@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Netto · dagelijkse schatting</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Caveat:wght@600;700&family=JetBrains+Mono:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+<!-- Supabase Client CDN (defer om te voorkomen dat de pagina blokkeert) -->
+<script defer src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="puzzles_embedded.js"></script>
+<script src="netto_frontend_puzzles.js"></script>
+<link rel="stylesheet" href="css/styles.css">
+
+</head>
+<body>
+
+  <!-- Achtergrond Formules -->
+  <div class="bg-deco">
+    <span style="top:40px; left:4%; font-size:88px; color:rgba(255,255,255,0.08); transform:rotate(-14deg);">+</span>
+    <span style="top:160px; right:4%; font-size:120px; color:rgba(255,216,74,0.10); transform:rotate(10deg);">×</span>
+    <span style="top:400px; left:2%; font-size:72px; color:rgba(255,255,255,0.08); transform:rotate(16deg);">−</span>
+    <span style="top:540px; right:6%; font-size:64px; color:rgba(255,255,255,0.07); transform:rotate(-8deg);">÷</span>
+    <span style="bottom:60px; left:6%; font-size:90px; color:rgba(255,216,74,0.09); transform:rotate(6deg);">=</span>
+    <span style="bottom:220px; right:5%; font-size:64px; color:rgba(255,255,255,0.07); transform:rotate(-18deg);">π</span>
+    <span style="top:90px; right:16%; font-size:52px; color:rgba(255,255,255,0.06); transform:rotate(9deg);">√</span>
+  </div>
+
+  <!-- Sarcastische Toast Container -->
+  <div class="toast-container" id="toastContainer"></div>
+
+  <!-- Vaste Topbar -->
+  <header class="topbar">
+    <button class="hamburger" id="hamburgerBtn" onclick="toggleMenu()" aria-label="Menu">
+      <span></span><span></span><span></span>
+    </button>
+    <div class="user-badge-bar">
+      <div class="streak-badge" id="topbarStreak">🔥 0</div>
+      <span style="opacity:0.3;">|</span>
+      <button class="user-btn" id="topbarUserBtn" onclick="openAuthModal()">
+        <span id="topbarUsername">Inloggen</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- Sidebar Overlay & Menu -->
+  <div class="overlay" id="overlay" onclick="toggleMenu()"></div>
+  <nav class="sidebar" id="sidebar">
+    <button class="sidebar-back" onclick="goHome()">← Terug naar home</button>
+    <div class="sidebar-logo">Netto</div>
+    <div class="sidebar-tagline">dagelijkse schatting</div>
+
+    <button class="sidebar-item" onclick="openDailyPuzzles()"><span class="num">01</span><span class="label">Daily Archive</span><span class="arrow">→</span></button>
+    <button class="sidebar-item" onclick="openPuzzles()"><span class="num">02</span><span class="label">Puzzels</span><span class="arrow">→</span></button>
+    <button class="sidebar-item" onclick="openPremiumLibrary()"><span class="num">03</span><span class="label">Library <span aria-label="Premium">✦</span></span><span class="arrow">→</span></button>
+    <button class="sidebar-item" onclick="openLeaderboardModal()"><span class="num">04</span><span class="label">Leaderboard</span><span class="arrow">→</span></button>
+    <button class="sidebar-item" onclick="openAbout()"><span class="num">05</span><span class="label">About Us</span><span class="arrow">→</span></button>
+    <button class="sidebar-item" onclick="alert('Binnenkort beschikbaar: Stuur jouw eigen feiten trio in!')"><span class="num">06</span><span class="label">Vraag insturen</span><span class="arrow">→</span></button>
+
+    <div class="sidebar-footer">Made by <b>B-Force</b></div>
+  </nav>
+
+  <!-- ============ SCHERM 1: HOME ============ -->
+  <main class="screen active" id="screen-home">
+    <div class="hero-inner hero-carousel" id="heroCarousel">
+      <button class="hero-carousel-arrow prev" type="button" onclick="changeHeroSlide(-1)" aria-label="Vorige slide">←</button>
+      <section class="hero-slide active" data-slide="0">
+        <div class="hero-eyebrow">Netto · dagelijkse schatting</div>
+        <h1 class="hero-headline">Drie vragen.<br><span class="script">Eén verband.</span></h1>
+        <p class="hero-sub">Schat drie feiten. De derde volgt uit de eerste twee — weet je er één goed, dan kun je de rest afleiden. Elke dag een nieuwe puzzel.</p>
+        <button class="hero-cta" id="btnStartPuzzle" onclick="showScreen('puzzle')">Start dagelijkse puzzel <svg viewBox="0 0 24 24" fill="none" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button>
+        <div class="hero-meta" id="heroDateMeta">Nr. 032 · 28 augustus 2026</div>
+      </section>
+      <section class="hero-slide" data-slide="1">
+        <div class="hero-eyebrow">Netto · speel verder</div>
+        <h1 class="hero-headline">Nog één <span class="script">puzzel.</span></h1>
+        <p class="hero-sub">Ga verder waar je gebleven was en ontdek of je schatting nog scherper kan.</p>
+        <button class="hero-cta" type="button" onclick="startNextPuzzle()">Start puzzel 1 →</button>
+      </section>
+      <section class="hero-slide" data-slide="2">
+        <div class="hero-eyebrow">Netto · voor nieuwsgierige mensen</div>
+        <h1 class="hero-headline">Duik in de <span class="script">Library.</span></h1>
+        <p class="hero-sub">Doorzoek categorieën, operators en difficulties en vind jouw volgende uitdaging.</p>
+        <button class="hero-cta" type="button" onclick="openPremiumLibrary()">Open Library →</button>
+      </section>
+      <button class="hero-carousel-arrow next" type="button" onclick="changeHeroSlide(1)" aria-label="Volgende slide">→</button>
+      <div class="hero-dots" aria-label="Landing slides"><button class="hero-dot active" onclick="setHeroSlide(0)"></button><button class="hero-dot" onclick="setHeroSlide(1)"></button><button class="hero-dot" onclick="setHeroSlide(2)"></button></div>
+    </div>
+  </main>
+
+  <!-- ============ SCHERM 2: PUZZEL ============ -->
+  <main class="screen" id="screen-puzzle">
+    <div class="inner">
+      <div class="eyebrow" id="puzzleEyebrow">Netto · nr. 032 · 28 aug</div>
+      <h1 class="headline">Schat het <span class="script">slim.</span></h1>
+
+      <div class="card">
+        <!-- Banner als speler vandaag al gespeeld heeft -->
+        <div class="already-played-banner" id="alreadyPlayedBanner">
+          <span>✅ Je hebt de puzzel van vandaag al gespeeld!</span>
+          <button onclick="openLeaderboardModal()" style="background:none; border:none; color:#3730A3; font-weight:700; cursor:pointer; text-decoration:underline;">Bekijk ranglijst</button>
+        </div>
+
+        <div class="q-block">
+          <div class="q-label" id="q1-label">1. Hoeveel inwoners heeft Nederland ongeveer?</div>
+          <div class="input-wrapper">
+            <input type="text" id="g1" inputmode="numeric" placeholder="Your guess">
+          </div>
+        </div>
+
+        <div class="connector">
+          <div class="connector-line"></div>
+          <div class="connector-badge" id="operatorBadge">×</div>
+          <div class="connector-line"></div>
+        </div>
+
+        <div class="q-block">
+          <div class="q-label" id="q2-label">2. Hoeveel bezoekers trekt de Efteling per jaar?</div>
+          <div class="input-wrapper">
+            <input type="text" id="g2" inputmode="numeric" placeholder="Your guess">
+          </div>
+        </div>
+
+        <div class="connector">
+          <div class="connector-line"></div>
+          <div class="connector-badge eq">=</div>
+          <div class="connector-line"></div>
+        </div>
+
+        <div class="q-block">
+          <div class="q-label" id="q3-label">3. Wat is dat vermenigvuldigd?</div>
+          <div class="input-wrapper">
+            <input type="text" id="g3" inputmode="numeric" placeholder="Your guess">
+          </div>
+        </div>
+
+        <button class="btn-check" id="btnCheck" onclick="checkAnswers()">Check mijn score</button>
+
+        <!-- Resultaten & Wordle Share Card -->
+        <div class="results" id="results">
+          <div class="score-badge-container">
+            <div class="score-badge-title">Jouw Gemiddelde Afwijking</div>
+            <div class="score-badge-val" id="scoreBadge">1.18×</div>
+            <div class="score-badge-msg" id="scoreBadgeMsg">🎯 Meesterlijk geschat!</div>
+          </div>
+
+          <div class="results-grid">
+            <div class="result-card-item">
+              <div class="res-info">
+                <span class="res-lbl">Vraag 1 — echt antwoord</span>
+                <span class="res-val" id="a1"></span>
+              </div>
+              <div class="res-badge" id="badge-q1"></div>
+            </div>
+            <div class="result-card-item">
+              <div class="res-info">
+                <span class="res-lbl">Vraag 2 — echt antwoord</span>
+                <span class="res-val" id="a2"></span>
+              </div>
+              <div class="res-badge" id="badge-q2"></div>
+            </div>
+            <div class="result-card-item">
+              <div class="res-info">
+                <span class="res-lbl">Vraag 3 — echt antwoord</span>
+                <span class="res-val" id="a3"></span>
+              </div>
+              <div class="res-badge" id="badge-q3"></div>
+            </div>
+          </div>
+
+          <div class="actions-row">
+            <button class="btn-share" onclick="shareScore()">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+              Deel uitslag
+            </button>
+            <button class="btn-leaderboard-open" onclick="openLeaderboardModal()">
+              🏆 Leaderboard
+            </button>
+          </div>
+
+          <!-- Banner om in te loggen als speler niet is ingelogd -->
+          <div class="cloud-sync-banner" id="cloudSyncBanner">
+            <span>🏆 Wil je meedoen in het <b>Leaderboard</b>?</span>
+            <button onclick="openAuthModal()">Log in / Registreer</button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </main>
+
+  <!-- ============ DAILY PUZZELS & LIBRARY ============ -->
+  <main class="library-screen" id="libraryScreen">
+    <div class="library-page-inner">
+      <div class="library-page-top"><button class="library-back" onclick="closeLibraryScreen()">← Terug</button><span class="library-page-kicker">NETTO · LIBRARY</span></div>
+      <h1 class="library-page-title" id="libraryTitle">Daily Archive</h1>
+      <p class="library-page-subtitle" id="librarySubtitle">Elke puzzel opnieuw spelen.</p>
+      <div id="dailyDateControls" class="month-nav" style="display:none;">
+        <button type="button" id="previousMonthBtn" onclick="changeArchiveMonth(-1)" aria-label="Vorige maand">←</button>
+        <strong id="activeArchiveMonth">augustus 2026</strong>
+        <button type="button" id="nextMonthBtn" onclick="changeArchiveMonth(1)" aria-label="Volgende maand">→</button>
+      </div>
+      <div class="library-stats" id="libraryStats"></div>
+      <div class="library-filters" id="libraryFilters">
+        <button class="active" onclick="selectLibraryView('daily', this)">Daily Archive</button>
+        <button onclick="selectLibraryView('library', this)">Puzzels</button>
+        <button onclick="openPremiumLibrary()">Library ✦</button>
+      </div>
+      <section class="premium-library-panel" id="premiumLibraryPanel" style="display:none;">
+        <div class="premium-lock" id="premiumLock">
+          <span class="premium-icon">✦</span>
+          <h2>Netto Library</h2>
+          <p>Doorzoek alle puzzels op operator, categorie en difficulty.</p>
+          <strong>$3.99 Premium</strong>
+          <button class="hero-cta" type="button" onclick="unlockPremiumLibrary()">Ontgrendel Library</button>
+          <small>Testmodus: simuleert aankoop lokaal in je browser.</small>
+        </div>
+        <div id="premiumLibraryContent" style="display:none;">
+          <div class="premium-library-toolbar">
+            <input id="premiumSearch" type="search" placeholder="Zoek in vragen…" oninput="renderPremiumLibrary()">
+            <select id="premiumOperator" onchange="renderPremiumLibrary()"><option value="">Alle operators</option><option>×</option><option>÷</option><option>+</option><option>−</option></select>
+            <select id="premiumDifficulty" onchange="renderPremiumLibrary()"><option value="">Alle difficulties</option><option value="easy">Easy</option><option value="intermediate">Intermediate</option><option value="hard">Hard</option><option value="extremely-hard">Extremely Hard</option></select>
+            <select id="premiumCategory" onchange="renderPremiumLibrary()"><option value="">Alle categorieën</option></select>
+          </div>
+          <div class="premium-result-count" id="premiumResultCount"></div>
+          <div class="premium-results" id="premiumResults"></div>
+        </div>
+      </section>
+      <section class="about-panel" id="aboutPanel" style="display:none;">
+        <h2>Onze missie</h2>
+        <p>Netto maakt nieuwsgierigheid speelbaar. We verbinden alledaagse feiten met slimme rekensommen, zodat je niet alleen gokt, maar leert denken in verhoudingen.</p>
+        <p>Elke puzzel is een kleine ontdekking: drie vragen, één verband en altijd een kans om dichter bij de waarheid te komen.</p>
+      </section>
+      <button class="library-back-to-archive" id="dailyArchiveReturn" style="display:none;" onclick="openDailyPuzzles()">← Naar Daily Archive</button>
+      <div class="library-difficulties" id="libraryDifficulties">
+        <button class="active" onclick="selectLibraryDifficulty('easy', this)">Easy <span>laden…</span></button>
+        <button onclick="selectLibraryDifficulty('intermediate', this)">Intermediate <span>laden…</span></button>
+        <button onclick="selectLibraryDifficulty('hard', this)">Hard <span>laden…</span></button>
+        <button onclick="selectLibraryDifficulty('extremely-hard', this)">Extremely Hard <span>laden…</span></button>
+      </div>
+      <div class="daily-archive-list" id="dailyPuzzleList"></div>
+      <div class="library-card-grid" id="libraryCardGrid" style="display:none;"></div>
+      <div class="library-puzzle-view" id="libraryPuzzleView" style="display:none;">
+        <div class="library-progress" id="libraryProgress"></div>
+        <div class="library-equation" id="libraryEquation"></div>
+        <div class="library-question-list" id="libraryQuestionList"></div>
+        <div class="library-actions"><button onclick="libraryMove(-1)">← Vorige</button><button onclick="libraryMove(1)">Volgende →</button></div>
+      </div>
+    </div>
+  </main>
+
+  <!-- ============ REKENMACHINE ============ -->
+  <section class="calculator" id="calculator" aria-label="Rekenmachine">
+    <div class="calculator-header">
+      <span class="calculator-title">Snelle rekenmachine</span>
+      <button class="calculator-close" onclick="toggleCalculator(false)" aria-label="Sluit rekenmachine">✕</button>
+    </div>
+    <input class="calculator-display" id="calculatorDisplay" value="0" readonly aria-label="Rekenmachine display">
+    <div class="calculator-grid">
+      <button onclick="calculatorClear()">C</button><button onclick="calculatorBackspace()">⌫</button><button class="operator" onclick="calculatorInput('÷')">÷</button><button class="operator" onclick="calculatorInput('×')">×</button>
+      <button onclick="calculatorInput('7')">7</button><button onclick="calculatorInput('8')">8</button><button onclick="calculatorInput('9')">9</button><button class="operator" onclick="calculatorInput('−')">−</button>
+      <button onclick="calculatorInput('4')">4</button><button onclick="calculatorInput('5')">5</button><button onclick="calculatorInput('6')">6</button><button class="operator" onclick="calculatorInput('+')">+</button>
+      <button onclick="calculatorInput('1')">1</button><button onclick="calculatorInput('2')">2</button><button onclick="calculatorInput('3')">3</button><button class="equals" onclick="calculatorEvaluate()">=</button>
+      <button class="wide" onclick="calculatorInput('0')">0</button><button onclick="calculatorInput('.')">.</button>
+    </div>
+  </section>
+  <button class="calculator-toggle" onclick="toggleCalculator(true)">🧮 Rekenmachine</button>
+
+  <!-- ============ MODAL: LEADERBOARD ============ -->
+  <div class="modal-overlay" id="modalLeaderboard" onclick="closeModalOnBg(event, 'modalLeaderboard')">
+    <div class="modal">
+      <button class="modal-close" onclick="closeLeaderboardModal()">✕</button>
+      <h2 class="modal-title">Leaderboard 🏆</h2>
+      <div class="modal-subtitle">Wie zat er vandaag het dichtst op de waarheid?</div>
+
+      <div class="tab-buttons">
+        <button class="tab-btn active" id="tabTodayBtn" onclick="switchLbTab('today')">Vandaag (#032)</button>
+        <button class="tab-btn" id="tabStreaksBtn" onclick="switchLbTab('streaks')">Top Streaks 🔥</button>
+      </div>
+
+      <div class="leaderboard-list" id="leaderboardList">
+        <!-- Wordt dynamisch gevuld -->
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ MODAL: AUTH / ACCOUNT ============ -->
+  <div class="modal-overlay" id="modalAuth" onclick="closeModalOnBg(event, 'modalAuth')">
+    <div class="modal">
+      <button class="modal-close" onclick="closeAuthModal()">✕</button>
+      
+      <!-- Ingelogde weergave -->
+      <div id="authLoggedInView" style="display:none;">
+        <h2 class="modal-title">Mijn Profiel 👤</h2>
+        <div class="modal-subtitle" id="profileEmailSubtitle">ingelogd als gebruiker</div>
+        <div style="background:#F8F9FE; border-radius:12px; padding:18px; margin-bottom:18px;">
+          <div style="font-size:12px; color:#6B7280; margin-bottom:4px;">GEBRUIKERSNAAM</div>
+          <div style="font-size:20px; font-weight:700; color:var(--bg-dark);" id="profileUsername">Speler</div>
+          <div style="margin-top:12px; font-size:14px; color:#D97706; font-weight:600;" id="profileStreak">🔥 Huidige streak: 0 dagen</div>
+        </div>
+        <button class="btn-check" style="background:#EF4444; margin-top:0;" onclick="handleLogout()">Uitloggen</button>
+      </div>
+
+      <!-- Niet ingelogde weergave (Inloggen / Registreren) -->
+      <div id="authFormView">
+        <h2 class="modal-title" id="authTitle">Inloggen</h2>
+        <div class="modal-subtitle">Synchroniseer je scores over al je apparaten & sta op het leaderboard.</div>
+
+        <form id="authForm" onsubmit="handleAuthSubmit(event)">
+          <div class="form-group" id="usernameGroup" style="display:none;">
+            <label>Spelersnaam (uniek)</label>
+            <input type="text" id="authUsername" placeholder="bijv. MathMasterNL">
+          </div>
+          <div class="form-group">
+            <label>E-mailadres</label>
+            <input type="email" id="authEmail" placeholder="jouw@email.nl" required>
+          </div>
+          <div class="form-group">
+            <label>Wachtwoord</label>
+            <input type="password" id="authPassword" placeholder="••••••••" required>
+          </div>
+          <button type="submit" class="btn-check" id="authSubmitBtn" style="margin-top:16px;">Inloggen</button>
+        </form>
+
+        <div class="auth-toggle">
+          <span id="authToggleText">Nog geen account? </span>
+          <a onclick="toggleAuthMode()" id="authToggleLink">Registreer gratis</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+<script src="js/app.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="nl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Netto Admin</title>
+  <link rel="stylesheet" href="css/admin.css">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body>
+  <main class="admin-shell">
+    <section id="authView" class="panel auth-panel" hidden>
+      <p class="eyebrow">NETTO / ADMIN</p>
+      <h1>Admin login</h1>
+      <p class="muted-dark">Log in met je Supabase-account. Alleen een account dat in <code>admin_users</code> staat krijgt toegang.</p>
+      <form id="loginForm">
+        <label for="email">E-mailadres</label>
+        <input id="email" type="email" autocomplete="username" required>
+        <label for="password">Wachtwoord</label>
+        <input id="password" type="password" autocomplete="current-password" required>
+        <button type="submit">Inloggen</button>
+      </form>
+      <button id="forgotButton" class="link-button" type="button">Wachtwoord vergeten?</button>
+      <form id="forgotForm" hidden>
+        <label for="resetEmail">E-mailadres voor reset</label>
+        <input id="resetEmail" type="email" autocomplete="email" required>
+        <button type="submit">Resetlink sturen</button>
+      </form>
+      <form id="newPasswordForm" hidden>
+        <h2>Nieuw wachtwoord</h2>
+        <label for="newPassword">Nieuw wachtwoord</label>
+        <input id="newPassword" type="password" minlength="8" autocomplete="new-password" required>
+        <label for="confirmPassword">Herhaal wachtwoord</label>
+        <input id="confirmPassword" type="password" minlength="8" autocomplete="new-password" required>
+        <button type="submit">Opslaan</button>
+      </form>
+      <p id="authMessage" class="message" role="alert"></p>
+    </section>
+
+    <section id="dashboardView">
+      <header class="dashboard-header">
+        <div><p class="eyebrow">NETTO / ADMIN</p><h1>Dashboard</h1><p id="identity"></p></div>
+        <button id="logoutButton" class="secondary" type="button">Uitloggen</button>
+      </header>
+      <p id="dashboardMessage" class="message" role="alert"></p>
+      <section class="metric-grid">
+        <article class="metric"><span>Daily puzzles</span><strong id="dailyCount">—</strong></article>
+        <article class="metric"><span>Library puzzles</span><strong id="libraryCount">—</strong></article>
+        <article class="metric"><span>Users</span><strong id="userCount">—</strong></article>
+        <article class="metric"><span>User plays</span><strong id="playCount">—</strong></article>
+        <article class="metric"><span>Unieke spelers</span><strong id="uniquePlayerCount">—</strong></article>
+        <article class="metric"><span>Login events</span><strong id="loginCount">—</strong></article>
+      </section>
+      <section class="panel"><h2>Status</h2><p class="muted-dark">Dit dashboard leest alleen gegevens waarvoor jouw Supabase-tabellen en RLS-policies toegang geven. Een ontbrekende optionele tabel wordt als een streepje getoond.</p></section>
+    </section>
+  </main>
+<script>
+(() => {
+  const SUPABASE_URL = 'https://bqatnnouxkjdzvvhqbly.supabase.co';
+  const SUPABASE_ANON_KEY = 'PLAK_HIER_DE_ACTUELE_ANON_PUBLIC_KEY';
+  const $ = id => document.getElementById(id);
+  const client = SUPABASE_ANON_KEY.startsWith('eyJ') ? window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY) : null;
+  const setMessage = (id, text, error = false) => { const el = $(id); el.textContent = text || ''; el.classList.toggle('error', error); };
+  const showAuth = () => { $('authView').hidden = false; $('dashboardView').hidden = true; };
+  const showDashboard = () => { $('authView').hidden = true; $('dashboardView').hidden = false; };
+
+  async function requireAdmin(user) {
+    if (!client) return;
+    const { data, error } = await client.from('admin_users').select('user_id').eq('user_id', user.id).maybeSingle();
+    if (error) throw new Error('Admincontrole mislukt: ' + error.message);
+    if (!data) throw new Error('Dit account staat niet in admin_users.');
+  }
+  async function tableCount(table) {
+    const { count, error } = await client.from(table).select('*', { count: 'exact', head: true });
+    return error ? null : count;
+  }
+  async function loadDashboard(user) {
+    await requireAdmin(user);
+    showDashboard(); $('identity').textContent = user.email || user.id;
+    if (!client) { ['dailyCount','libraryCount','userCount','playCount','uniquePlayerCount','loginCount'].forEach(id => $(id).textContent = '—'); return; }
+    const [daily, library, users, plays, logins] = await Promise.all(['puzzles','library_puzzles','profiles','user_plays','login_events'].map(tableCount));
+    const { data: playerRows, error } = await client.from('user_plays').select('user_id');
+    const unique = error ? null : new Set((playerRows || []).map(row => row.user_id)).size;
+    [$('dailyCount'),$('libraryCount'),$('userCount'),$('playCount'),$('uniquePlayerCount'),$('loginCount')].forEach((el,i) => el.textContent = [daily,library,users,plays,unique,logins][i] ?? '—');
+  }
+
+  $('loginForm').addEventListener('submit', async event => {
+    event.preventDefault(); setMessage('authMessage','');
+    const { data, error } = await client.auth.signInWithPassword({ email: $('email').value.trim(), password: $('password').value });
+    if (error) { setMessage('authMessage', error.message, true); return; }
+    try { await loadDashboard(data.user); } catch (err) { await client.auth.signOut(); setMessage('authMessage', err.message, true); }
+  });
+  $('forgotButton').addEventListener('click', () => { $('forgotForm').hidden = !$('forgotForm').hidden; $('resetEmail').value = $('email').value; });
+  $('forgotForm').addEventListener('submit', async event => {
+    event.preventDefault(); setMessage('authMessage','');
+    const { error } = await client.auth.resetPasswordForEmail($('resetEmail').value.trim(), { redirectTo: window.location.href.split('#')[0] });
+    setMessage('authMessage', error ? error.message : 'Resetlink verstuurd. Controleer je e-mail.');
+  });
+  $('newPasswordForm').addEventListener('submit', async event => {
+    event.preventDefault();
+    if ($('newPassword').value !== $('confirmPassword').value) { setMessage('authMessage','De wachtwoorden komen niet overeen.',true); return; }
+    const { error } = await client.auth.updateUser({ password: $('newPassword').value });
+    if (error) { setMessage('authMessage',error.message,true); return; }
+    $('newPasswordForm').hidden = true; $('loginForm').hidden = false; $('forgotButton').hidden = false; setMessage('authMessage','Wachtwoord gewijzigd. Log opnieuw in.');
+  });
+  $('logoutButton').addEventListener('click', async () => { await client.auth.signOut(); showAuth(); setMessage('authMessage','Uitgelogd.'); });
+  client?.auth.onAuthStateChange((event) => { if (event === 'PASSWORD_RECOVERY') { $('loginForm').hidden = true; $('forgotButton').hidden = true; $('forgotForm').hidden = true; $('newPasswordForm').hidden = false; } });
+  client?.auth.getSession().then(async ({ data }) => { if (!data.session) return; try { await loadDashboard(data.session.user); } catch (err) { await client.auth.signOut(); setMessage('authMessage',err.message,true); } });
+})();
+</script>
+</body>
+</html>
