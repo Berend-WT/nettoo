@@ -399,25 +399,58 @@
     const input = document.getElementById(id); if (!input || !Number.isFinite(value)) return;
     input.value = formatDutchNumber(String(exactNumber(value)).replace('.', ','));
     autoCalculatedInputs.add(id); input.dataset.autoCalculated = 'true'; input.classList.add('auto-calculated');
+    input.setAttribute('aria-label', 'Automatisch berekend antwoord');
   }
   function clearAutoInput(id) {
     const input = document.getElementById(id); if (!input || !autoCalculatedInputs.has(id)) return;
     input.value = ''; input.placeholder = 'Your guess'; input.dataset.autoCalculated = 'false'; input.classList.remove('auto-calculated'); autoCalculatedInputs.delete(id);
   }
-  function updateDailyDerivedInput() {
-    const values = ['g1','g2','g3'].map(id => parseFormattedNumber(document.getElementById(id).value));
-    const op = dailyOperator();
-    ['g1','g2','g3'].forEach((id, i) => { if (autoCalculatedInputs.has(id) && document.activeElement?.id !== id) clearAutoInput(id); });
-    const [a,b,c] = values;
-    if (Number.isFinite(a) && Number.isFinite(c) && !Number.isFinite(b)) {
-      let result = op === '+' ? c - a : op === '−' || op === '-' ? a - c : op === '×' || op === '*' ? (a === 0 ? NaN : c / a) : op === '÷' || op === '/' ? (c === 0 ? NaN : a / c) : NaN;
-      if (Number.isFinite(result) && (op === '+' || op === '−' || op === '-' || op === '×' || op === '*')) setAutoInput('g2', result);
-    } else if (Number.isFinite(a) && Number.isFinite(b) && !Number.isFinite(c)) {
-      setAutoInput('g3', calculateDailyValue(a,b,op));
-    } else if (Number.isFinite(b) && Number.isFinite(c) && !Number.isFinite(a)) {
-      let result = op === '+' ? c - b : op === '−' || op === '-' ? c + b : op === '×' || op === '*' ? (b === 0 ? NaN : c / b) : op === '÷' || op === '/' ? b * c : NaN;
-      setAutoInput('g1', result);
+  function calculateDerivedValues(ids, operator) {
+    const inputs = ids.map(id => document.getElementById(id));
+    if (inputs.some(input => !input)) return;
+    const values = inputs.map(input => parseFormattedNumber(input.value));
+    const [a, b, c] = values;
+    inputs.forEach((input, index) => {
+      if (autoCalculatedInputs.has(input.id) && document.activeElement?.id !== input.id) clearAutoInput(input.id);
+      else if (autoCalculatedInputs.has(input.id) && !Number.isFinite(values[index])) clearAutoInput(input.id);
+    });
+    const fresh = ids.map(id => parseFormattedNumber(document.getElementById(id).value));
+    const [left, middle, result] = fresh;
+    if (Number.isFinite(left) && Number.isFinite(middle) && !Number.isFinite(result)) {
+      setAutoInput(ids[2], calculateDailyValue(left, middle, operator));
+    } else if (Number.isFinite(left) && Number.isFinite(result) && !Number.isFinite(middle)) {
+      const value = operator === '+' ? result - left : operator === '−' || operator === '-' ? left - result : operator === '×' || operator === '*' ? (left === 0 ? NaN : result / left) : operator === '÷' || operator === '/' ? (result === 0 ? NaN : left / result) : NaN;
+      if (operator !== '÷' && operator !== '/' || Number.isInteger(value)) setAutoInput(ids[1], value);
+    } else if (Number.isFinite(middle) && Number.isFinite(result) && !Number.isFinite(left)) {
+      const value = operator === '+' ? result - middle : operator === '−' || operator === '-' ? result + middle : operator === '×' || operator === '*' ? (middle === 0 ? NaN : result / middle) : operator === '÷' || operator === '/' ? middle * result : NaN;
+      if (operator !== '÷' && operator !== '/' || Number.isInteger(value)) setAutoInput(ids[0], value);
     }
+  }
+  function updateDailyDerivedInput() { calculateDerivedValues(['g1','g2','g3'], dailyOperator()); }
+  function bindDerivedInputs(prefix, operator) {
+    const ids = [`${prefix}Answer0`, `${prefix}Answer1`, `${prefix}Answer2`];
+    const inputs = ids.map(id => document.getElementById(id));
+    if (inputs.some(input => !input)) return;
+    inputs.forEach(input => {
+      input.addEventListener('focus', () => {
+        input.dataset.editing = 'true';
+        // Dit geldt ook voor Daily: bij focus krijgt de speler het automatische veld terug.
+        if (autoCalculatedInputs.has(input.id)) clearAutoInput(input.id);
+      });
+      input.addEventListener('blur', () => {
+        input.dataset.editing = 'false';
+        if (!input.value.trim()) calculateDerivedValues(ids, operator);
+      });
+      input.addEventListener('input', () => {
+        autoCalculatedInputs.delete(input.id);
+        input.dataset.autoCalculated = 'false';
+        input.placeholder = input.value.trim() ? '' : 'Your guess';
+        input.classList.remove('auto-calculated');
+        if (!input.value.trim()) input.placeholder = 'Your guess';
+        calculateDerivedValues(ids, operator);
+      });
+    });
+    calculateDerivedValues(ids, operator);
   }
 
   function initInputs() {
@@ -455,7 +488,14 @@
         if (/[a-zA-Z]/.test(val)) {
           showSarcasticToast();
         }
-        if (val.trim() === '') { if (autoCalculatedInputs.has(id)) autoCalculatedInputs.delete(id); input.placeholder = 'Your guess'; updateDailyDerivedInput(); return; }
+        if (val.trim() === '') {
+          autoCalculatedInputs.delete(id);
+          input.dataset.autoCalculated = 'false';
+          input.placeholder = 'Your guess';
+          input.classList.remove('auto-calculated');
+          updateDailyDerivedInput();
+          return;
+        }
         input.value = formatDutchNumber(val);
         autoCalculatedInputs.delete(id); input.dataset.autoCalculated = 'false'; input.classList.remove('auto-calculated');
         updateDailyDerivedInput();
@@ -867,6 +907,7 @@
     document.getElementById('screen-home').classList.toggle('active', name === 'home');
     document.getElementById('screen-puzzle').classList.toggle('active', name === 'puzzle');
     document.getElementById('libraryScreen').classList.toggle('active', name === 'library');
+    document.getElementById('premiumScreen').classList.toggle('active', name === 'premium');
     document.getElementById('calculator').classList.remove('open');
     window.scrollTo(0, 0);
   }
@@ -897,6 +938,90 @@
   let libraryMode = 'daily';
   let libraryActivePuzzle = null;
 
+  // ===== Puzzle countdown timer (Puzzels-tab én Library ✦) =====
+  // Per-difficulty time budget (seconds). Harder puzzles get more thinking time.
+  const LIBRARY_TIMER_SECONDS = {
+    'easy': 60,
+    'intermediate': 90,
+    'hard': 120,
+    'extremely-hard': 180,
+  };
+  const puzzleTimerIntervals = {};
+
+  function stopPuzzleTimer(prefix) {
+    if (puzzleTimerIntervals[prefix]) { clearInterval(puzzleTimerIntervals[prefix]); delete puzzleTimerIntervals[prefix]; }
+  }
+  function stopLibraryTimer() { stopPuzzleTimer('library'); }
+
+  function startPuzzleTimer(prefix, difficulty) {
+    stopPuzzleTimer(prefix);
+    const el = document.getElementById(prefix + 'Timer');
+    if (!el) return;
+    const total = LIBRARY_TIMER_SECONDS[difficulty] ?? 120;
+    let remaining = total;
+    const render = () => {
+      const m = Math.floor(remaining / 60);
+      const s = remaining % 60;
+      el.textContent = `⏱ ${m}:${s.toString().padStart(2, '0')}`;
+      el.classList.toggle('warn', remaining <= 30 && remaining > 10);
+      el.classList.toggle('crit', remaining <= 10);
+    };
+    render();
+    puzzleTimerIntervals[prefix] = setInterval(() => {
+      remaining -= 1;
+      if (remaining <= 0) {
+        stopPuzzleTimer(prefix);
+        el.textContent = '⏱ 0:00';
+        el.classList.add('crit');
+        submitPuzzleView(prefix, true);
+        return;
+      }
+      render();
+    }, 1000);
+  }
+
+  // ===== Generieke puzzle-view (werkt voor 'library' én 'premium' prefix) =====
+  function renderPuzzleView(prefix, p, progressLabel, moveAction) {
+    const listEl = document.getElementById(prefix + 'QuestionList');
+    if (!listEl || !p) return;
+    document.getElementById(prefix + 'Progress').textContent = progressLabel;
+    document.getElementById(prefix + 'Equation').style.display = 'none';
+    const autoCalcNote = localStorage.getItem('netto_auto_calc_note_seen') === 'true' ? '' : `<div class="auto-calc-note" role="status" aria-live="polite">↳ Antwoorden worden automatisch berekend als de berekening klopt.</div>`;
+    listEl.innerHTML = [[p.q1_label,p.q1_answer],[p.q2_label,p.q2_answer],[p.q3_label,p.q3_answer]].map((q,i) => `<div class="q-block"><div class="q-label">${q[0] || 'Vraag niet beschikbaar'}</div><div class="input-wrapper"><input type="text" class="library-answer-input daily-style-input" id="${prefix}Answer${i}" inputmode="numeric" placeholder="Your guess"></div></div>${i < 2 ? `<div class="connector"><div class="connector-line"></div><div class="connector-badge ${i === 1 ? 'eq' : ''}">${i === 0 ? (p.operator || '×') : '='}</div><div class="connector-line"></div></div>` : ''}`).join('') + autoCalcNote + `<button class="btn-check" onclick="submit${prefix === 'library' ? 'Library' : 'Premium'}Puzzle()">Check mijn score</button>`;
+    if (autoCalcNote) localStorage.setItem('netto_auto_calc_note_seen', 'true');
+    if (prefix === 'library') libraryActivePuzzle = p; else premiumActivePuzzle = p;
+    bindDerivedInputs(prefix, p.operator || '×');
+    startPuzzleTimer(prefix, p.difficulty);
+  }
+
+  function submitPuzzleView(prefix, auto = false) {
+    const active = prefix === 'library' ? libraryActivePuzzle : premiumActivePuzzle;
+    if (!active) return;
+    stopPuzzleTimer(prefix);
+    const guesses = [0,1,2].map(i => parseFormattedNumber(document.getElementById(`${prefix}Answer${i}`).value));
+    if (guesses.some(v => !Number.isFinite(v) || v <= 0)) {
+      if (auto) {
+        // Timer expired with incomplete input: fill blanks with 1 so scoring
+        // still runs (max deviation), and show feedback instead of blocking.
+        for (let i = 0; i < 3; i++) {
+          const inp = document.getElementById(`${prefix}Answer${i}`);
+          if (inp && (!Number.isFinite(guesses[i]) || guesses[i] <= 0)) inp.value = '1';
+        }
+        guesses.forEach((v, i) => { if (!Number.isFinite(v) || v <= 0) guesses[i] = 1; });
+      } else {
+        alert('Vul alle drie de vragen in met een getal groter dan 0.');
+        return;
+      }
+    }
+    const answers = [active.q1_answer,active.q2_answer,active.q3_answer];
+    const factor = answers.reduce((sum,a,i) => sum + scoreVraag(guesses[i],a),0) / 3;
+    const plays = JSON.parse(localStorage.getItem('netto_library_plays') || '{}'); plays[active.id] = { factor, guesses, completedAt:new Date().toISOString() }; localStorage.setItem('netto_library_plays',JSON.stringify(plays));
+    const nextAction = prefix === 'library' ? 'libraryMove(1)' : 'premiumPuzzleMove(1)';
+    document.getElementById(prefix + 'QuestionList').innerHTML = answers.map((a,i) => `<div class="library-question"><b>Vraag ${i+1}</b>${[active.q1_label,active.q2_label,active.q3_label][i]}<br><strong>Echt antwoord: ${fmt(a)} · ${scoreVraag(guesses[i],a).toFixed(2)}×</strong></div>`).join('') + `<div class="score-badge-container"><div class="score-badge-title">Jouw gemiddelde afwijking</div><div class="score-badge-val" style="color:${scoreColor(factor)}">${factor.toFixed(2)}×</div></div><button class="btn-check" onclick="${nextAction}">Volgende puzzel →</button>`;
+    syncLibraryPlay(active, guesses[0], guesses[1], guesses[2], factor);
+    if (prefix === 'library') renderLibraryCards(); else renderPremiumPuzzles();
+  }
+
   function openDailyPuzzles() {
     closeMenu(); openLibraryScreen('daily');
   }
@@ -911,9 +1036,32 @@
 
   function isPremiumUnlocked() { return localStorage.getItem('netto_premium_unlocked') === 'true'; }
 
+  // ===== LIBRARY ✦ (eigen pagina, premium) =====
+  let premiumView = 'puzzles';            // 'puzzels' | 'vragen'
+  let allPremiumPuzzles = [];             // library + daily puzzles met bron-label
+  let premiumPuzzleList = [];             // actuele gefilterde lijst
+  let premiumPuzzleIndex = 0;
+  let premiumActivePuzzle = null;
+  let allPremiumVragen = [];              // alle losse vragen
+
   function openPremiumLibrary() {
     closeMenu();
-    openLibraryScreen('premium');
+    buildPremiumData(); // altijd opnieuw: libraryPuzzles kan door Supabase-merge zijn bijgewerkt
+    const unlocked = isPremiumUnlocked();
+    document.getElementById('premiumLock').style.display = unlocked ? 'none' : 'block';
+    document.getElementById('premiumContent').style.display = unlocked ? 'block' : 'none';
+    document.getElementById('premiumPuzzleView').style.display = 'none';
+    renderPremiumStats();
+    populatePremiumFilters();
+    setPremiumView(premiumView, null);
+    showScreen('premium');
+    document.getElementById('premiumScreen').classList.add('active');
+  }
+
+  function closePremiumScreen() {
+    document.getElementById('premiumScreen').classList.remove('active');
+    stopPuzzleTimer('premium');
+    showScreen('home');
   }
 
   function unlockPremiumLibrary() {
@@ -921,20 +1069,94 @@
     openPremiumLibrary();
   }
 
-  function renderPremiumLibrary() {
+  function buildPremiumData() {
+    // Alle puzzels: 100 library + alle daily's, elk met bron-label en stabiele id.
+    allPremiumPuzzles = [
+      ...libraryPuzzles.map(p => ({ ...p, source: 'Puzzels' })),
+      ...DAILY_PUZZLES.map((p, i) => ({ ...p, source: 'Daily Archive', id: p.id || `daily-${p.date || p.number || i + 1}` })),
+    ];
+    // Alle losse vragen (3 per puzzel).
+    allPremiumVragen = [];
+    allPremiumPuzzles.forEach((p, pi) => {
+      [p.q1_label, p.q2_label, p.q3_label].forEach((label, qi) => {
+        allPremiumVragen.push({
+          id: `${p.id}-q${qi + 1}`,
+          label: label || 'Vraag niet beschikbaar',
+          answer: [p.q1_answer, p.q2_answer, p.q3_answer][qi],
+          category: (p.categories && p.categories[0]) || 'Algemeen',
+          operator: p.operator || '×',
+          source: p.source || 'Puzzels',
+          puzzleName: p.name || `Puzzel ${pi + 1}`,
+        });
+      });
+    });
+  }
+
+  function renderPremiumStats() {
+    const plays = JSON.parse(localStorage.getItem('netto_library_plays') || '{}');
+    const played = allPremiumPuzzles.filter(p => plays[p.id]).length;
+    document.getElementById('premiumStats').innerHTML = `<div class="library-stat"><b>${allPremiumPuzzles.length}</b><span>Puzzels</span></div><div class="library-stat"><b>${allPremiumVragen.length}</b><span>Vragen</span></div><div class="library-stat"><b>${played}</b><span>Gespeeld door jou</span></div>`;
+  }
+
+  function populatePremiumFilters() {
+    const catSelect = document.getElementById('premiumCategory');
+    const vragenSelect = document.getElementById('vragenCategory');
+    if (!catSelect || !vragenSelect) return;
+    const categories = [...new Set(allPremiumPuzzles.flatMap(p => p.categories || []))].sort((a,b) => a.localeCompare(b));
+    const options = '<option value="">Alle categorieën</option>' + categories.map(c => `<option value="${c.replace(/"/g, '&quot;')}">${c}</option>`).join('');
+    catSelect.innerHTML = options;
+    vragenSelect.innerHTML = options;
+  }
+
+  function setPremiumView(view, button) {
+    premiumView = view;
+    document.querySelectorAll('#premiumViewToggle button').forEach((b, i) => b.classList.toggle('active', (['puzzles','vragen'][i]) === view));
+    document.getElementById('premiumPuzzlesView').style.display = view === 'puzzles' ? 'block' : 'none';
+    document.getElementById('premiumVragenView').style.display = view === 'vragen' ? 'block' : 'none';
+    document.getElementById('premiumPuzzleView').style.display = 'none';
+    if (view === 'puzzles') renderPremiumPuzzles(); else renderPremiumVragen();
+  }
+
+  function renderPremiumPuzzles() {
     const search = (document.getElementById('premiumSearch')?.value || '').trim().toLowerCase();
     const operator = document.getElementById('premiumOperator')?.value || '';
     const difficulty = document.getElementById('premiumDifficulty')?.value || '';
     const category = document.getElementById('premiumCategory')?.value || '';
-    const source = libraryPuzzles.filter(p => (!operator || p.operator === operator) && (!difficulty || p.difficulty === difficulty) && (!category || (p.categories || []).includes(category)) && (!search || [p.name,p.q1_label,p.q2_label,p.q3_label].join(' ').toLowerCase().includes(search)));
-    document.getElementById('premiumResultCount').textContent = `${source.length} puzzel${source.length === 1 ? '' : 's'} gevonden`;
-    document.getElementById('premiumResults').innerHTML = source.slice(0, 200).map(p => `<article class="premium-result-card"><header><span>${p.difficulty || '—'}</span><span>${p.operator || '—'}</span></header><div class="premium-equation">${p.calculation || `${p.q1_answer} ${p.operator} ${p.q2_answer} = ${p.q3_answer}`}</div><p><b>1.</b> ${p.q1_label}</p><p><b>2.</b> ${p.q2_label}</p><p><b>3.</b> ${p.q3_label}</p></article>`).join('') || '<div class="premium-lock">Geen puzzels gevonden.</div>';
+    premiumPuzzleList = allPremiumPuzzles.filter(p => (!operator || p.operator === operator) && (!difficulty || p.difficulty === difficulty) && (!category || (p.categories || []).includes(category)) && (!search || [p.name,p.q1_label,p.q2_label,p.q3_label].join(' ').toLowerCase().includes(search)));
+    document.getElementById('premiumPuzzleCount').textContent = `${premiumPuzzleList.length} puzzel${premiumPuzzleList.length === 1 ? '' : 's'} gevonden`;
+    const plays = JSON.parse(localStorage.getItem('netto_library_plays') || '{}');
+    document.getElementById('premiumPuzzleGrid').innerHTML = premiumPuzzleList.map((p, i) => {
+      const play = plays[p.id];
+      const color = play ? scoreColor(play.factor) : '';
+      const label = play ? `Score ${play.factor.toFixed(2)}×` : 'Open puzzle →';
+      return `<article class="library-flip-card" role="button" tabindex="0" onclick="playPremiumPuzzle('${p.id}')" onkeydown="if(event.key==='Enter'||event.key===' ') { event.preventDefault(); playPremiumPuzzle('${p.id}'); }"><div class="library-flip-card-inner"><div class="library-flip-front ${play ? 'played' : ''}" style="${play ? `background:${color};` : ''}"><strong>#${i + 1}</strong><span>${label}</span><span class="premium-source-badge">${p.source || 'Puzzels'}</span></div></div></article>`;
+    }).join('') || '<div class="premium-lock">Geen puzzels gevonden.</div>';
   }
 
-  function populatePremiumCategories() {
-    const select = document.getElementById('premiumCategory'); if (!select) return;
-    const categories = [...new Set(libraryPuzzles.flatMap(p => p.categories || []))].sort((a,b) => a.localeCompare(b));
-    select.innerHTML = '<option value="">Alle categorieën</option>' + categories.map(c => `<option value="${c.replace(/"/g, '&quot;')}">${c}</option>`).join('');
+  function renderPremiumVragen() {
+    const search = (document.getElementById('vragenSearch')?.value || '').trim().toLowerCase();
+    const category = document.getElementById('vragenCategory')?.value || '';
+    const vragen = allPremiumVragen.filter(v => (!category || v.category === category) && (!search || (v.label + ' ' + v.puzzleName).toLowerCase().includes(search)));
+    document.getElementById('vragenCount').textContent = `${vragen.length} vraag${vragen.length === 1 ? '' : 'en'} gevonden · klik op een kaart voor het antwoord`;
+    document.getElementById('vragenGrid').innerHTML = vragen.map((v, i) => `<article class="library-flip-card" role="button" tabindex="0" data-vraag="${i}" onclick="toggleVraagCard(this)" onkeydown="if(event.key==='Enter'||event.key===' ') { event.preventDefault(); toggleVraagCard(this); }"><div class="library-flip-card-inner"><div class="vraag-flip-front"><div class="vraag-tekst">${v.label}</div><div class="vraag-meta"><span class="vraag-categorie">${v.category}</span><span>${v.operator}</span></div></div><div class="vraag-flip-back"><div><div class="vraag-bron">${v.puzzleName} · ${v.source}</div><div class="vraag-tekst" style="color:#fff;">${v.label}</div></div><div class="vraag-antwoord">${fmt(v.answer)}</div></div></div></article>`).join('');
+  }
+
+  function toggleVraagCard(cardEl) { cardEl.classList.toggle('revealed'); }
+
+  function playPremiumPuzzle(id) {
+    const index = premiumPuzzleList.findIndex(p => p.id === id);
+    if (index < 0) return;
+    premiumPuzzleIndex = index;
+    document.getElementById('premiumPuzzlesView').style.display = 'none';
+    document.getElementById('premiumVragenView').style.display = 'none';
+    document.getElementById('premiumPuzzleView').style.display = 'block';
+    renderPremiumPuzzleView();
+  }
+
+  function premiumPuzzleMove(direction) {
+    const next = Math.max(0, Math.min(premiumPuzzleList.length - 1, premiumPuzzleIndex + direction));
+    premiumPuzzleIndex = next;
+    renderPremiumPuzzleView();
   }
 
   function openLibraryScreen(mode) {
@@ -943,34 +1165,24 @@
     document.getElementById('libraryStats').style.display = 'grid';
     document.getElementById('dailyDateControls').style.display = mode === 'daily' ? 'flex' : 'none';
     document.getElementById('aboutPanel').style.display = 'none';
-    document.getElementById('premiumLibraryPanel').style.display = mode === 'premium' ? 'block' : 'none';
-    if (mode === 'premium') {
-      document.getElementById('premiumLock').style.display = isPremiumUnlocked() ? 'none' : 'block';
-      document.getElementById('premiumLibraryContent').style.display = isPremiumUnlocked() ? 'block' : 'none';
-      populatePremiumCategories();
-      if (isPremiumUnlocked()) renderPremiumLibrary();
-    }
     showScreen('library');
     document.getElementById('libraryScreen').classList.add('active');
     document.getElementById('libraryDifficulties').style.display = mode === 'library' ? 'grid' : 'none';
     document.getElementById('libraryCardGrid').style.display = mode === 'library' ? 'grid' : 'none';
-    document.getElementById('libraryCardGrid').style.display = mode === 'library' ? 'grid' : 'none';
-    document.getElementById('dailyArchiveReturn').style.display = mode === 'daily' ? 'none' : 'block';
-    document.getElementById('libraryDifficulties').querySelectorAll('button').forEach((button, index) => { const level = ['easy','intermediate','hard','extremely-hard'][index]; const count = libraryPuzzles.filter(p => p.difficulty === level).length; const locked = level !== 'easy' && !hasCompletedDifficulty(level === 'intermediate' ? 'easy' : level === 'hard' ? 'intermediate' : 'hard'); button.innerHTML = `${level === 'extremely-hard' ? 'Extremely Hard' : level[0].toUpperCase() + level.slice(1)} ${locked ? '🔒' : ''}<span>${locked ? 'Locked' : `${count} puzzels`}</span>`; button.disabled = locked; });
+    document.getElementById('libraryDifficulties').querySelectorAll('button').forEach((button, index) => { const level = ['easy','intermediate','hard','extremely-hard'][index]; const count = libraryPuzzles.filter(p => p.difficulty === level).length; const locked = level !== 'easy' && !hasCompletedDifficulty(level === 'intermediate' ? 'easy' : level === 'hard' ? 'intermediate' : 'hard'); button.innerHTML = `${level === 'extremely-hard' ? 'Extremely Hard' : level[0].toUpperCase() + level.slice(1)} ${locked ? '🔒' : ''}<span>${locked ? 'Locked' : `${count} puzzels`}</span>`; button.disabled = locked; button.classList.toggle('active', level === selectedDifficulty); });
     document.getElementById('libraryPuzzleView').style.display = 'none';
-    document.getElementById('dailyPuzzleList').style.display = mode === 'daily' ? 'block' : 'none';      document.getElementById('libraryTitle').textContent = mode === 'daily' ? 'Daily Archive' : mode === 'premium' ? 'Library' : 'Puzzels';
+    document.getElementById('dailyPuzzleList').style.display = mode === 'daily' ? 'block' : 'none';      document.getElementById('libraryTitle').textContent = mode === 'daily' ? 'Daily Archive' : 'Puzzels';
     document.getElementById('aboutPanel').style.display = 'none';
-    document.getElementById('librarySubtitle').textContent = mode === 'daily' ? 'Elke puzzel sinds dag één. Speel ze opnieuw.' : mode === 'premium' ? 'Alle puzzels doorzoekbaar met Premium.' : 'Kies een difficulty en speel alle puzzels.';
-    document.querySelectorAll('.library-filters button').forEach((b,i) => b.classList.toggle('active', mode === ['daily','library','premium'][i]));
+    document.getElementById('librarySubtitle').textContent = mode === 'daily' ? 'Elke puzzel sinds dag één. Speel ze opnieuw.' : 'Kies een difficulty en speel alle puzzels.';
+    document.querySelectorAll('#libraryFilters button').forEach((b,i) => b.classList.toggle('active', mode === ['daily','library'][i]));
     renderLibraryStats();
     if (mode === 'daily') renderDailyArchive();
-    else if (mode === 'library') { renderLibraryCards(); loadLibraryFromSupabase(); }
-    else { loadLibraryFromSupabase(); }
+    else { renderLibraryCards(); loadLibraryFromSupabase(); }
   }
 
   function selectLibraryView(mode, button) { openLibraryScreen(mode); }
   function openAbout() { closeMenu(); showScreen('library'); document.getElementById('libraryScreen').classList.add('active'); document.getElementById('libraryTitle').textContent='About Us'; document.getElementById('librarySubtitle').textContent='Waarom we Netto bouwen.'; document.getElementById('libraryFilters').style.display='none'; document.getElementById('libraryDifficulties').style.display='none'; document.getElementById('dailyPuzzleList').style.display='none'; document.getElementById('libraryPuzzleView').style.display='none'; document.getElementById('libraryStats').style.display='none'; document.getElementById('aboutPanel').style.display='block'; }
-  function closeLibraryScreen() { document.getElementById('libraryScreen').classList.remove('active'); showScreen('home'); }
+  function closeLibraryScreen() { document.getElementById('libraryScreen').classList.remove('active'); stopLibraryTimer(); showScreen('home'); }
   function closeLibrary() { closeLibraryScreen(); }
 
 
@@ -1003,9 +1215,10 @@
       const isCompleted = Boolean(play);
       const isNext = !isCompleted && i === nextIndex;
       const canOpen = isCompleted || isNext;
-      const scoreClass = play ? (play.factor <= 1.10 ? 'good' : play.factor <= 2 ? 'ok' : 'bad') : '';
+      const color = play ? scoreColor(play.factor) : '';
+      const frontStyle = play ? `background:${color};` : '';
       const label = play ? `Score ${play.factor.toFixed(2)}×` : (isNext ? 'Open puzzle →' : '');
-      return `<article class="library-flip-card ${scoreClass} ${canOpen ? 'is-open' : 'is-locked'}" role="button" tabindex="${canOpen ? '0' : '-1'}" aria-label="${canOpen ? `Open puzzel ${i + 1}` : `Puzzel ${i + 1} vergrendeld`}" ${canOpen ? `onclick="playLibraryCard('${p.id}')" onkeydown="if(event.key==='Enter'||event.key===' ') { event.preventDefault(); playLibraryCard('${p.id}'); }"` : ''}><div class="library-flip-card-inner"><div class="library-flip-front"><strong>#${i + 1}</strong><span>${label}</span></div></div></article>`;
+      return `<article class="library-flip-card ${canOpen ? 'is-open' : 'is-locked'}" role="button" tabindex="${canOpen ? '0' : '-1'}" aria-label="${canOpen ? `Open puzzel ${i + 1}` : `Puzzel ${i + 1} vergrendeld`}" ${canOpen ? `onclick="playLibraryCard('${p.id}')" onkeydown="if(event.key==='Enter'||event.key===' ') { event.preventDefault(); playLibraryCard('${p.id}'); }"` : ''}><div class="library-flip-card-inner"><div class="library-flip-front ${play ? 'played' : ''}" style="${frontStyle}"><strong>#${i + 1}</strong><span>${label}</span></div></div></article>`;
     }).join('');
   }
   function playLibraryCard(id) {
@@ -1049,7 +1262,17 @@
     });
   }
 
-  function scoreColor(factor) { return factor <= 1.10 ? 'var(--green)' : factor <= 2 ? 'var(--orange)' : 'var(--red)'; }
+  // Dynamische scorekleur: vloeiende gradient groen (1.00) -> geel (~1.5) -> rood (2.0+).
+  function scoreColor(factor) {
+    const f = Math.max(1, Number(factor) || 1);
+    const H_GREEN = 145, H_YELLOW = 48, H_RED = 0;
+    let h;
+    if (f <= 1) h = H_GREEN;
+    else if (f <= 1.5) h = H_GREEN + (H_YELLOW - H_GREEN) * ((f - 1) / 0.5);
+    else if (f <= 2) h = H_YELLOW + (H_RED - H_YELLOW) * ((f - 1.5) / 0.5);
+    else h = H_RED;
+    return `hsl(${Math.round(h)}, 74%, 45%)`;
+  }
 
   function getPuzzleDifficulty(p) {
     const max = Math.max(Number(p.a1), Number(p.a2), Number(p.a3));
@@ -1102,29 +1325,23 @@
   function renderLibraryPuzzle() {
     const p = libraryPuzzles.filter(x => x.difficulty === selectedDifficulty)[libraryIndex]; if (!p) return;
     if (!hasLibraryProgress(selectedDifficulty, libraryIndex)) { showSarcasticToast('🔒 Rond eerst de vorige puzzel af.'); return; }
-    document.getElementById('libraryProgress').textContent = `${selectedDifficulty.replace('-', ' ')} · puzzel ${libraryIndex + 1}`;
-    document.getElementById('libraryEquation').style.display = 'none';
-    document.getElementById('libraryQuestionList').innerHTML = [[p.q1_label,p.q1_answer],[p.q2_label,p.q2_answer],[p.q3_label,p.q3_answer]].map((q,i) => `<div class="q-block"><div class="q-label">${q[0] || 'Vraag niet beschikbaar'}</div><div class="input-wrapper"><input type="text" class="library-answer-input daily-style-input" id="libraryAnswer${i}" inputmode="numeric" placeholder="Your guess"></div></div>${i < 2 ? `<div class="connector"><div class="connector-line"></div><div class="connector-badge ${i === 1 ? 'eq' : ''}">${i === 0 ? (p.operator || '×') : '='}</div><div class="connector-line"></div></div>` : ''}`).join('') + `<button class="btn-check" onclick="submitLibraryPuzzle()">Check mijn score</button>`;
-    libraryActivePuzzle = p;
+    renderPuzzleView('library', p, `${selectedDifficulty.replace('-', ' ')} · puzzel ${libraryIndex + 1}`);
   }
+
+  function renderPremiumPuzzleView() {
+    const p = premiumPuzzleList[premiumPuzzleIndex]; if (!p) return;
+    premiumActivePuzzle = p;
+    renderPuzzleView('premium', p, `Library ✦ · ${p.source === 'Daily Archive' ? 'daily' : 'puzzel'} ${premiumPuzzleIndex + 1}`);
+  }
+
+  function submitLibraryPuzzle(auto = false) { submitPuzzleView('library', auto); }
+  function submitPremiumPuzzle(auto = false) { submitPuzzleView('premium', auto); }
 
   function jumpToLibraryPuzzle(index) { libraryIndex = index; renderLibraryPuzzle(); }
 
   function renderLibraryProgressBlocks() {
     const set = libraryPuzzles.filter(p => p.difficulty === selectedDifficulty).slice(0,25);
     const plays = JSON.parse(localStorage.getItem('netto_library_plays') || '{}');
-  }
-
-  function submitLibraryPuzzle() {
-    if (!libraryActivePuzzle) return;
-    const guesses = [0,1,2].map(i => parseFormattedNumber(document.getElementById(`libraryAnswer${i}`).value));
-    if (guesses.some(v => !Number.isFinite(v) || v <= 0)) { alert('Vul alle drie de vragen in met een getal groter dan 0.'); return; }
-    const answers = [libraryActivePuzzle.q1_answer,libraryActivePuzzle.q2_answer,libraryActivePuzzle.q3_answer];
-    const factor = answers.reduce((sum,a,i) => sum + scoreVraag(guesses[i],a),0) / 3;
-    const plays = JSON.parse(localStorage.getItem('netto_library_plays') || '{}'); plays[libraryActivePuzzle.id] = { factor, guesses, completedAt:new Date().toISOString() }; localStorage.setItem('netto_library_plays',JSON.stringify(plays));
-    document.getElementById('libraryQuestionList').innerHTML = answers.map((a,i) => `<div class="library-question"><b>Vraag ${i+1}</b>${[libraryActivePuzzle.q1_label,libraryActivePuzzle.q2_label,libraryActivePuzzle.q3_label][i]}<br><strong>Echt antwoord: ${fmt(a)} · ${scoreVraag(guesses[i],a).toFixed(2)}×</strong></div>`).join('') + `<div class="score-badge-container"><div class="score-badge-title">Jouw gemiddelde afwijking</div><div class="score-badge-val" style="color:${scoreColor(factor)}">${factor.toFixed(2)}×</div></div><button class="btn-check" onclick="libraryMove(1)">Volgende puzzel →</button>`;
-    syncLibraryPlay(libraryActivePuzzle, guesses[0], guesses[1], guesses[2], factor);
-    renderLibraryCards();
   }
 
   function libraryMove(direction) {    const set = libraryPuzzles.filter(p => p.difficulty === selectedDifficulty); const next = Math.max(0, Math.min(set.length - 1, libraryIndex + direction)); if (!hasLibraryProgress(selectedDifficulty, next)) { showSarcasticToast('🔒 Rond eerst de vorige puzzel af.'); return; } libraryIndex = next; renderLibraryPuzzle(); }
@@ -1262,6 +1479,15 @@
   window.openDailyPuzzles = openDailyPuzzles;
   window.openPuzzles = openPuzzles;
   window.openPremiumLibrary = openPremiumLibrary;
+  window.closePremiumScreen = closePremiumScreen;
+  window.setPremiumView = setPremiumView;
+  window.renderPremiumPuzzles = renderPremiumPuzzles;
+  window.renderPremiumVragen = renderPremiumVragen;
+  window.playPremiumPuzzle = playPremiumPuzzle;
+  window.premiumPuzzleMove = premiumPuzzleMove;
+  window.submitPremiumPuzzle = submitPremiumPuzzle;
+  window.toggleVraagCard = toggleVraagCard;
+  window.unlockPremiumLibrary = unlockPremiumLibrary;
   window.selectLibraryView = selectLibraryView;    window.selectDifficulty = selectDifficulty;
   window.selectLibraryDifficulty = selectLibraryDifficulty;
   window.playLibraryCard = playLibraryCard;

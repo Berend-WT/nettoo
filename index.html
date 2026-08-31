@@ -204,34 +204,12 @@
       <div class="library-filters" id="libraryFilters">
         <button class="active" onclick="selectLibraryView('daily', this)">Daily Archive</button>
         <button onclick="selectLibraryView('library', this)">Puzzels</button>
-        <button onclick="openPremiumLibrary()">Library ✦</button>
       </div>
-      <section class="premium-library-panel" id="premiumLibraryPanel" style="display:none;">
-        <div class="premium-lock" id="premiumLock">
-          <span class="premium-icon">✦</span>
-          <h2>Netto Library</h2>
-          <p>Doorzoek alle puzzels op operator, categorie en difficulty.</p>
-          <strong>$3.99 Premium</strong>
-          <button class="hero-cta" type="button" onclick="unlockPremiumLibrary()">Ontgrendel Library</button>
-          <small>Testmodus: simuleert aankoop lokaal in je browser.</small>
-        </div>
-        <div id="premiumLibraryContent" style="display:none;">
-          <div class="premium-library-toolbar">
-            <input id="premiumSearch" type="search" placeholder="Zoek in vragen…" oninput="renderPremiumLibrary()">
-            <select id="premiumOperator" onchange="renderPremiumLibrary()"><option value="">Alle operators</option><option>×</option><option>÷</option><option>+</option><option>−</option></select>
-            <select id="premiumDifficulty" onchange="renderPremiumLibrary()"><option value="">Alle difficulties</option><option value="easy">Easy</option><option value="intermediate">Intermediate</option><option value="hard">Hard</option><option value="extremely-hard">Extremely Hard</option></select>
-            <select id="premiumCategory" onchange="renderPremiumLibrary()"><option value="">Alle categorieën</option></select>
-          </div>
-          <div class="premium-result-count" id="premiumResultCount"></div>
-          <div class="premium-results" id="premiumResults"></div>
-        </div>
-      </section>
       <section class="about-panel" id="aboutPanel" style="display:none;">
         <h2>Onze missie</h2>
         <p>Netto maakt nieuwsgierigheid speelbaar. We verbinden alledaagse feiten met slimme rekensommen, zodat je niet alleen gokt, maar leert denken in verhoudingen.</p>
         <p>Elke puzzel is een kleine ontdekking: drie vragen, één verband en altijd een kans om dichter bij de waarheid te komen.</p>
       </section>
-      <button class="library-back-to-archive" id="dailyArchiveReturn" style="display:none;" onclick="openDailyPuzzles()">← Naar Daily Archive</button>
       <div class="library-difficulties" id="libraryDifficulties">
         <button class="active" onclick="selectLibraryDifficulty('easy', this)">Easy <span>laden…</span></button>
         <button onclick="selectLibraryDifficulty('intermediate', this)">Intermediate <span>laden…</span></button>
@@ -242,6 +220,7 @@
       <div class="library-card-grid" id="libraryCardGrid" style="display:none;"></div>
       <div class="library-puzzle-view" id="libraryPuzzleView" style="display:none;">
         <div class="library-progress" id="libraryProgress"></div>
+        <div class="library-timer" id="libraryTimer" role="timer" aria-live="off"></div>
         <div class="library-equation" id="libraryEquation"></div>
         <div class="library-question-list" id="libraryQuestionList"></div>
         <div class="library-actions"><button onclick="libraryMove(-1)">← Vorige</button><button onclick="libraryMove(1)">Volgende →</button></div>
@@ -265,6 +244,60 @@
     </div>
   </section>
   <button class="calculator-toggle" onclick="toggleCalculator(true)">🧮 Rekenmachine</button>
+
+  <!-- ============ LIBRARY ✦ (PREMIUM PAGINA) ============ -->
+  <main class="library-screen" id="premiumScreen">
+    <div class="library-page-inner">
+      <div class="library-page-top"><button class="library-back" onclick="closePremiumScreen()">← Terug</button><span class="library-page-kicker">NETTO · LIBRARY ✦</span></div>
+      <h1 class="library-page-title">Library</h1>
+      <p class="library-page-subtitle">Alle puzzels en vragen doorzoekbaar.</p>
+      <div class="library-stats" id="premiumStats"></div>
+
+      <section class="premium-lock" id="premiumLock" style="display:none;">
+        <span class="premium-icon">✦</span>
+        <h2>Netto Library</h2>
+        <p>Doorzoek alle puzzels op operator, categorie en difficulty, en blader door alle losse vragen.</p>
+        <strong>$3.99 Premium</strong>
+        <button class="hero-cta" type="button" onclick="unlockPremiumLibrary()">Ontgrendel Library</button>
+        <small>Testmodus: simuleert aankoop lokaal in je browser.</small>
+      </section>
+
+      <div id="premiumContent" style="display:none;">
+        <div class="library-filters" id="premiumViewToggle">
+          <button class="active" onclick="setPremiumView('puzzles', this)">Puzzels</button>
+          <button onclick="setPremiumView('vragen', this)">Vragen</button>
+        </div>
+
+        <div id="premiumPuzzlesView">
+          <div class="premium-library-toolbar">
+            <input id="premiumSearch" type="search" placeholder="Zoek in puzzels…" oninput="renderPremiumPuzzles()">
+            <select id="premiumOperator" onchange="renderPremiumPuzzles()"><option value="">Alle operators</option><option>×</option><option>÷</option><option>+</option><option>−</option></select>
+            <select id="premiumDifficulty" onchange="renderPremiumPuzzles()"><option value="">Alle difficulties</option><option value="easy">Easy</option><option value="intermediate">Intermediate</option><option value="hard">Hard</option><option value="extremely-hard">Extremely Hard</option></select>
+            <select id="premiumCategory" onchange="renderPremiumPuzzles()"><option value="">Alle categorieën</option></select>
+          </div>
+          <div class="premium-result-count" id="premiumPuzzleCount"></div>
+          <div class="premium-card-grid" id="premiumPuzzleGrid"></div>
+        </div>
+
+        <div id="premiumVragenView" style="display:none;">
+          <div class="premium-library-toolbar vragen-toolbar">
+            <input id="vragenSearch" type="search" placeholder="Zoek in vragen…" oninput="renderPremiumVragen()">
+            <select id="vragenCategory" onchange="renderPremiumVragen()"><option value="">Alle categorieën</option></select>
+          </div>
+          <div class="premium-result-count" id="vragenCount"></div>
+          <div class="premium-card-grid" id="vragenGrid"></div>
+        </div>
+
+        <div class="library-puzzle-view" id="premiumPuzzleView" style="display:none;">
+          <div class="library-progress" id="premiumProgress"></div>
+          <div class="library-timer" id="premiumTimer" role="timer" aria-live="off"></div>
+          <div class="library-equation" id="premiumEquation"></div>
+          <div class="library-question-list" id="premiumQuestionList"></div>
+          <div class="library-actions"><button onclick="premiumPuzzleMove(-1)">← Vorige</button><button onclick="premiumPuzzleMove(1)">Volgende →</button></div>
+        </div>
+      </div>
+    </div>
+  </main>
 
   <!-- ============ MODAL: LEADERBOARD ============ -->
   <div class="modal-overlay" id="modalLeaderboard" onclick="closeModalOnBg(event, 'modalLeaderboard')">
