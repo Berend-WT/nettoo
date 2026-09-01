@@ -10,6 +10,7 @@
 <script defer src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="puzzles_embedded.js"></script>
 <script src="netto_frontend_puzzles.js"></script>
+<script src="netto_breinkrakers.js"></script>
 <link rel="stylesheet" href="css/styles.css">
 
 </head>
@@ -53,10 +54,11 @@
     <button class="sidebar-item" onclick="openDailyPuzzles()"><span class="num">01</span><span class="label">Daily Archive</span><span class="arrow">→</span></button>
     <button class="sidebar-item" onclick="openPuzzles()"><span class="num">02</span><span class="label">Puzzels</span><span class="arrow">→</span></button>
     <button class="sidebar-item" onclick="openPuzzleRace()"><span class="num">03</span><span class="label">Puzzel Race</span><span class="arrow">→</span></button>
-    <button class="sidebar-item" onclick="openPremiumLibrary()"><span class="num">04</span><span class="label">Library <span aria-label="Premium">✦</span></span><span class="arrow">→</span></button>
-    <button class="sidebar-item" onclick="openLeaderboardModal()"><span class="num">05</span><span class="label">Leaderboard</span><span class="arrow">→</span></button>
-    <button class="sidebar-item" onclick="openAbout()"><span class="num">06</span><span class="label">About Us</span><span class="arrow">→</span></button>
-    <button class="sidebar-item" onclick="alert('Binnenkort beschikbaar: Stuur jouw eigen feiten trio in!')"><span class="num">07</span><span class="label">Vraag insturen</span><span class="arrow">→</span></button>
+    <button class="sidebar-item" onclick="openBreinkrakers()"><span class="num">04</span><span class="label">Breinkrakers</span><span class="arrow">→</span></button>
+    <button class="sidebar-item" onclick="openPremiumLibrary()"><span class="num">05</span><span class="label">Library <span aria-label="Premium">✦</span></span><span class="arrow">→</span></button>
+    <button class="sidebar-item" onclick="openLeaderboardModal()"><span class="num">06</span><span class="label">Leaderboard</span><span class="arrow">→</span></button>
+    <button class="sidebar-item" onclick="openAbout()"><span class="num">07</span><span class="label">About Us</span><span class="arrow">→</span></button>
+    <button class="sidebar-item" onclick="alert('Binnenkort beschikbaar: Stuur jouw eigen feiten trio in!')"><span class="num">08</span><span class="label">Vraag insturen</span><span class="arrow">→</span></button>
 
     <div class="sidebar-footer">Made by <b>B-Force</b></div>
   </nav>
@@ -307,6 +309,51 @@
         <div class="race-review-heading"><h3>Review</h3><span>Alle ingediende puzzels</span></div>
         <div class="race-review-list" id="raceReviewList"></div>
         <button class="hero-cta race-restart-button" type="button" onclick="startPuzzleRace()">Nog een race →</button>
+      </section>
+    </div>
+  </main>
+
+  <!-- ============ BREINKRAKERS ============ -->
+  <main class="library-screen breinkrakers-screen" id="breinkrakersScreen">
+    <div class="library-page-inner race-page-inner">
+      <div class="library-page-top"><button class="library-back" onclick="closeBreinkrakers()">← Terug</button><span class="library-page-kicker">NETTO · BREINKRAKERS</span></div>
+
+      <section class="race-panel bk-start-panel" id="bkStart">
+        <div class="race-kicker">NETTO · 4 VRAGEN · 1 FORMULE</div>
+        <h1 class="race-title">Brein<span class="script">krakers.</span></h1>
+        <p class="race-intro">Vier vragen vormen één formule: <b>A (× of ÷) B, plus of min C = D</b>. Vul alle vier de antwoorden in en zie meteen hoe dicht je bij de waarheid zit.</p>
+        <div class="race-rules">
+          <div class="race-rule"><strong>1</strong><span>Vul alle vier de antwoorden in.</span></div>
+          <div class="race-rule"><strong>2</strong><span>De formule is altijd A × of ÷ B, plus of min C = D.</span></div>
+          <div class="race-rule"><strong>3</strong><span>Je score is je gemiddelde afwijking over de vier vragen.</span></div>
+        </div>
+        <div class="race-best" id="bkProgress"></div>
+        <button class="hero-cta race-start-button" type="button" onclick="startBreinkrakers()">Start puzzel <span aria-hidden="true">→</span></button>
+        <button class="race-duel-leave bk-reset-button" type="button" onclick="resetBreinkrakers()">Voortgang wissen en opnieuw beginnen</button>
+      </section>
+
+      <section class="race-panel race-play-panel" id="bkPlay" style="display:none;">
+        <div class="race-topline">
+          <div>
+            <div class="race-mode-label">BREINKRAKERS</div>
+            <div class="race-level" id="bkLevelLabel">Intermediate</div>
+          </div>
+          <div class="race-clock"><strong id="bkCounter">1 / 193</strong><span>puzzel</span></div>
+        </div>
+        <div class="bk-formula" id="bkFormula" aria-label="Formule-skelet"></div>
+        <div class="race-question-card">
+          <div class="race-question-list" id="bkQuestionList"></div>
+          <div class="race-feedback" id="bkFeedback" role="status" aria-live="polite"></div>
+          <button class="btn-check race-submit-button" id="bkSubmitButton" type="button" onclick="submitBreinkrakers()">Check mijn score</button>
+        </div>
+      </section>
+
+      <section class="race-panel race-results-panel" id="bkDone" style="display:none;">
+        <div class="race-kicker">BREINKRAKERS · KLAAR</div>
+        <h2 class="race-results-title">Alle puzzels gespeeld 🎉</h2>
+        <div class="race-score-card"><strong id="bkDoneScore">—</strong><span>gemiddelde afwijking</span></div>
+        <p class="race-results-meta" id="bkDoneMeta"></p>
+        <button class="hero-cta race-restart-button" type="button" onclick="resetBreinkrakers()">Opnieuw spelen →</button>
       </section>
     </div>
   </main>
