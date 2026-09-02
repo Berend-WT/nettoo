@@ -62,6 +62,35 @@
   if (!supabaseClient && window.supabase) initSupabaseClient();
   window.addEventListener('load', initSupabaseClient);
 
+  // Sessie-sync: log uit op apparaat A = ook uitgelogd op apparaat B,
+  // en herstel de ingelogde gebruiker bij paginalading.
+  function initAuthStateListener() {
+    if (!supabaseClient || supabaseClient._authListenerSet) return;
+    supabaseClient._authListenerSet = true;
+    supabaseClient.auth.onAuthStateChange((event, session) => {
+      if (event === 'SIGNED_OUT' || !session) {
+        if (currentUser) {
+          currentUser = null;
+          localStorage.removeItem('netto_user');
+          updateUserUI();
+        }
+        return;
+      }
+      if (event === 'SIGNED_IN' && session?.user && !currentUser) {
+        const u = session.user;
+        currentUser = {
+          id: u.id,
+          email: u.email,
+          username: u.user_metadata?.username || (u.email || '').split('@')[0]
+        };
+        localStorage.setItem('netto_user', JSON.stringify(currentUser));
+        updateUserUI();
+      }
+    });
+  }
+  initAuthStateListener();
+  window.addEventListener('load', initAuthStateListener);
+
   // Datum & Actuele Dagpuzzels (12 Geverifieerde, niet-overlappende puzzels!)
   const TODAY_STR = new Date().toISOString().split('T')[0];
   
@@ -386,6 +415,23 @@
   }
 
   let autoCalculatedInputs = new Set();
+  // Settings: auto-calculator aan/uit (default aan). Uit = geen auto-fill, overal.
+  const AUTO_CALC_KEY = 'netto_auto_calc';
+  function isAutoCalcEnabled() { return localStorage.getItem(AUTO_CALC_KEY) !== 'off'; }
+  function toggleAutoCalc() {
+    const next = isAutoCalcEnabled() ? 'off' : 'on';
+    localStorage.setItem(AUTO_CALC_KEY, next);
+    updateAutoCalcToggle();
+    if (!isAutoCalcEnabled()) {
+      // Direct alle huidige auto-ingevulde velden leegmaken.
+      [...autoCalculatedInputs].forEach(id => clearAutoInput(id));
+    }
+    showSarcasticToast(next === 'on' ? 'Auto-calculator staat nu AAN' : 'Auto-calculator staat nu UIT', true);
+  }
+  function updateAutoCalcToggle() {
+    const toggle = document.getElementById('autoCalcToggle');
+    if (toggle) toggle.setAttribute('aria-checked', String(isAutoCalcEnabled()));
+  }
   function dailyOperator() { return PUZZLE_DATA?.operator || '×'; }
   function calculateDailyValue(a, b, operator) {
     if (operator === '+') return a + b;
@@ -406,6 +452,7 @@
     input.value = ''; input.placeholder = 'Your guess'; input.dataset.autoCalculated = 'false'; input.classList.remove('auto-calculated'); autoCalculatedInputs.delete(id);
   }
   function calculateDerivedValues(ids, operator) {
+    if (!isAutoCalcEnabled()) return;
     const inputs = ids.map(id => document.getElementById(id));
     if (inputs.some(input => !input)) return;
     const values = inputs.map(input => parseFormattedNumber(input.value));
@@ -714,38 +761,128 @@
   }
 
 
+  // ===== Auth helpers: Nederlandse foutmeldingen, validatie, rate limiting =====
+  function mapAuthError(message) {
+    const m = (message || '').toLowerCase();
+    if (m.includes('rate limit') || m.includes('too many requests') || m.includes('email rate'))
+      return 'Te veel pogingen. Probeer het over een uur opnieuw.';
+    if (m.includes('invalid login credentials'))
+      return 'Onjuist e-mailadres of wachtwoord.';
+    if (m.includes('email not confirmed'))
+      return 'Bevestig eerst je e-mailadres via de link in je inbox.';
+    if (m.includes('user already registered') || m.includes('already been registered'))
+      return 'Er bestaat al een account met dit e-mailadres. Log in of gebruik "Wachtwoord vergeten?".';
+    if (m.includes('password should be at least') || m.includes('weak password'))
+      return 'Je wachtwoord is te zwak — gebruik minimaal 8 tekens.';
+    if (m.includes('invalid format') && m.includes('email'))
+      return 'Dit e-mailadres ziet er niet goed uit.';
+    if (m.includes('unable to validate email'))
+      return 'Dit e-mailadres ziet er niet goed uit.';
+    if (m.includes('failed to fetch') || m.includes('network'))
+      return 'Kan geen verbinding maken met de server. Controleer je internet.';
+    return 'Er ging iets mis: ' + (message || 'onbekende fout');
+  }
+
+  function showAuthError(msg) {
+    const box = document.getElementById('authErrorBox');
+    box.textContent = msg;
+    box.style.display = 'block';
+  }
+  function clearAuthError() {
+    const box = document.getElementById('authErrorBox');
+    box.style.display = 'none';
+  }
+
+  function setAuthBusy(busy) {
+    const btn = document.getElementById('authSubmitBtn');
+    btn.disabled = busy;
+    btn.textContent = busy ? 'Even geduld…' : (authMode === 'login' ? 'Inloggen' : 'Account Aanmaken');
+    btn.style.opacity = busy ? '0.6' : '1';
+  }
+
+  // Rate limiting: max 5 signup-pogingen per uur per browser.
+  const SIGNUP_LIMIT = 5;
+  const SIGNUP_WINDOW_MS = 60 * 60 * 1000;
+  function getSignupAttempts() {
+    try {
+      const raw = JSON.parse(localStorage.getItem('netto_signup_attempts') || '[]');
+      const now = Date.now();
+      return raw.filter(t => now - t < SIGNUP_WINDOW_MS);
+    } catch (e) { return []; }
+  }
+  function signupRateLimited() {
+    return getSignupAttempts().length >= SIGNUP_LIMIT;
+  }
+  function recordSignupAttempt() {
+    const attempts = getSignupAttempts();
+    attempts.push(Date.now());
+    localStorage.setItem('netto_signup_attempts', JSON.stringify(attempts));
+  }
+  function signupCooldownText() {
+    const attempts = getSignupAttempts();
+    if (!attempts.length) return '';
+    const oldest = Math.min(...attempts);
+    const waitMs = SIGNUP_WINDOW_MS - (Date.now() - oldest);
+    const mins = Math.max(1, Math.ceil(waitMs / 60000));
+    return `Je hebt ${attempts.length} van de ${SIGNUP_LIMIT} registraties per uur gebruikt. Over ~${mins} minuten kun je weer registreren.`;
+  }
+
+  function validateAuthInput(email, password, username) {
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)) return 'Vul een geldig e-mailadres in.';
+    if (password.length < 8) return 'Je wachtwoord moet minimaal 8 tekens zijn.';
+    if (password.length > 72) return 'Je wachtwoord mag maximaal 72 tekens zijn.';
+    if (authMode === 'register' && username) {
+      if (username.length < 3 || username.length > 20) return 'Je spelersnaam moet 3 tot 20 tekens zijn.';
+    }
+    return null;
+  }
+
   async function handleAuthSubmit(e) {
     e.preventDefault();
-    const email = document.getElementById('authEmail').value.trim();
+    clearAuthError();
+    const email = document.getElementById('authEmail').value.trim().toLowerCase();
     const password = document.getElementById('authPassword').value;
     const username = document.getElementById('authUsername').value.trim() || email.split('@')[0];
 
-    if (supabaseClient) {
-      try {
-        if (authMode === 'register') {
-          const { data, error } = await supabaseClient.auth.signUp({
-            email, password,
-            options: { data: { username } }
-          });
-          if (error) throw error;
-          currentUser = { id: data.user.id, email, username };
-        } else {
-          const { data, error } = await supabaseClient.auth.signInWithPassword({ email, password });
-          if (error) throw error;
-          currentUser = { id: data.user.id, email, username: data.user.user_metadata?.username || username };
-        }
-      } catch (err) {
-        alert("Inloggen mislukt: " + err.message);
-        return;
-      }
-    } else {
-      // Offline / Test Fallback simulatie
-      currentUser = {
-        id: 'mock-user-' + Math.random().toString(36).substr(2, 9),
-        email: email,
-        username: username
-      };
+    const validationError = validateAuthInput(email, password, username);
+    if (validationError) { showAuthError(validationError); return; }
+
+    if (!supabaseClient) {
+      showAuthError('De server is momenteel niet beschikbaar. Probeer het later opnieuw — inloggen zonder server is niet mogelijk.');
+      return;
     }
+
+    if (authMode === 'register' && signupRateLimited()) {
+      showAuthError('Te veel registratiepogingen. ' + signupCooldownText());
+      return;
+    }
+
+    setAuthBusy(true);
+    try {
+      if (authMode === 'register') {
+        recordSignupAttempt();
+        const { data, error } = await supabaseClient.auth.signUp({
+          email, password,
+          options: { data: { username } }
+        });
+        if (error) throw error;
+        if (!data.session) {
+          showSarcasticToast('Account aangemaakt! Bevestig je e-mailadres via de link in je inbox, daarna kun je inloggen.', true);
+          setAuthBusy(false);
+          return;
+        }
+        currentUser = { id: data.user.id, email, username };
+      } else {
+        const { data, error } = await supabaseClient.auth.signInWithPassword({ email, password });
+        if (error) throw error;
+        currentUser = { id: data.user.id, email, username: data.user.user_metadata?.username || username };
+      }
+    } catch (err) {
+      showAuthError(mapAuthError(err.message));
+      setAuthBusy(false);
+      return;
+    }
+    setAuthBusy(false);
 
     localStorage.setItem('netto_user', JSON.stringify(currentUser));
     updateUserUI();
@@ -760,6 +897,45 @@
     }
   }
 
+  // ===== Wachtwoord vergeten =====
+  function showForgotPassword() {
+    clearAuthError();
+    document.getElementById('authFormView').style.display = 'none';
+    document.getElementById('authForgotView').style.display = 'block';
+    const email = document.getElementById('authEmail').value.trim();
+    if (email) document.getElementById('forgotEmail').value = email;
+  }
+  function backToAuthForm() {
+    document.getElementById('forgotErrorBox').style.display = 'none';
+    document.getElementById('authForgotView').style.display = 'none';
+    document.getElementById('authFormView').style.display = 'block';
+  }
+  async function handleForgotPassword(e) {
+    e.preventDefault();
+    const box = document.getElementById('forgotErrorBox');
+    box.style.display = 'none';
+    const email = document.getElementById('forgotEmail').value.trim().toLowerCase();
+    if (!supabaseClient) {
+      box.textContent = 'De server is momenteel niet beschikbaar. Probeer het later opnieuw.';
+      box.style.display = 'block';
+      return;
+    }
+    const btn = document.getElementById('forgotSubmitBtn');
+    btn.disabled = true;
+    btn.textContent = 'Versturen…';
+    try {
+      const { error } = await supabaseClient.auth.resetPasswordForEmail(email);
+      if (error) throw error;
+      backToAuthForm();
+      showSarcasticToast('Resetlink verstuurd! Check je inbox (ook de spam-map).', true);
+    } catch (err) {
+      box.textContent = mapAuthError(err.message);
+      box.style.display = 'block';
+    }
+    btn.disabled = false;
+    btn.textContent = 'Verstuur resetlink';
+  }
+
   function handleLogout() {
     if (supabaseClient) supabaseClient.auth.signOut();
     currentUser = null;
@@ -771,6 +947,7 @@
 
   function toggleAuthMode() {
     authMode = authMode === 'login' ? 'register' : 'login';
+    clearAuthError();
     document.getElementById('authTitle').textContent = authMode === 'login' ? 'Inloggen' : 'Registreren';
     document.getElementById('authSubmitBtn').textContent = authMode === 'login' ? 'Inloggen' : 'Account Aanmaken';
     document.getElementById('usernameGroup').style.display = authMode === 'register' ? 'block' : 'none';
@@ -910,6 +1087,7 @@
     document.getElementById('premiumScreen').classList.toggle('active', name === 'premium');
     document.getElementById('raceScreen').classList.toggle('active', name === 'race');
     document.getElementById('breinkrakersScreen').classList.toggle('active', name === 'breinkrakers');
+    document.getElementById('settingsScreen').classList.toggle('active', name === 'settings');
     document.getElementById('calculator').classList.remove('open');
     window.scrollTo(0, 0);
   }
@@ -1359,8 +1537,79 @@
   let raceState = null;
 
   function buildRaceQueue() {
-    return (REBUILT_DATA.race || []).map(normalizeLibraryPuzzle)
+    // Solo-race gebruikt de gekozen vraagset (Settings); duel altijd de standaardset.
+    const selected = getRaceSetKey();
+    let source;
+    if (selected && selected !== 'standaard' && window.NETTO_RACE_SETS && Array.isArray(window.NETTO_RACE_SETS[selected]) && window.NETTO_RACE_SETS[selected].length > 0) {
+      source = window.NETTO_RACE_SETS[selected];
+    } else {
+      source = REBUILT_DATA.race || [];
+    }
+    return source.map(normalizeLibraryPuzzle)
       .sort((a, b) => (RACE_LEVEL_ORDER[a.difficulty ?? 'hard'] - RACE_LEVEL_ORDER[b.difficulty ?? 'hard']) || ((a.difficulty_score || 0) - (b.difficulty_score || 0)));
+  }
+
+  // ===== RACE-VRAAGSETS (Settings) =====
+  const RACE_SET_KEY = 'netto_race_set';
+  const RACE_SET_META = [
+    { key: 'standaard', label: 'Wereld', emoji: '🌍', desc: 'Standaardset zonder echt Nederlandse vragen' },
+    { key: 'nederland', label: 'Nederland', emoji: '🇳🇱', desc: 'NL-specifieke vragen: steden, koningshuis, sport' },
+    { key: 'usa', label: 'USA', emoji: '🇺🇸', desc: 'Staten, presidenten, sport, merken en monumenten' },
+    { key: 'europa', label: 'Europa', emoji: '🇪🇺', desc: 'EU, hoofdsteden, geschiedenis en Europese sport' },
+    { key: 'azie', label: 'Azië', emoji: '🌏', desc: 'Landen, religies, techniek en Aziatische cultuur' },
+    { key: 'afrika', label: 'Afrika', emoji: '🌍', desc: 'Landen, dieren, Egypte en natuur' },
+    { key: 'oceanie', label: 'Oceanië', emoji: '🦘', desc: 'Australië, Nieuw-Zeeland en de eilandstaten' },
+    { key: 'latijns_amerika', label: 'Latijns-Amerika', emoji: '🌴', desc: 'Amazone, Andes, sport en cultuur' },
+    { key: 'ruimte_wetenschap', label: 'Ruimte & Wetenschap', emoji: '🚀', desc: 'Sterrenkunde, natuurkunde en technologie' },
+    { key: 'dierenrijk', label: 'Dierenrijk', emoji: '🦁', desc: 'Alle dier- en natuurvragen' },
+    { key: 'sport', label: 'Sport', emoji: '⚽', desc: 'Voetbal, Olympische Spelen en records' },
+    { key: 'popcultuur', label: 'Popcultuur', emoji: '🎬', desc: 'Films, series, muziek en games' },
+  ];
+
+  function getRaceSetKey() {
+    return localStorage.getItem(RACE_SET_KEY) || 'standaard';
+  }
+
+  function raceSetPuzzleCount(key) {
+    if (key === 'standaard' || !window.NETTO_RACE_SETS || !Array.isArray(window.NETTO_RACE_SETS[key])) {
+      return (REBUILT_DATA.race || []).length;
+    }
+    return window.NETTO_RACE_SETS[key].length;
+  }
+
+  function renderSettingsSets() {
+    const container = document.getElementById('settingsSets');
+    if (!container) return;
+    const active = getRaceSetKey();
+    container.innerHTML = RACE_SET_META.map((meta) => {
+      const count = raceSetPuzzleCount(meta.key);
+      const empty = count === 0;
+      return `
+        <button class="settings-set ${meta.key === active ? 'active' : ''}" type="button" data-set="${meta.key}" onclick="selectRaceSet('${meta.key}')" ${empty ? 'disabled' : ''}>
+          <span class="settings-set-emoji">${meta.emoji}</span>
+          <span class="settings-set-text"><b>${meta.label}</b><span>${meta.desc}</span></span>
+          <span class="settings-set-count">${empty ? 'binnenkort' : count + ' puzzels'}</span>
+        </button>`;
+    }).join('');
+  }
+
+  function selectRaceSet(key) {
+    localStorage.setItem(RACE_SET_KEY, key);
+    renderSettingsSets();
+    showSarcasticToast(`Race-set gewijzigd: ${RACE_SET_META.find(m => m.key === key)?.label || key}`, true);
+  }
+
+  function openSettings() {
+    closeMenu();
+    renderSettingsSets();
+    updateAutoCalcToggle();
+    showScreen('settings');
+    document.getElementById('settingsScreen').classList.add('active');
+  }
+
+  function closeSettings() {
+    document.getElementById('settingsScreen').classList.remove('active');
+    showScreen('home');
   }
 
   function openPuzzleRace() {
@@ -1982,8 +2231,10 @@
       document.getElementById('authFormView').style.display = 'none';
     } else {
       document.getElementById('authLoggedInView').style.display = 'none';
+      document.getElementById('authForgotView').style.display = 'none';
       document.getElementById('authFormView').style.display = 'block';
     }
+    clearAuthError();
     document.getElementById('modalAuth').classList.add('active');
   }
 
@@ -1999,6 +2250,9 @@
 
   // Expliciet binden aan window zodat inline onclick ALTIJD werkt
   window.toggleMenu = toggleMenu;
+  window.showForgotPassword = showForgotPassword;
+  window.backToAuthForm = backToAuthForm;
+  window.handleForgotPassword = handleForgotPassword;
   window.closeMenu = closeMenu;
   window.showScreen = showScreen;
   window.goHome = goHome;
@@ -2056,3 +2310,7 @@
   window.submitBreinkrakers = submitBreinkrakers;
   window.resetBreinkrakers = resetBreinkrakers;
   window.bkTryAutoFill = bkTryAutoFill;
+  window.openSettings = openSettings;
+  window.closeSettings = closeSettings;
+  window.selectRaceSet = selectRaceSet;
+  window.toggleAutoCalc = toggleAutoCalc;

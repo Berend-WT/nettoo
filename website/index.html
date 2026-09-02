@@ -10,6 +10,7 @@
 <script defer src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="puzzles_embedded.js"></script>
 <script src="netto_frontend_puzzles.js"></script>
+<script src="netto_race_sets.js"></script>
 <script src="netto_breinkrakers.js"></script>
 <link rel="stylesheet" href="css/styles.css">
 
@@ -58,7 +59,8 @@
     <button class="sidebar-item" onclick="openPremiumLibrary()"><span class="num">05</span><span class="label">Library <span aria-label="Premium">✦</span></span><span class="arrow">→</span></button>
     <button class="sidebar-item" onclick="openLeaderboardModal()"><span class="num">06</span><span class="label">Leaderboard</span><span class="arrow">→</span></button>
     <button class="sidebar-item" onclick="openAbout()"><span class="num">07</span><span class="label">About Us</span><span class="arrow">→</span></button>
-    <button class="sidebar-item" onclick="alert('Binnenkort beschikbaar: Stuur jouw eigen feiten trio in!')"><span class="num">08</span><span class="label">Vraag insturen</span><span class="arrow">→</span></button>
+    <button class="sidebar-item" onclick="openSettings()"><span class="num">08</span><span class="label">Settings</span><span class="arrow">→</span></button>
+    <button class="sidebar-item" onclick="alert('Binnenkort beschikbaar: Stuur jouw eigen feiten trio in!')"><span class="num">09</span><span class="label">Vraag insturen</span><span class="arrow">→</span></button>
 
     <div class="sidebar-footer">Made by <b>B-Force</b></div>
   </nav>
@@ -358,6 +360,35 @@
     </div>
   </main>
 
+  <!-- ============ SETTINGS ============ -->
+  <main class="library-screen settings-screen" id="settingsScreen">
+    <div class="library-page-inner race-page-inner">
+      <div class="library-page-top"><button class="library-back" onclick="closeSettings()">← Terug</button><span class="library-page-kicker">NETTO · SETTINGS</span></div>
+
+      <section class="race-panel settings-panel">
+        <div class="race-kicker">NETTO · INSTELLINGEN</div>
+        <h1 class="race-title">Set<span class="script">tings.</span></h1>
+
+        <div class="settings-section">
+          <h2 class="settings-heading">Rekenmachine</h2>
+          <div class="settings-row">
+            <div class="settings-row-text">
+              <b>Auto-calculator</b>
+              <span>Vult automatisch het derde antwoord in zodra je er twee hebt. Aan = helpend, uit = pure puzzelmodus.</span>
+            </div>
+            <button class="settings-toggle" id="autoCalcToggle" type="button" role="switch" aria-checked="true" onclick="toggleAutoCalc()"><span class="settings-toggle-knob"></span></button>
+          </div>
+        </div>
+
+        <div class="settings-section">
+          <h2 class="settings-heading">Race-vraagset <span class="settings-hint">alleen solo race · duel gebruikt altijd de standaardset</span></h2>
+          <div class="settings-sets" id="settingsSets"></div>
+          <p class="settings-note">De gekozen set geldt vanaf je volgende solo-race. Daily-puzzels, Puzzels en Breinkrakers blijven onveranderd.</p>
+        </div>
+      </section>
+    </div>
+  </main>
+
   <!-- ============ REKENMACHINE ============ -->
   <section class="calculator" id="calculator" aria-label="Rekenmachine">
     <div class="calculator-header">
@@ -469,10 +500,13 @@
         <h2 class="modal-title" id="authTitle">Inloggen</h2>
         <div class="modal-subtitle">Synchroniseer je scores over al je apparaten & sta op het leaderboard.</div>
 
+        <div id="authErrorBox" style="display:none; background:#FEF2F2; border:1px solid #FECACA; color:#B91C1C; border-radius:10px; padding:12px 14px; font-size:13px; margin-bottom:14px;"></div>
+
         <form id="authForm" onsubmit="handleAuthSubmit(event)">
           <div class="form-group" id="usernameGroup" style="display:none;">
             <label>Spelersnaam (uniek)</label>
-            <input type="text" id="authUsername" placeholder="bijv. MathMasterNL">
+            <input type="text" id="authUsername" placeholder="bijv. MathMasterNL" maxlength="20">
+            <div style="font-size:11px; color:#9CA3AF; margin-top:4px;">3–20 tekens</div>
           </div>
           <div class="form-group">
             <label>E-mailadres</label>
@@ -480,7 +514,8 @@
           </div>
           <div class="form-group">
             <label>Wachtwoord</label>
-            <input type="password" id="authPassword" placeholder="••••••••" required>
+            <input type="password" id="authPassword" placeholder="••••••••" required minlength="8">
+            <div style="font-size:11px; color:#9CA3AF; margin-top:4px;">Minimaal 8 tekens</div>
           </div>
           <button type="submit" class="btn-check" id="authSubmitBtn" style="margin-top:16px;">Inloggen</button>
         </form>
@@ -488,6 +523,26 @@
         <div class="auth-toggle">
           <span id="authToggleText">Nog geen account? </span>
           <a onclick="toggleAuthMode()" id="authToggleLink">Registreer gratis</a>
+        </div>
+        <div class="auth-toggle" id="forgotRow" style="margin-top:8px;">
+          <a onclick="showForgotPassword()" style="font-size:12px; color:#6B7280;">Wachtwoord vergeten?</a>
+        </div>
+      </div>
+
+      <!-- Wachtwoord vergeten weergave -->
+      <div id="authForgotView" style="display:none;">
+        <h2 class="modal-title">Wachtwoord vergeten? 🔑</h2>
+        <div class="modal-subtitle">Vul je e-mailadres in en we sturen je een link om een nieuw wachtwoord in te stellen.</div>
+        <div id="forgotErrorBox" style="display:none; background:#FEF2F2; border:1px solid #FECACA; color:#B91C1C; border-radius:10px; padding:12px 14px; font-size:13px; margin-bottom:14px;"></div>
+        <form onsubmit="handleForgotPassword(event)">
+          <div class="form-group">
+            <label>E-mailadres</label>
+            <input type="email" id="forgotEmail" placeholder="jouw@email.nl" required>
+          </div>
+          <button type="submit" class="btn-check" id="forgotSubmitBtn" style="margin-top:16px;">Verstuur resetlink</button>
+        </form>
+        <div class="auth-toggle" style="margin-top:14px;">
+          <a onclick="backToAuthForm()">← Terug naar inloggen</a>
         </div>
       </div>
     </div>
