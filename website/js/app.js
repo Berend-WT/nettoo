@@ -1396,6 +1396,7 @@
     document.getElementById('libraryStats').style.display = 'grid';
     document.getElementById('dailyDateControls').style.display = mode === 'daily' ? 'flex' : 'none';
     document.getElementById('aboutPanel').style.display = 'none';
+    document.getElementById('howPanel').style.display = 'none';
     showScreen('library');
     document.getElementById('libraryScreen').classList.add('active');
     const isLibrary = mode === 'library';
@@ -1410,7 +1411,8 @@
     if (mode === 'daily') renderDailyArchive();
     else { renderLibraryCards(); loadLibraryFromSupabase(); }
   }
-  function openAbout() { closeMenu(); showScreen('library'); document.getElementById('libraryScreen').classList.add('active'); document.getElementById('libraryTitle').textContent='About Us'; document.getElementById('librarySubtitle').textContent='Waarom we Netto bouwen.'; document.getElementById('libraryDifficulties').style.display='none'; document.getElementById('dailyPuzzleList').style.display='none'; document.getElementById('libraryPuzzleView').style.display='none'; document.getElementById('libraryStats').style.display='none'; document.getElementById('dailyDateControls').style.display='none'; document.getElementById('aboutPanel').style.display='block'; }
+  function openAbout() { closeMenu(); showScreen('library'); document.getElementById('libraryScreen').classList.add('active'); document.getElementById('libraryTitle').textContent='About Us'; document.getElementById('librarySubtitle').textContent='Waarom we Netto bouwen.'; document.getElementById('libraryDifficulties').style.display='none'; document.getElementById('dailyPuzzleList').style.display='none'; document.getElementById('libraryPuzzleView').style.display='none'; document.getElementById('libraryStats').style.display='none'; document.getElementById('dailyDateControls').style.display='none'; document.getElementById('howPanel').style.display='none'; document.getElementById('aboutPanel').style.display='block'; }
+  function openHowItWorks() { closeMenu(); showScreen('library'); document.getElementById('libraryScreen').classList.add('active'); document.getElementById('libraryTitle').textContent='Hoe werkt het?'; document.getElementById('librarySubtitle').textContent='Van feit-trio tot multiplier.'; document.getElementById('libraryDifficulties').style.display='none'; document.getElementById('dailyPuzzleList').style.display='none'; document.getElementById('libraryPuzzleView').style.display='none'; document.getElementById('libraryStats').style.display='none'; document.getElementById('dailyDateControls').style.display='none'; document.getElementById('aboutPanel').style.display='none'; document.getElementById('howPanel').style.display='block'; }
   function closeLibraryScreen() { document.getElementById('libraryScreen').classList.remove('active'); stopLibraryTimer(); showScreen('home'); }
   function closeLibrary() { closeLibraryScreen(); }
 
@@ -2368,6 +2370,7 @@
   window.resetBreinkrakers = resetBreinkrakers;
   window.bkTryAutoFill = bkTryAutoFill;
   window.openSettings = openSettings;
+  window.openHowItWorks = openHowItWorks;
   window.closeSettings = closeSettings;
   window.selectRaceSet = selectRaceSet;
   window.toggleAutoCalc = toggleAutoCalc;

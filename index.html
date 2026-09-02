@@ -6,7 +6,7 @@
 <title>Netto · dagelijkse schatting</title>
 <meta name="description" content="Schat drie feiten, vind het verband. Elke dag een nieuwe puzzel.">
 <meta name="theme-color" content="#14163B">
-<link rel="icon" type="image/svg+xml" href="favicon.svg?v=14">
+<link rel="icon" type="image/svg+xml" href="favicon.svg?v=16">
 <!-- Open Graph / social sharing -->
 <meta property="og:type" content="website">
 <meta property="og:title" content="Netto · dagelijkse schatting">
@@ -20,11 +20,11 @@
 <link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Caveat:wght@600;700&family=JetBrains+Mono:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
 <!-- Supabase Client CDN (defer om te voorkomen dat de pagina blokkeert) -->
 <script defer src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="puzzles_embedded.js?v=14"></script>
-<script src="netto_frontend_puzzles.js?v=14"></script>
-<script src="netto_race_sets.js?v=14"></script>
-<script src="netto_breinkrakers.js?v=14"></script>
-<link rel="stylesheet" href="css/styles.css?v=14">
+<script src="puzzles_embedded.js?v=16"></script>
+<script src="netto_frontend_puzzles.js?v=16"></script>
+<script src="netto_race_sets.js?v=16"></script>
+<script src="netto_breinkrakers.js?v=16"></script>
+<link rel="stylesheet" href="css/styles.css?v=16">
 
 </head>
 <body>
@@ -75,9 +75,10 @@
       <div class="sidebar-group">
         <div class="sidebar-group-title">Meer</div>
         <button class="sidebar-item" onclick="openLeaderboardModal()"><span class="num">06</span><span class="label">Leaderboard</span><span class="arrow">→</span></button>
-        <button class="sidebar-item" onclick="openAbout()"><span class="num">07</span><span class="label">About Us</span><span class="arrow">→</span></button>
-        <button class="sidebar-item" onclick="openSettings()"><span class="num">08</span><span class="label">Settings</span><span class="arrow">→</span></button>
-        <button class="sidebar-item" onclick="showNoticeToast('Binnenkort: stuur jouw eigen feiten-trio in!')"><span class="num">09</span><span class="label">Vraag insturen</span><span class="arrow">→</span></button>
+        <button class="sidebar-item" onclick="openHowItWorks()"><span class="num">07</span><span class="label">Hoe werkt het?</span><span class="arrow">→</span></button>
+        <button class="sidebar-item" onclick="openAbout()"><span class="num">08</span><span class="label">About Us</span><span class="arrow">→</span></button>
+        <button class="sidebar-item" onclick="openSettings()"><span class="num">09</span><span class="label">Settings</span><span class="arrow">→</span></button>
+        <button class="sidebar-item" onclick="showNoticeToast('Binnenkort: stuur jouw eigen feiten-trio in!')"><span class="num">10</span><span class="label">Vraag insturen</span><span class="arrow">→</span></button>
       </div>
     </div>
 
@@ -116,6 +117,11 @@
     <div class="home-modes">
       <div class="home-modes-title">Kies je modus</div>
       <div class="home-modes-grid">
+        <button class="home-mode-card" onclick="openHowItWorks()">
+          <span class="home-mode-icon">❓</span>
+          <span class="home-mode-body"><b>Hoe werkt het?</b><small>Uitleg van feit-trio's, de wiskunde-twist en de multiplier</small></span>
+          <span class="home-mode-arrow">→</span>
+        </button>
         <button class="home-mode-card" onclick="openPuzzles()">
           <span class="home-mode-icon">🧩</span>
           <span class="home-mode-body"><b>Puzzels</b><small>Kies een moeilijkheid en speel alle puzzels</small></span>
@@ -263,6 +269,33 @@
         <h2>Onze missie</h2>
         <p>Netto maakt nieuwsgierigheid speelbaar. We verbinden alledaagse feiten met slimme rekensommen, zodat je niet alleen gokt, maar leert denken in verhoudingen.</p>
         <p>Elke puzzel is een kleine ontdekking: drie vragen, één verband en altijd een kans om dichter bij de waarheid te komen.</p>
+      </section>
+
+      <section class="about-panel" id="howPanel" style="display:none;">
+        <h2>Hoe werkt Netto?</h2>
+
+        <h3>1. De drie vragen &amp; de wiskunde-twist</h3>
+        <p>Elke puzzel geeft je <b>drie feiten-vragen</b>. Je schat een getal per vraag. Maar er is een twist: de drie antwoorden hangen aan elkaar via een som.</p>
+        <p><b>Voorbeeld:</b> <i>Hoeveel sterren in onze Melkweg? × Hoeveel planeten per ster? = Hoeveel sterren-ish?</i> — de derde volgt uit de eerste twee. Ken je er één goed, dan kun je de rest afleiden.</p>
+
+        <h3>2. Scoren &amp; de multiplier</h3>
+        <p>Per vraag krijg je een <b>factor</b> (multiplier). Die is <b>1,00×</b> als je exact raadt en loopt op naarmate je verder van het echte antwoord zit:</p>
+        <div class="how-score-bars">
+          <div class="how-score-bar"><span class="tag tag-green">🟩 ≤1,15×</span><small>Spot on! Bijna perfect</small></div>
+          <div class="how-score-bar"><span class="tag tag-yellow">🟨 ≤1,50×</span><small>Dichtbij, mooie schatting</small></div>
+          <div class="how-score-bar"><span class="tag tag-orange">🟧 ≤2,50×</span><small>Ruime schatting</small></div>
+          <div class="how-score-bar"><span class="tag tag-red">🟥 meer</span><small>Ver uit de buurt</small></div>
+        </div>
+        <p>Je <b>eindfactor</b> is het gemiddelde van de drie vragen. Hoe lager, hoe beter.</p>
+
+        <h3>3. Bonus &amp; meer</h3>
+        <ul class="how-list">
+          <li><b>Streak</b> — speel elke dag en bouw een reeks op.</li>
+          <li><b>Puzzel Race</b> — 5 minuten zoveel mogelijk exact goed, van makkelijk naar moeilijk.</li>
+          <li><b>Speel met vrienden</b> — live duel via room-code; wie de meeste goed heeft wint.</li>
+          <li><b>Vraagsets wisselen</b> — pas je race aan met regio- of thema-sets in <b>Settings</b>.</li>
+          <li><b>Breinkrakers</b> — een ketting van 4 vragen in één formule.</li>
+        </ul>
       </section>
       <div class="library-difficulties" id="libraryDifficulties">
         <button class="active" onclick="selectLibraryDifficulty('easy', this)">Easy <span>laden…</span></button>
@@ -608,7 +641,7 @@
     </div>
   </div>
 
-<script src="js/app.js?v=14"></script>
+<script src="js/app.js?v=16"></script>
 
 </body>
 </html>

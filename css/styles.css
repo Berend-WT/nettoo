@@ -344,7 +344,20 @@
   .library-filters button.active { background:var(--bg-dark); color:#fff; }
   .about-panel { max-width:680px; background:var(--surface); color:var(--ink); border-radius:20px; padding:28px; margin-top:20px; line-height:1.6; }
   .about-panel h2 { font:700 28px 'Archivo Black',sans-serif; margin-bottom:12px; }
+  .about-panel h3 { font:700 18px 'Space Grotesk',sans-serif; margin:22px 0 8px; color:var(--accent); }
   .about-panel p + p { margin-top:12px; }
+  .about-panel p b { color:var(--ink); }
+  .how-score-bars { display:flex; flex-direction:column; gap:8px; margin:12px 0 14px; }
+  .how-score-bar { display:flex; align-items:center; gap:10px; }
+  .how-score-bar .tag { font:700 13px 'JetBrains Mono',monospace; border-radius:6px; padding:5px 10px; flex-shrink:0; }
+  .how-score-bar small { color:var(--text-muted); font-size:13px; }
+  .tag-green { background:#D1FAE5; color:#065F46; }
+  .tag-yellow { background:#FEF3C7; color:#92400E; }
+  .tag-orange { background:#FFEDD5; color:#9A3412; }
+  .tag-red { background:#FEE2E2; color:#991B1B; }
+  .how-list { padding-left:0; list-style:none; margin:10px 0 0; }
+  .how-list li { padding:5px 0 5px 22px; position:relative; }
+  .how-list li::before { content:'•'; position:absolute; left:6px; color:var(--accent); font-weight:700; }
   .month-nav { display:flex; align-items:center; justify-content:center; gap:18px; margin:0 0 20px; color:#fff; }
   .month-nav button { width:40px; height:40px; border:0; border-radius:50%; background:var(--surface); color:var(--ink); cursor:pointer; font:700 20px 'JetBrains Mono',monospace; }
   .month-nav button:disabled { opacity:.35; cursor:not-allowed; }
