@@ -4,15 +4,27 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Netto · dagelijkse schatting</title>
+<meta name="description" content="Schat drie feiten, vind het verband. Elke dag een nieuwe puzzel.">
+<meta name="theme-color" content="#14163B">
+<link rel="icon" type="image/svg+xml" href="favicon.svg?v=2">
+<!-- Open Graph / social sharing -->
+<meta property="og:type" content="website">
+<meta property="og:title" content="Netto · dagelijkse schatting">
+<meta property="og:description" content="Drie vragen. Eén verband. Elke dag een nieuwe puzzel.">
+<meta property="og:url" content="https://netto.game/">
+<meta property="og:image" content="https://netto.game/og-image.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Netto · dagelijkse schatting">
+<meta name="twitter:description" content="Drie vragen. Eén verband. Elke dag een nieuwe puzzel.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Caveat:wght@600;700&family=JetBrains+Mono:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
 <!-- Supabase Client CDN (defer om te voorkomen dat de pagina blokkeert) -->
 <script defer src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="puzzles_embedded.js"></script>
-<script src="netto_frontend_puzzles.js"></script>
-<script src="netto_race_sets.js"></script>
-<script src="netto_breinkrakers.js"></script>
-<link rel="stylesheet" href="css/styles.css">
+<script src="puzzles_embedded.js?v=2"></script>
+<script src="netto_frontend_puzzles.js?v=2"></script>
+<script src="netto_race_sets.js?v=2"></script>
+<script src="netto_breinkrakers.js?v=2"></script>
+<link rel="stylesheet" href="css/styles.css?v=2">
 
 </head>
 <body>
@@ -48,21 +60,28 @@
   <!-- Sidebar Overlay & Menu -->
   <div class="overlay" id="overlay" onclick="toggleMenu()"></div>
   <nav class="sidebar" id="sidebar">
-    <button class="sidebar-back" onclick="goHome()">← Terug naar home</button>
-    <div class="sidebar-logo">Netto</div>
+    <button class="sidebar-logo" onclick="goHome()" title="Naar home">Netto</button>
     <div class="sidebar-tagline">dagelijkse schatting</div>
 
-    <button class="sidebar-item" onclick="openDailyPuzzles()"><span class="num">01</span><span class="label">Daily Archive</span><span class="arrow">→</span></button>
-    <button class="sidebar-item" onclick="openPuzzles()"><span class="num">02</span><span class="label">Puzzels</span><span class="arrow">→</span></button>
-    <button class="sidebar-item" onclick="openPuzzleRace()"><span class="num">03</span><span class="label">Puzzel Race</span><span class="arrow">→</span></button>
-    <button class="sidebar-item" onclick="openBreinkrakers()"><span class="num">04</span><span class="label">Breinkrakers</span><span class="arrow">→</span></button>
-    <button class="sidebar-item" onclick="openPremiumLibrary()"><span class="num">05</span><span class="label">Library <span aria-label="Premium">✦</span></span><span class="arrow">→</span></button>
-    <button class="sidebar-item" onclick="openLeaderboardModal()"><span class="num">06</span><span class="label">Leaderboard</span><span class="arrow">→</span></button>
-    <button class="sidebar-item" onclick="openAbout()"><span class="num">07</span><span class="label">About Us</span><span class="arrow">→</span></button>
-    <button class="sidebar-item" onclick="openSettings()"><span class="num">08</span><span class="label">Settings</span><span class="arrow">→</span></button>
-    <button class="sidebar-item" onclick="alert('Binnenkort beschikbaar: Stuur jouw eigen feiten trio in!')"><span class="num">09</span><span class="label">Vraag insturen</span><span class="arrow">→</span></button>
+    <div class="sidebar-scroll">
+      <div class="sidebar-group">
+        <div class="sidebar-group-title">Spelen</div>
+        <button class="sidebar-item" onclick="openDailyPuzzles()"><span class="num">01</span><span class="label">Daily Archive</span><span class="arrow">→</span></button>
+        <button class="sidebar-item" onclick="openPuzzles()"><span class="num">02</span><span class="label">Puzzels</span><span class="arrow">→</span></button>
+        <button class="sidebar-item" onclick="openPuzzleRace()"><span class="num">03</span><span class="label">Puzzel Race</span><span class="arrow">→</span></button>
+        <button class="sidebar-item" onclick="openBreinkrakers()"><span class="num">04</span><span class="label">Breinkrakers</span><span class="arrow">→</span></button>
+        <button class="sidebar-item" onclick="openPremiumLibrary()"><span class="num">05</span><span class="label">Library <span aria-label="Premium">✦</span></span><span class="arrow">→</span></button>
+      </div>
+      <div class="sidebar-group">
+        <div class="sidebar-group-title">Meer</div>
+        <button class="sidebar-item" onclick="openLeaderboardModal()"><span class="num">06</span><span class="label">Leaderboard</span><span class="arrow">→</span></button>
+        <button class="sidebar-item" onclick="openAbout()"><span class="num">07</span><span class="label">About Us</span><span class="arrow">→</span></button>
+        <button class="sidebar-item" onclick="openSettings()"><span class="num">08</span><span class="label">Settings</span><span class="arrow">→</span></button>
+        <button class="sidebar-item" onclick="showNoticeToast('Binnenkort: stuur jouw eigen feiten-trio in!')"><span class="num">09</span><span class="label">Vraag insturen</span><span class="arrow">→</span></button>
+      </div>
+    </div>
 
-    <div class="sidebar-footer">Made by <b>B-Force</b></div>
+    <button class="sidebar-footer" onclick="openAbout()" title="Over ons">Made by <b>B-Force</b></button>
   </nav>
 
   <!-- ============ SCHERM 1: HOME ============ -->
@@ -109,7 +128,7 @@
         <div class="q-block">
           <div class="q-label" id="q1-label">1. Hoeveel inwoners heeft Nederland ongeveer?</div>
           <div class="input-wrapper">
-            <input type="text" id="g1" inputmode="numeric" placeholder="Your guess">
+            <input type="text" id="g1" inputmode="numeric" placeholder="Jouw schatting">
           </div>
         </div>
 
@@ -122,7 +141,7 @@
         <div class="q-block">
           <div class="q-label" id="q2-label">2. Hoeveel bezoekers trekt de Efteling per jaar?</div>
           <div class="input-wrapper">
-            <input type="text" id="g2" inputmode="numeric" placeholder="Your guess">
+            <input type="text" id="g2" inputmode="numeric" placeholder="Jouw schatting">
           </div>
         </div>
 
@@ -135,7 +154,7 @@
         <div class="q-block">
           <div class="q-label" id="q3-label">3. Wat is dat vermenigvuldigd?</div>
           <div class="input-wrapper">
-            <input type="text" id="g3" inputmode="numeric" placeholder="Your guess">
+            <input type="text" id="g3" inputmode="numeric" placeholder="Jouw schatting">
           </div>
         </div>
 
@@ -548,7 +567,7 @@
     </div>
   </div>
 
-<script src="js/app.js"></script>
+<script src="js/app.js?v=2"></script>
 
 </body>
 </html>

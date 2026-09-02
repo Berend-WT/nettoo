@@ -286,16 +286,18 @@
   // =========================================================================
   // 2. INITIALISATIE & LOCALSTORAGE SYNC
   // =========================================================================
+  // Consistente nummering: Nr. 001, Nr. 028, Nr. 142 (3 cijfers)
+  const puzzleNr = n => `Nr. ${String(n).padStart(3, '0')}`;
+
   function initApp() {
     try {
-      console.log("Netto: initApp gestart...");
       if (document.getElementById('q1-label')) {
         document.getElementById('q1-label').textContent = PUZZLE_DATA.q1_label;
         document.getElementById('q2-label').textContent = PUZZLE_DATA.q2_label;
         document.getElementById('q3-label').textContent = PUZZLE_DATA.q3_label;
         document.getElementById('operatorBadge').textContent = PUZZLE_DATA.operator || '×';
-        document.getElementById('heroDateMeta').textContent = `Nr. 00${PUZZLE_DATA.number} · Dagelijkse Puzzel`;
-        document.getElementById('puzzleEyebrow').textContent = `Netto · nr. 00${PUZZLE_DATA.number}`;
+        document.getElementById('heroDateMeta').textContent = `${puzzleNr(PUZZLE_DATA.number)} · Dagelijkse Puzzel`;
+        document.getElementById('puzzleEyebrow').textContent = `Netto · ${puzzleNr(PUZZLE_DATA.number)}`;
       }
 
       // Koppel knoppen expliciet via event listeners
@@ -325,7 +327,6 @@
       });
       checkExistingPlay();
       startHeroSlideshow();
-      console.log("Netto: initApp succesvol afgerond!");
     } catch(err) {
       console.error("Fout tijdens initApp:", err);
     }
@@ -414,6 +415,27 @@
     }, 3800);
   }
 
+  // Neutrale melding (geen alert): voor validaties en informatie
+  function showNoticeToast(msg, icon = '💡') {
+    const container = document.getElementById('toastContainer');
+    const toast = document.createElement('div');
+    toast.className = 'toast copy-toast';
+    toast.innerHTML = `
+      <div class="toast-icon">${icon}</div>
+      <div class="toast-body">
+        <b>Let op</b>
+        <span>${msg}</span>
+      </div>
+    `;
+    container.appendChild(toast);
+    setTimeout(() => {
+      toast.style.opacity = '0';
+      toast.style.transform = 'translateY(-10px)';
+      toast.style.transition = 'all 0.3s ease';
+      setTimeout(() => toast.remove(), 300);
+    }, 3800);
+  }
+
   let autoCalculatedInputs = new Set();
   // Settings: auto-calculator aan/uit (default aan). Uit = geen auto-fill, overal.
   const AUTO_CALC_KEY = 'netto_auto_calc';
@@ -449,7 +471,7 @@
   }
   function clearAutoInput(id) {
     const input = document.getElementById(id); if (!input || !autoCalculatedInputs.has(id)) return;
-    input.value = ''; input.placeholder = 'Your guess'; input.dataset.autoCalculated = 'false'; input.classList.remove('auto-calculated'); autoCalculatedInputs.delete(id);
+    input.value = ''; input.placeholder = 'Jouw schatting'; input.dataset.autoCalculated = 'false'; input.classList.remove('auto-calculated'); autoCalculatedInputs.delete(id);
   }
   function calculateDerivedValues(ids, operator) {
     if (!isAutoCalcEnabled()) return;
@@ -491,9 +513,9 @@
       input.addEventListener('input', () => {
         autoCalculatedInputs.delete(input.id);
         input.dataset.autoCalculated = 'false';
-        input.placeholder = input.value.trim() ? '' : 'Your guess';
+        input.placeholder = input.value.trim() ? '' : 'Jouw schatting';
         input.classList.remove('auto-calculated');
-        if (!input.value.trim()) input.placeholder = 'Your guess';
+        if (!input.value.trim()) input.placeholder = 'Jouw schatting';
         calculateDerivedValues(ids, operator);
       });
     });
@@ -538,7 +560,7 @@
         if (val.trim() === '') {
           autoCalculatedInputs.delete(id);
           input.dataset.autoCalculated = 'false';
-          input.placeholder = 'Your guess';
+          input.placeholder = 'Jouw schatting';
           input.classList.remove('auto-calculated');
           updateDailyDerivedInput();
           return;
@@ -599,7 +621,7 @@
     const g3 = parseFormattedNumber(document.getElementById('g3').value);
 
     if (isNaN(g1) || isNaN(g2) || isNaN(g3) || g1 <= 0 || g2 <= 0 || g3 <= 0) {
-      alert('Vul eerst alle drie de vragen in met een getal groter dan 0.');
+      showNoticeToast('Vul eerst alle drie de vragen in met een getal groter dan 0.');
       return;
     }
 
@@ -722,14 +744,17 @@
   }
 
   function updateUserUI() {
+    const userBtn = document.getElementById('topbarUserBtn');
     if (currentUser) {
-      document.getElementById('topbarUsername').textContent = `👤 ${currentUser.username || currentUser.email.split('@')[0]}`;
+      document.getElementById('topbarUsername').textContent = currentUser.username || currentUser.email.split('@')[0];
+      userBtn.classList.add('logged-in');
       document.getElementById('sidebarAuthLabel').textContent = `Profiel (${currentUser.username || 'Speler'})`;
       document.getElementById('profileUsername').textContent = currentUser.username || currentUser.email;
       document.getElementById('profileEmailSubtitle').textContent = currentUser.email;
       document.getElementById('cloudSyncBanner').style.display = 'none';
     } else {
       document.getElementById('topbarUsername').textContent = 'Inloggen';
+      userBtn.classList.remove('logged-in');
       document.getElementById('sidebarAuthLabel').textContent = 'Inloggen / Registreren';
     }
   }
@@ -749,8 +774,7 @@
         if (error) console.warn('Supabase sync error:', error);
       } catch (err) {
         console.warn('Sync failed:', err);
-      }      } else {
-      console.log(`[Cloud Mock Sync] Score voor ${dateStr} gesynchroniseerd voor gebruiker ${currentUser.email}`);
+      }
     }
   }
 
@@ -1167,7 +1191,7 @@
     document.getElementById(prefix + 'Progress').textContent = progressLabel;
     document.getElementById(prefix + 'Equation').style.display = 'none';
     const autoCalcNote = localStorage.getItem('netto_auto_calc_note_seen') === 'true' ? '' : `<div class="auto-calc-note" role="status" aria-live="polite">↳ Antwoorden worden automatisch berekend als de berekening klopt.</div>`;
-    listEl.innerHTML = [[p.q1_label,p.q1_answer],[p.q2_label,p.q2_answer],[p.q3_label,p.q3_answer]].map((q,i) => `<div class="q-block"><div class="q-label">${q[0] || 'Vraag niet beschikbaar'}</div><div class="input-wrapper"><input type="text" class="library-answer-input daily-style-input" id="${prefix}Answer${i}" inputmode="numeric" placeholder="Your guess"></div></div>${i < 2 ? `<div class="connector"><div class="connector-line"></div><div class="connector-badge ${i === 1 ? 'eq' : ''}">${i === 0 ? (p.operator || '×') : '='}</div><div class="connector-line"></div></div>` : ''}`).join('') + autoCalcNote + `<button class="btn-check" onclick="submit${prefix === 'library' ? 'Library' : 'Premium'}Puzzle()">Check mijn score</button>`;
+    listEl.innerHTML = [[p.q1_label,p.q1_answer],[p.q2_label,p.q2_answer],[p.q3_label,p.q3_answer]].map((q,i) => `<div class="q-block"><div class="q-label">${q[0] || 'Vraag niet beschikbaar'}</div><div class="input-wrapper"><input type="text" class="library-answer-input daily-style-input" id="${prefix}Answer${i}" inputmode="numeric" placeholder="Jouw schatting"></div></div>${i < 2 ? `<div class="connector"><div class="connector-line"></div><div class="connector-badge ${i === 1 ? 'eq' : ''}">${i === 0 ? (p.operator || '×') : '='}</div><div class="connector-line"></div></div>` : ''}`).join('') + autoCalcNote + `<button class="btn-check" onclick="submit${prefix === 'library' ? 'Library' : 'Premium'}Puzzle()">Check mijn score</button>`;
     if (autoCalcNote) localStorage.setItem('netto_auto_calc_note_seen', 'true');
     if (prefix === 'library') libraryActivePuzzle = p; else premiumActivePuzzle = p;
     bindDerivedInputs(prefix, p.operator || '×');
@@ -1189,7 +1213,7 @@
         }
         guesses.forEach((v, i) => { if (!Number.isFinite(v) || v <= 0) guesses[i] = 1; });
       } else {
-        alert('Vul alle drie de vragen in met een getal groter dan 0.');
+        showNoticeToast('Vul alle drie de vragen in met een getal groter dan 0.');
         return;
       }
     }
@@ -1408,7 +1432,7 @@
   }
 
   function startBreinkrakers() {
-    if (!BK_DATA.length) { alert('Er zijn nog geen breinkrakers. Draai maak_breinkrakers.py.'); return; }
+    if (!BK_DATA.length) { showNoticeToast('Er zijn nog geen breinkrakers beschikbaar. Draai maak_breinkrakers.py.'); return; }
     const progress = bkLoadProgress() || { index: 0, results: [] };
     progress.index = Math.min(progress.index || 0, BK_DATA.length);
     if (!Array.isArray(progress.results)) progress.results = [];
@@ -1432,7 +1456,7 @@
     document.getElementById('bkFormula').textContent = `▢ ${p.op1} ▢ ${p.op2} ▢ = ▢`;
     const note = localStorage.getItem('netto_auto_calc_note_seen') === 'true' ? '' : `<div class="auto-calc-note" role="status" aria-live="polite">↳ Antwoorden worden automatisch berekend als de berekening klopt.</div>`;
     document.getElementById('bkQuestionList').innerHTML = [p.q1, p.q2, p.q3, p.q4].map((q, i) => `
-      <div class="q-block"><div class="q-label">${q.label || 'Vraag niet beschikbaar'}</div><div class="input-wrapper"><input type="text" class="library-answer-input daily-style-input" id="bkAnswer${i}" inputmode="numeric" placeholder="Your guess" oninput="bkTryAutoFill()"></div></div>
+      <div class="q-block"><div class="q-label">${q.label || 'Vraag niet beschikbaar'}</div><div class="input-wrapper"><input type="text" class="library-answer-input daily-style-input" id="bkAnswer${i}" inputmode="numeric" placeholder="Jouw schatting" oninput="bkTryAutoFill()"></div></div>
       ${i < 3 ? `<div class="connector"><div class="connector-line"></div><div class="connector-badge ${i === 2 ? 'eq' : ''}">${[p.op1, p.op2, '='][i]}</div><div class="connector-line"></div></div>` : ''}`).join('') + note;
     if (note) localStorage.setItem('netto_auto_calc_note_seen', 'true');
     document.getElementById('bkFeedback').textContent = '';
@@ -1484,7 +1508,7 @@
     const p = bkActivePuzzle; if (!p || !bkState) return;
     const guesses = [0, 1, 2, 3].map(i => parseFormattedNumber(document.getElementById(`bkAnswer${i}`).value));
     if (guesses.some(v => !Number.isFinite(v) || v < 0)) {
-      alert('Vul alle vier de vragen in met een getal 0 of hoger.');
+      showNoticeToast('Vul alle vier de vragen in met een getal 0 of hoger.');
       return;
     }
     const answers = [p.q1.answer, p.q2.answer, p.q3.answer, p.q4.answer];
@@ -1650,7 +1674,7 @@
 
   function startRaceCore(isDuel) {
     raceQueue = buildRaceQueue();
-    if (!raceQueue.length) { alert('Er zijn nog geen race-puzzels geladen.'); return; }
+    if (!raceQueue.length) { showNoticeToast('Er zijn nog geen race-puzzels geladen.'); return; }
     raceState = { index: 0, results: [], correct: 0, streak: 0, longestStreak: 0, remaining: RACE_TOTAL_SECONDS, timerId: null };
     const inDuel = Boolean(isDuel && raceDuelSession);
     if (inDuel) raceDuelSession.opponent = { correct: 0, finished: false };
@@ -1707,7 +1731,7 @@
     const autoCalcNote = localStorage.getItem('netto_auto_calc_note_seen') === 'true' ? '' : `<div class="auto-calc-note" role="status" aria-live="polite">↳ Antwoorden worden automatisch berekend als de berekening klopt.</div>`;
     if (autoCalcNote) localStorage.setItem('netto_auto_calc_note_seen', 'true');
     listEl.innerHTML = [[p.q1_label, p.q1_answer], [p.q2_label, p.q2_answer], [p.q3_label, p.q3_answer]].map((q, i) =>
-      `<div class="q-block"><div class="q-label">${q[0] || 'Vraag niet beschikbaar'}</div><div class="input-wrapper"><input type="text" class="daily-style-input" id="raceAnswer${i}" inputmode="numeric" placeholder="Your guess" autocomplete="off"></div></div>${i < 2 ? `<div class="connector"><div class="connector-line"></div><div class="connector-badge ${i === 1 ? 'eq' : ''}">${i === 0 ? (p.operator || '×') : '='}</div><div class="connector-line"></div></div>` : ''}`).join('') + autoCalcNote;
+      `<div class="q-block"><div class="q-label">${q[0] || 'Vraag niet beschikbaar'}</div><div class="input-wrapper"><input type="text" class="daily-style-input" id="raceAnswer${i}" inputmode="numeric" placeholder="Jouw schatting" autocomplete="off"></div></div>${i < 2 ? `<div class="connector"><div class="connector-line"></div><div class="connector-badge ${i === 1 ? 'eq' : ''}">${i === 0 ? (p.operator || '×') : '='}</div><div class="connector-line"></div></div>` : ''}`).join('') + autoCalcNote;
     bindRaceInputs(p.operator || '×');
     const first = document.getElementById('raceAnswer0');
     if (first) first.focus();
@@ -2040,7 +2064,7 @@
 
   function showLibraryAnswers(index) {
     const p = libraryPuzzles[index]; if (!p) return;
-    alert(`${p.q1_label}\nAntwoord: ${fmt(p.q1_answer)}\n\n${p.q2_label}\nAntwoord: ${fmt(p.q2_answer)}\n\n${p.q3_label}\nAntwoord: ${fmt(p.q3_answer)}`);
+    showNoticeToast(`${p.q1_label} — ${fmt(p.q1_answer)} · ${p.q2_label} — ${fmt(p.q2_answer)} · ${p.q3_label} — ${fmt(p.q3_answer)}`, '📝');
   }
 
   function renderDailyArchive() {
@@ -2190,13 +2214,13 @@
     document.getElementById('q3-label').textContent = PUZZLE_DATA.q3_label;
     document.getElementById('operatorBadge').textContent = PUZZLE_DATA.operator || '×';
     document.getElementById('heroDateMeta').textContent = `Daily · ${PUZZLE_DATA.name || `Puzzel #${activePuzzleIndex + 1}`}`;
-    document.getElementById('puzzleEyebrow').textContent = `Netto · nr. 00${PUZZLE_DATA.number}`;
+    document.getElementById('puzzleEyebrow').textContent = `Netto · ${puzzleNr(PUZZLE_DATA.number)}`;
 
     // Reset velden en uitslag
     ['g1', 'g2', 'g3'].forEach(id => {
       const input = document.getElementById(id);
       input.value = '';
-      input.placeholder = 'Your guess';
+      input.placeholder = 'Jouw schatting';
       input.dataset.autoCalculated = 'false';
       input.classList.remove('auto-calculated');
       input.disabled = false;
