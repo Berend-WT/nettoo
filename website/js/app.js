@@ -1379,27 +1379,24 @@
 
   function openLibraryScreen(mode) {
     libraryMode = mode;
-    document.getElementById('libraryFilters').style.display = 'flex';
     document.getElementById('libraryStats').style.display = 'grid';
     document.getElementById('dailyDateControls').style.display = mode === 'daily' ? 'flex' : 'none';
     document.getElementById('aboutPanel').style.display = 'none';
     showScreen('library');
     document.getElementById('libraryScreen').classList.add('active');
-    document.getElementById('libraryDifficulties').style.display = mode === 'library' ? 'grid' : 'none';
-    document.getElementById('libraryCardGrid').style.display = mode === 'library' ? 'grid' : 'none';
-    document.getElementById('libraryDifficulties').querySelectorAll('button').forEach((button, index) => { const level = ['easy','intermediate','hard','extremely-hard'][index]; const count = libraryPuzzles.filter(p => p.difficulty === level).length; button.innerHTML = `${level === 'extremely-hard' ? 'Extremely Hard' : level[0].toUpperCase() + level.slice(1)}<span>${count} puzzels</span>`; button.disabled = false; button.classList.toggle('active', level === selectedDifficulty); });
+    const isLibrary = mode === 'library';
+    document.getElementById('libraryDifficulties').style.display = isLibrary ? 'grid' : 'none';
+    document.getElementById('libraryCardGrid').style.display = isLibrary ? 'grid' : 'none';
+    document.getElementById('libraryDifficulties').querySelectorAll('button').forEach((button, index) => { const level = ['easy','intermediate','hard','extremely-hard'][index]; const count = libraryPuzzles.filter(p => p.difficulty === level).length; button.innerHTML = `${level === 'extremely-hard' ? 'Extremely Hard' : level[0].toUpperCase() + level.slice(1)}<span>${count}</span>`; button.disabled = false; button.classList.toggle('active', level === selectedDifficulty); });
     document.getElementById('libraryPuzzleView').style.display = 'none';
-    document.getElementById('dailyPuzzleList').style.display = mode === 'daily' ? 'block' : 'none';      document.getElementById('libraryTitle').textContent = mode === 'daily' ? 'Daily Archive' : 'Puzzels';
-    document.getElementById('aboutPanel').style.display = 'none';
-    document.getElementById('librarySubtitle').textContent = mode === 'daily' ? 'Elke puzzel sinds dag één. Speel ze opnieuw.' : 'Kies een difficulty en speel alle puzzels.';
-    document.querySelectorAll('#libraryFilters button').forEach((b,i) => b.classList.toggle('active', mode === ['daily','library'][i]));
+    document.getElementById('dailyPuzzleList').style.display = isLibrary ? 'none' : 'block';
+    document.getElementById('libraryTitle').textContent = isLibrary ? 'Puzzels' : 'Daily Archive';
+    document.getElementById('librarySubtitle').textContent = isLibrary ? 'Kies een moeilijkheid en speel alle puzzels.' : 'Elke dagpuzzel sinds dag één. Speel ze opnieuw.';
     renderLibraryStats();
     if (mode === 'daily') renderDailyArchive();
     else { renderLibraryCards(); loadLibraryFromSupabase(); }
   }
-
-  function selectLibraryView(mode, button) { openLibraryScreen(mode); }
-  function openAbout() { closeMenu(); showScreen('library'); document.getElementById('libraryScreen').classList.add('active'); document.getElementById('libraryTitle').textContent='About Us'; document.getElementById('librarySubtitle').textContent='Waarom we Netto bouwen.'; document.getElementById('libraryFilters').style.display='none'; document.getElementById('libraryDifficulties').style.display='none'; document.getElementById('dailyPuzzleList').style.display='none'; document.getElementById('libraryPuzzleView').style.display='none'; document.getElementById('libraryStats').style.display='none'; document.getElementById('aboutPanel').style.display='block'; }
+  function openAbout() { closeMenu(); showScreen('library'); document.getElementById('libraryScreen').classList.add('active'); document.getElementById('libraryTitle').textContent='About Us'; document.getElementById('librarySubtitle').textContent='Waarom we Netto bouwen.'; document.getElementById('libraryDifficulties').style.display='none'; document.getElementById('dailyPuzzleList').style.display='none'; document.getElementById('libraryPuzzleView').style.display='none'; document.getElementById('libraryStats').style.display='none'; document.getElementById('dailyDateControls').style.display='none'; document.getElementById('aboutPanel').style.display='block'; }
   function closeLibraryScreen() { document.getElementById('libraryScreen').classList.remove('active'); stopLibraryTimer(); showScreen('home'); }
   function closeLibrary() { closeLibraryScreen(); }
 
@@ -2049,8 +2046,15 @@
 
   function renderLibraryStats() {
     const plays = getLocalPlays();
-    const completed = Object.keys(plays).length;
-    document.getElementById('libraryStats').innerHTML = `<div class="library-stat"><b>${completed}</b><span>Puzzels gespeeld</span></div><div class="library-stat"><b>${DAILY_PUZZLES.length}</b><span>Daily puzzels</span></div><div class="library-stat"><b>${libraryPuzzles.length}</b><span>Library puzzels</span></div>`;
+    if (libraryMode === 'daily') {
+      const dailyDone = Object.keys(plays).length;
+      document.getElementById('libraryStats').innerHTML = `<div class="library-stat"><b>${dailyDone}</b><span>Daily gespeeld</span></div><div class="library-stat"><b>${DAILY_PUZZLES.length}</b><span>Dagpuzzels</span></div>`;
+      document.getElementById('libraryStats').style.gridTemplateColumns = 'repeat(2,1fr)';
+    } else {
+      const done = libraryPuzzles.filter(p => getLocalPlays()[p.id] || getLocalPlays()[`library_${p.id}`]).length;
+      document.getElementById('libraryStats').innerHTML = `<div class="library-stat"><b>${done}</b><span>Library gespeeld</span></div><div class="library-stat"><b>${libraryPuzzles.length}</b><span>Puzzels</span></div>`;
+      document.getElementById('libraryStats').style.gridTemplateColumns = 'repeat(2,1fr)';
+    }
   }
 
   function getLibrarySet(level) { return libraryPuzzles.filter(p => p.difficulty === level); }
@@ -2325,7 +2329,7 @@
   window.submitPremiumPuzzle = submitPremiumPuzzle;
   window.toggleVraagCard = toggleVraagCard;
   window.unlockPremiumLibrary = unlockPremiumLibrary;
-  window.selectLibraryView = selectLibraryView;    window.selectDifficulty = selectDifficulty;
+  window.selectDifficulty = selectDifficulty;
   window.selectLibraryDifficulty = selectLibraryDifficulty;
   window.playLibraryCard = playLibraryCard;
   window.jumpToLibraryPuzzle = jumpToLibraryPuzzle;
