@@ -30,8 +30,8 @@ from openpyxl.utils import get_column_letter
 
 
 BASE_DIR = Path(__file__).resolve().parent
-DEFAULT_INPUT = "1000+ vragen netjes gecategoriseerd.xlsx"
-DEFAULT_OUTPUT = "netto_puzzels_race.xlsx"
+DEFAULT_INPUT = "vragen/1000+ vragen netjes gecategoriseerd.xlsx"
+DEFAULT_OUTPUT = "puzzels/netto_puzzels_race.xlsx"
 
 LEVELS = ("Easy", "Intermediate", "Hard", "Extremely Hard")
 OPERATORS = ("×", "÷", "+", "−")

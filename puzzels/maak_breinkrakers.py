@@ -26,9 +26,9 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 import maak_puzzels as m
 
-INPUT = Path("1000+ vragen netjes gecategoriseerd.xlsx")
-OUTPUT_XLSX = Path("breinkrakers.xlsx")
-OUTPUT_JS = Path("netto_breinkrakers.js")
+INPUT = Path("vragen/1000+ vragen netjes gecategoriseerd.xlsx")
+OUTPUT_XLSX = Path("puzzels/breinkrakers.xlsx")
+OUTPUT_JS = Path("netto_breinkrakers.js")  # frontend-asset, blijft in de projectroot
 TARGET_ROWS = 100_000
 FRONTEND_TARGET = 200
 FRONTEND_REUSE_CAP = 4

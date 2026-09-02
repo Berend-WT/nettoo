@@ -25,3 +25,13 @@ build/
 # Temporary files
 *.tmp
 *.temp
+
+# Python cache
+__pycache__/
+
+# Excel lock files
+~$*.xlsx
+~$*.xls
+
+# Groot databestand (251 MB, boven de GitHub-limiet van 100 MB)
+puzzels/niet unieke puzzels.xlsx

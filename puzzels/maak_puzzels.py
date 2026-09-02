@@ -14,8 +14,8 @@ Voorbeeld:
     python maak_puzzels.py
 
 Optionele argumenten:
-    python maak_puzzels.py --input "1000+ vragen netjes gecategoriseerd.xlsx"
-    python maak_puzzels.py --output "netto_puzzels_nieuw.xlsx"
+    python maak_puzzels.py --input "vragen/1000+ vragen netjes gecategoriseerd.xlsx"
+    python maak_puzzels.py --output "puzzels/netto_puzzels_definitief.xlsx"
     python maak_puzzels.py --target-per-operator 250 --md-target 90
 """
 
@@ -36,8 +36,8 @@ from openpyxl.utils import get_column_letter
 
 
 BASE_DIR = Path(__file__).resolve().parent
-DEFAULT_INPUT = "1000+ vragen netjes gecategoriseerd.xlsx"
-DEFAULT_OUTPUT = "netto_puzzels_definitief.xlsx"
+DEFAULT_INPUT = "vragen/1000+ vragen netjes gecategoriseerd.xlsx"
+DEFAULT_OUTPUT = "puzzels/netto_puzzels_definitief.xlsx"
 DEFAULT_MULTIPLICATION_DIVISION_TARGET = 90
 
 OPERATORS = ("×", "÷", "+", "−")

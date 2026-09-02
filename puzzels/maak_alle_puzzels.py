@@ -30,8 +30,8 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 import maak_puzzels as m
 
-INPUT = Path("1000+ vragen netjes gecategoriseerd.xlsx")
-OUTPUT = Path("niet unieke puzzels.xlsx")
+INPUT = Path("vragen/1000+ vragen netjes gecategoriseerd.xlsx")
+OUTPUT = Path("puzzels/niet unieke puzzels.xlsx")
 SHEET_COUNT = 5
 MAX_ROWS_PER_SHEET = 1_048_575  # Excel-rijlimiet minus de headerrij
 OPS = ("×", "÷", "+", "−")
