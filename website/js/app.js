@@ -318,6 +318,7 @@
 
       initInputs();
       loadUserProfile();
+      applyTheme();
       if (supabaseClient) supabaseClient.auth.getSession().then(({ data }) => {
         if (data.session?.user) {
           currentUser = { id: data.session.user.id, email: data.session.user.email, username: data.session.user.user_metadata?.username || data.session.user.email.split('@')[0] };
@@ -453,6 +454,19 @@
   function updateAutoCalcToggle() {
     const toggle = document.getElementById('autoCalcToggle');
     if (toggle) toggle.setAttribute('aria-checked', String(isAutoCalcEnabled()));
+  }
+
+  // ===== Thema: light (Netto-blauw) / dark (goud op navy) =====
+  const THEME_KEY = 'netto_theme';
+  function isDarkTheme() { return (localStorage.getItem(THEME_KEY) || 'light') === 'dark'; }
+  function applyTheme() {
+    document.documentElement.dataset.theme = isDarkTheme() ? 'dark' : 'light';
+    const toggle = document.getElementById('themeToggle');
+    if (toggle) toggle.setAttribute('aria-checked', String(isDarkTheme()));
+  }
+  function toggleTheme() {
+    localStorage.setItem(THEME_KEY, isDarkTheme() ? 'light' : 'dark');
+    applyTheme();
   }
   function dailyOperator() { return PUZZLE_DATA?.operator || '×'; }
   function calculateDailyValue(a, b, operator) {
@@ -1627,6 +1641,7 @@
     closeMenu();
     renderSettingsSets();
     updateAutoCalcToggle();
+    applyTheme();
     showScreen('settings');
     document.getElementById('settingsScreen').classList.add('active');
   }
@@ -2338,3 +2353,5 @@
   window.closeSettings = closeSettings;
   window.selectRaceSet = selectRaceSet;
   window.toggleAutoCalc = toggleAutoCalc;
+  window.toggleTheme = toggleTheme;
+  window.applyTheme = applyTheme;

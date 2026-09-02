@@ -6,7 +6,7 @@
 <title>Netto · dagelijkse schatting</title>
 <meta name="description" content="Schat drie feiten, vind het verband. Elke dag een nieuwe puzzel.">
 <meta name="theme-color" content="#14163B">
-<link rel="icon" type="image/svg+xml" href="favicon.svg?v=2">
+<link rel="icon" type="image/svg+xml" href="favicon.svg?v=9">
 <!-- Open Graph / social sharing -->
 <meta property="og:type" content="website">
 <meta property="og:title" content="Netto · dagelijkse schatting">
@@ -20,11 +20,11 @@
 <link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Caveat:wght@600;700&family=JetBrains+Mono:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
 <!-- Supabase Client CDN (defer om te voorkomen dat de pagina blokkeert) -->
 <script defer src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="puzzles_embedded.js?v=2"></script>
-<script src="netto_frontend_puzzles.js?v=2"></script>
-<script src="netto_race_sets.js?v=2"></script>
-<script src="netto_breinkrakers.js?v=2"></script>
-<link rel="stylesheet" href="css/styles.css?v=2">
+<script src="puzzles_embedded.js?v=9"></script>
+<script src="netto_frontend_puzzles.js?v=9"></script>
+<script src="netto_race_sets.js?v=9"></script>
+<script src="netto_breinkrakers.js?v=9"></script>
+<link rel="stylesheet" href="css/styles.css?v=9">
 
 </head>
 <body>
@@ -389,6 +389,17 @@
         <h1 class="race-title">Set<span class="script">tings.</span></h1>
 
         <div class="settings-section">
+          <h2 class="settings-heading">Uiterlijk</h2>
+          <div class="settings-row">
+            <div class="settings-row-text">
+              <b>Donkere modus</b>
+              <span>Warm goud op diepe navy. Uit = klassieke Netto-blauw.</span>
+            </div>
+            <button class="settings-toggle" id="themeToggle" type="button" role="switch" aria-checked="false" onclick="toggleTheme()"><span class="settings-toggle-knob"></span></button>
+          </div>
+        </div>
+
+        <div class="settings-section">
           <h2 class="settings-heading">Rekenmachine</h2>
           <div class="settings-row">
             <div class="settings-row-text">
@@ -423,7 +434,7 @@
       <button class="wide" onclick="calculatorInput('0')">0</button><button onclick="calculatorInput('.')">.</button>
     </div>
   </section>
-  <button class="calculator-toggle" onclick="toggleCalculator(true)">🧮 Rekenmachine</button>
+  <button class="calculator-toggle" onclick="toggleCalculator(true)"><span class="calculator-toggle-icon">🧮</span><span class="calculator-toggle-label">Rekenmachine</span></button>
 
   <!-- ============ LIBRARY ✦ (PREMIUM PAGINA) ============ -->
   <main class="library-screen" id="premiumScreen">
@@ -567,7 +578,7 @@
     </div>
   </div>
 
-<script src="js/app.js?v=2"></script>
+<script src="js/app.js?v=9"></script>
 
 </body>
 </html>
