@@ -2,8 +2,21 @@
   // REKENMACHINE
   // =========================================================================
   let calculatorExpression = '';
+  const CALC_OPENED_KEY = 'netto_calc_opened';
   function toggleCalculator(open) {
-    document.getElementById('calculator').classList.toggle('open', open);
+    const calc = document.getElementById('calculator');
+    calc.classList.toggle('open', open);
+    if (open) {
+      localStorage.setItem(CALC_OPENED_KEY, '1');
+      updateCalculatorToggleLabel();
+    }
+  }
+  // Label alleen tonen zolang de rekenmachine nog nooit geopend is; daarna alleen het icoon.
+  function updateCalculatorToggleLabel() {
+    const label = document.querySelector('.calculator-toggle-label');
+    if (label) label.style.display = localStorage.getItem(CALC_OPENED_KEY) ? 'none' : 'inline';
+    const toggle = document.querySelector('.calculator-toggle');
+    if (toggle) toggle.style.padding = localStorage.getItem(CALC_OPENED_KEY) ? '10px' : '10px 18px';
   }
   function formatCalculatorNumber(value) {
     if (!value || value === 'Fout') return value || '0';
@@ -319,6 +332,7 @@
       initInputs();
       loadUserProfile();
       applyTheme();
+      updateCalculatorToggleLabel();
       if (supabaseClient) supabaseClient.auth.getSession().then(({ data }) => {
         if (data.session?.user) {
           currentUser = { id: data.session.user.id, email: data.session.user.email, username: data.session.user.user_metadata?.username || data.session.user.email.split('@')[0] };
