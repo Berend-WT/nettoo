@@ -1495,31 +1495,39 @@
 
   function bkTryAutoFill() {
     const p = bkActivePuzzle; if (!p) return;
-    const vals = [0, 1, 2, 3].map(i => parseFormattedNumber(document.getElementById(`bkAnswer${i}`).value));
-    const known = vals.map(v => Number.isFinite(v) && v >= 0);
-    const h = (known[0] && known[1]) ? bkHalf(vals[0], vals[1], p.op1) : NaN;
+    const raws = [0, 1, 2, 3].map(i => document.getElementById(`bkAnswer${i}`).value);
+    const vals = raws.map(v => parseFormattedNumber(v));
+    const known = vals.map((v, i) => Number.isFinite(v) && v >= 0 && !(autoCalculatedInputs.has(`bkAnswer${i}`)));
+    // Verouderde auto-waarden wissen zodra een handmatige ingang verandert:
+    // bereken altijd opnieuw vanuit de niet-automatische velden.
+    ['bkAnswer2', 'bkAnswer3'].forEach(id => {
+      if (autoCalculatedInputs.has(id) && document.activeElement?.id !== id) clearAutoInput(id);
+    });
+    const fresh = [0, 1, 2, 3].map(i => parseFormattedNumber(document.getElementById(`bkAnswer${i}`).value));
+    const freshKnown = fresh.map(v => Number.isFinite(v) && v >= 0);
+    const h = (freshKnown[0] && freshKnown[1]) ? bkHalf(fresh[0], fresh[1], p.op1) : NaN;
     // d uit a, b, c
-    if (Number.isFinite(h) && known[2] && !known[3]) {
-      const d = p.op2 === '+' ? h + vals[2] : h - vals[2];
+    if (Number.isFinite(h) && freshKnown[2] && !freshKnown[3]) {
+      const d = p.op2 === '+' ? h + fresh[2] : h - fresh[2];
       if (Number.isFinite(d)) setAutoInput('bkAnswer3', d);
     }
     // c uit a, b, d
-    if (Number.isFinite(h) && known[3] && !known[2]) {
-      const c = p.op2 === '+' ? vals[3] - h : h - vals[3];
+    if (Number.isFinite(h) && freshKnown[3] && !freshKnown[2]) {
+      const c = p.op2 === '+' ? fresh[3] - h : h - fresh[3];
       if (Number.isFinite(c) && c >= 0) setAutoInput('bkAnswer2', c);
     }
     // a of b uit de rest (alleen bij exact geheel getal)
-    if (known[1] && known[2] && known[3] && !known[0]) {
-      const h2 = p.op2 === '+' ? vals[3] - vals[2] : vals[3] + vals[2];
+    if (freshKnown[1] && freshKnown[2] && freshKnown[3] && !freshKnown[0]) {
+      const h2 = p.op2 === '+' ? fresh[3] - fresh[2] : fresh[3] + fresh[2];
       if (Number.isFinite(h2) && h2 > 0) {
-        const a = p.op1 === '×' ? h2 / vals[1] : h2 * vals[1];
+        const a = p.op1 === '×' ? h2 / fresh[1] : h2 * fresh[1];
         if (Number.isFinite(a) && a > 0 && Math.abs(a - Math.round(a)) < 1e-9) setAutoInput('bkAnswer0', Math.round(a));
       }
     }
-    if (known[0] && known[2] && known[3] && !known[1]) {
-      const h2 = p.op2 === '+' ? vals[3] - vals[2] : vals[3] + vals[2];
+    if (freshKnown[0] && freshKnown[2] && freshKnown[3] && !freshKnown[1]) {
+      const h2 = p.op2 === '+' ? fresh[3] - fresh[2] : fresh[3] + fresh[2];
       if (Number.isFinite(h2) && h2 > 0) {
-        const b = p.op1 === '×' ? h2 / vals[0] : vals[0] / h2;
+        const b = p.op1 === '×' ? h2 / fresh[0] : fresh[0] / h2;
         if (Number.isFinite(b) && b > 0 && Math.abs(b - Math.round(b)) < 1e-9) setAutoInput('bkAnswer1', Math.round(b));
       }
     }
@@ -1587,17 +1595,45 @@
   let raceQueue = [];
   let raceState = null;
 
-  function buildRaceQueue() {
-    // Solo-race gebruikt de gekozen vraagset (Settings); duel altijd de standaardset.
+  function buildRaceQueue(seed) {
+    // Solo-race: willekeurige puzzels uit de 4,2M-pool (6000 sample), geen
+    // herhaling binnen één run. Duel: met gedeelde seed krijgen beide spelers
+    // exact dezelfde (random) volgorde. Zonder seed-set in Settings valt de
+    // race terug op de normale set (ook随机 geschud, herhaling uitgesloten).
     const selected = getRaceSetKey();
     let source;
     if (selected && selected !== 'standaard' && window.NETTO_RACE_SETS && Array.isArray(window.NETTO_RACE_SETS[selected]) && window.NETTO_RACE_SETS[selected].length > 0) {
       source = window.NETTO_RACE_SETS[selected];
+    } else if (window.NETTO_RACE_POOL && window.NETTO_RACE_POOL.length > 0) {
+      source = window.NETTO_RACE_POOL;
     } else {
       source = REBUILT_DATA.race || [];
     }
-    return source.map(normalizeLibraryPuzzle)
-      .sort((a, b) => (RACE_LEVEL_ORDER[a.difficulty ?? 'hard'] - RACE_LEVEL_ORDER[b.difficulty ?? 'hard']) || ((a.difficulty_score || 0) - (b.difficulty_score || 0)));
+    const list = source.map(normalizeLibraryPuzzle);
+    const rng = mulberry32(seed ?? (Date.now() ^ (Math.random() * 0xffffffff)));
+    for (let i = list.length - 1; i > 0; i--) {
+      const j = Math.floor(rng() * (i + 1));
+      [list[i], list[j]] = [list[j], list[i]];
+    }
+    // De pool is bewust niet-uniek (zelfde som, andere vragen); een speler
+    // ervaart dezelfde som als herhaling, dus we dedupen op de berekening.
+    const seen = new Set();
+    return list.filter(p => {
+      const key = p.calculation || `${p.q1_answer}${p.operator}${p.q2_answer}=${p.q3_answer}`;
+      if (seen.has(key)) return false;
+      seen.add(key);
+      return true;
+    });
+  }
+
+  // Kleine deterministische PRNG (Mulberry32) voor gedeelde duel-queues.
+  function mulberry32(a) {
+    return function () {
+      a |= 0; a = (a + 0x6D2B79F5) | 0;
+      let t = Math.imul(a ^ (a >>> 15), 1 | a);
+      t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+      return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+    };
   }
 
   // ===== RACE-VRAAGSETS (Settings) =====
@@ -1696,12 +1732,17 @@
 
   function startDuelRace() {
     if (!raceDuelSession || raceDuelSession.role !== 'host') return;
-    broadcastRaceEvent(raceDuelSession.code, 'start', { startedAt: Date.now() });
     startRaceCore(true);
   }
 
   function startRaceCore(isDuel) {
-    raceQueue = buildRaceQueue();
+    // Duel: host kiest een seed en deelt die, zodat beide spelers dezelfde
+    // random puzzelreeks krijgen. Solo: geen seed, elke run anders.
+    if (isDuel && raceDuelSession && raceDuelSession.role === 'host') {
+      raceDuelSession.seed = (Date.now() ^ (Math.random() * 0xffffffff)) >>> 0;
+      broadcastRaceEvent(raceDuelSession.code, 'start', { startedAt: Date.now(), seed: raceDuelSession.seed });
+    }
+    raceQueue = buildRaceQueue(isDuel && raceDuelSession ? raceDuelSession.seed : undefined);
     if (!raceQueue.length) { showNoticeToast('Er zijn nog geen race-puzzels geladen.'); return; }
     raceState = { index: 0, results: [], correct: 0, streak: 0, longestStreak: 0, remaining: RACE_TOTAL_SECONDS, timerId: null };
     const inDuel = Boolean(isDuel && raceDuelSession);
@@ -1734,6 +1775,9 @@
       el.textContent = `${m}:${String(s).padStart(2, '0')}`;
       clock.classList.toggle('warn', raceState.remaining <= 60 && raceState.remaining > 10);
       clock.classList.toggle('crit', raceState.remaining <= 10);
+      // Voortgangsbalk loopt mee met de tijd (geen vast aantal puzzels meer).
+      const fill = document.getElementById('raceProgressFill');
+      if (fill) fill.style.width = `${Math.round((1 - raceState.remaining / RACE_TOTAL_SECONDS) * 100)}%`;
     };
     render();
     raceState.timerId = setInterval(() => {
@@ -1749,10 +1793,12 @@
     const p = raceQueue[raceState.index];
     if (!p) { finishRace(false); return; }
     document.getElementById('raceLevelLabel').textContent = RACE_LEVEL_LABEL[p.difficulty] || 'Puzzel';
-    document.getElementById('raceProgressLabel').textContent = `Puzzel ${raceState.index + 1} / ${raceQueue.length}`;
+    // Race heeft geen vast eindpunt meer (random pool): de balk loopt over de
+    // tijd i.p.v. over een puzzelnummer.
+    document.getElementById('raceProgressLabel').textContent = `Puzzel ${raceState.index + 1}`;
     document.getElementById('raceCorrectCount').textContent = raceState.correct;
     document.getElementById('raceStreakCount').textContent = raceState.streak;
-    document.getElementById('raceProgressFill').style.width = `${Math.round((raceState.index / raceQueue.length) * 100)}%`;
+    document.getElementById('raceProgressFill').style.width = `${Math.round((1 - raceState.remaining / RACE_TOTAL_SECONDS) * 100)}%`;
     document.getElementById('raceFeedback').textContent = '';
     document.getElementById('raceFeedback').className = 'race-feedback';
     const listEl = document.getElementById('raceQuestionList');
@@ -1947,6 +1993,7 @@
   function handleRaceEvent(event, payload) {
     if (!raceDuelSession) return;
     if (event === 'start') {
+      if (raceDuelSession && Number.isFinite(Number(payload.seed))) raceDuelSession.seed = Number(payload.seed) >>> 0;
       if (!raceState) startRaceCore(true);
     } else if (event === 'result') {
       if (!raceDuelSession.opponent) raceDuelSession.opponent = { correct: 0, finished: false };

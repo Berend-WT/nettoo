@@ -6,7 +6,7 @@
 <title>Netto · dagelijkse schatting</title>
 <meta name="description" content="Schat drie feiten, vind het verband. Elke dag een nieuwe puzzel.">
 <meta name="theme-color" content="#14163B">
-<link rel="icon" type="image/svg+xml" href="favicon.svg?v=16">
+<link rel="icon" type="image/svg+xml" href="favicon.svg?v=17">
 <!-- Open Graph / social sharing -->
 <meta property="og:type" content="website">
 <meta property="og:title" content="Netto · dagelijkse schatting">
@@ -20,11 +20,12 @@
 <link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Caveat:wght@600;700&family=JetBrains+Mono:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
 <!-- Supabase Client CDN (defer om te voorkomen dat de pagina blokkeert) -->
 <script defer src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="puzzles_embedded.js?v=16"></script>
-<script src="netto_frontend_puzzles.js?v=16"></script>
-<script src="netto_race_sets.js?v=16"></script>
-<script src="netto_breinkrakers.js?v=16"></script>
-<link rel="stylesheet" href="css/styles.css?v=16">
+<script src="puzzles_embedded.js?v=17"></script>
+<script src="netto_frontend_puzzles.js?v=17"></script>
+<script src="netto_race_sets.js?v=17"></script>
+<script src="netto_race_pool.js?v=17"></script>
+<script src="netto_breinkrakers.js?v=17"></script>
+<link rel="stylesheet" href="css/styles.css?v=17">
 
 </head>
 <body>
@@ -370,7 +371,7 @@
           <div class="race-clock" id="raceClock" role="timer" aria-live="off"><strong id="raceTimer">5:00</strong><span>tijd over</span></div>
         </div>
         <div class="race-progress-track" aria-hidden="true"><div class="race-progress-fill" id="raceProgressFill"></div></div>
-        <div class="race-scoreline"><span id="raceProgressLabel">Puzzel 1 / 88</span><span><b id="raceCorrectCount">0</b> goed · <b id="raceStreakCount">0</b> reeks</span></div>
+        <div class="race-scoreline"><span id="raceProgressLabel">Puzzel 1</span><span><b id="raceCorrectCount">0</b> goed · <b id="raceStreakCount">0</b> reeks</span></div>
         <div class="race-history-label">Jouw reeks</div>
         <div class="race-history" id="raceHistory" aria-label="Resultaten van je reeks"></div>
         <div class="race-history-label race-opponent-label" id="raceOpponentLabel" style="display:none;"></div>
@@ -641,7 +642,7 @@
     </div>
   </div>
 
-<script src="js/app.js?v=16"></script>
+<script src="js/app.js?v=17"></script>
 
 </body>
 </html>
