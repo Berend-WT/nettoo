@@ -1140,6 +1140,7 @@
     document.getElementById('raceScreen').classList.toggle('active', name === 'race');
     document.getElementById('breinkrakersScreen').classList.toggle('active', name === 'breinkrakers');
     document.getElementById('settingsScreen').classList.toggle('active', name === 'settings');
+    document.getElementById('submitScreen').classList.toggle('active', name === 'submit');
     document.getElementById('calculator').classList.remove('open');
     window.scrollTo(0, 0);
   }
@@ -1860,6 +1861,97 @@
     document.getElementById('settingsScreen').classList.remove('active');
     showScreen('home');
   }
+
+  // ===== VRAAG INSTUREN — eigen feiten-trio opsturen voor review =====
+  function openSubmitQuestion() {
+    closeMenu();
+    showScreen('submit');
+    document.getElementById('submitScreen').classList.add('active');
+    updateSubmitPreview();
+  }
+
+  function closeSubmitQuestion() {
+    document.getElementById('submitScreen').classList.remove('active');
+    showScreen('home');
+  }
+
+  function submitNumber(value) {
+    const v = parseFormattedNumber(String(value || '').trim());
+    return Number.isFinite(v) && v > 0 ? v : null;
+  }
+
+  function updateSubmitPreview() {
+    const preview = document.getElementById('submitPreview');
+    if (!preview) return;
+    const q1 = document.getElementById('subQ1').value.trim();
+    const q2 = document.getElementById('subQ2').value.trim();
+    const q3 = document.getElementById('subQ3').value.trim();
+    const a1 = submitNumber(document.getElementById('subA1').value);
+    const a2 = submitNumber(document.getElementById('subA2').value);
+    const a3 = submitNumber(document.getElementById('subA3').value);
+    const op = document.getElementById('subOperator').value;
+    document.getElementById('subOperatorBadge').textContent = op;
+    if (!q1 || !q2 || !q3 || a1 === null || a2 === null || a3 === null) {
+      preview.textContent = 'Vul drie vragen en drie getallen in om je som te zien.';
+      preview.className = 'submit-preview';
+      return;
+    }
+    const expected = op === '×' ? a1 * a2 : op === '÷' ? a1 / a2 : op === '+' ? a1 + a2 : a1 - a2;
+    const exact = Number.isInteger(expected) && Math.abs(expected - a3) < 1e-9;
+    preview.innerHTML = `<span class="submit-preview-calc">${fmt(a1)} ${op} ${fmt(a2)} = ${fmt(a3)}</span>` +
+      (exact
+        ? '<span class="submit-preview-ok">✓ De berekening klopt</span>'
+        : `<span class="submit-preview-bad">✗ Klopt niet: ${fmt(a1)} ${op} ${fmt(a2)} = ${fmt(expected)}</span>`);
+    preview.className = 'submit-preview ' + (exact ? 'is-ok' : 'is-bad');
+  }
+
+  async function submitQuestion(event) {
+    event.preventDefault();
+    const box = document.getElementById('submitErrorBox');
+    const showErr = (msg) => { box.textContent = msg; box.style.display = 'block'; };
+    box.style.display = 'none';
+    const q1 = document.getElementById('subQ1').value.trim();
+    const q2 = document.getElementById('subQ2').value.trim();
+    const q3 = document.getElementById('subQ3').value.trim();
+    const a1 = submitNumber(document.getElementById('subA1').value);
+    const a2 = submitNumber(document.getElementById('subA2').value);
+    const a3 = submitNumber(document.getElementById('subA3').value);
+    const op = document.getElementById('subOperator').value;
+    const note = document.getElementById('subNote').value.trim() || null;
+    const email = document.getElementById('subEmail').value.trim() || null;
+    if (!q1 || !q2 || !q3) { showErr('Vul alle drie de vragen in.'); return; }
+    if (a1 === null || a2 === null || a3 === null) { showErr('Alle antwoorden moeten hele getallen groter dan 0 zijn.'); return; }
+    const expected = op === '×' ? a1 * a2 : op === '÷' ? a1 / a2 : op === '+' ? a1 + a2 : a1 - a2;
+    if (!Number.isInteger(expected) || Math.abs(expected - a3) >= 1e-9) {
+      showErr(`De som klopt niet: ${fmt(a1)} ${op} ${fmt(a2)} = ${fmt(expected)}. Pas de antwoorden of bewerking aan.`);
+      return;
+    }
+    if (q3.length < 5) { showErr('Vraag 3 is te kort — omschrijf het resultaat echt als vraag.'); return; }
+    const btn = document.getElementById('submitQuestionBtn');
+    btn.disabled = true;
+    btn.textContent = 'Versturen…';
+    try {
+      if (!supabaseClient) throw new Error('Kan geen verbinding maken met de server. Probeer het later opnieuw.');
+      const { error } = await supabaseClient.from('question_submissions').insert({
+        q1, a1, q2, a2, q3, a3, operator: op, note, email,
+        user_id: currentUser ? currentUser.id : null
+      });
+      if (error) throw error;
+      ['subQ1','subQ2','subQ3','subA1','subA2','subA3','subEmail','subNote'].forEach(id => { document.getElementById(id).value = ''; });
+      updateSubmitPreview();
+      showNoticeToast('Ontvangen! We reviewen je puzzel — misschien staat hij er snel in. 🎉', '📮');
+    } catch (err) {
+      showErr(mapAuthError(err.message));
+    } finally {
+      btn.disabled = false;
+      btn.innerHTML = 'Verstuur inzending <span aria-hidden="true">→</span>';
+    }
+  }
+
+  window.openSubmitQuestion = openSubmitQuestion;
+  window.closeSubmitQuestion = closeSubmitQuestion;
+  window.submitQuestion = submitQuestion;
+  window.updateSubmitPreview = updateSubmitPreview;
 
   function renderRaceSetOptions(mode) {
     const select = document.getElementById(`race${mode[0].toUpperCase() + mode.slice(1)}Set`);

@@ -6,7 +6,7 @@
 <title>Netto · dagelijkse schatting</title>
 <meta name="description" content="Schat drie feiten, vind het verband. Elke dag een nieuwe puzzel.">
 <meta name="theme-color" content="#14163B">
-<link rel="icon" type="image/svg+xml" href="favicon.svg?v=18">
+<link rel="icon" type="image/svg+xml" href="favicon.svg?v=19">
 <!-- Open Graph / social sharing -->
 <meta property="og:type" content="website">
 <meta property="og:title" content="Netto · dagelijkse schatting">
@@ -20,12 +20,12 @@
 <link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Caveat:wght@600;700&family=JetBrains+Mono:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
 <!-- Supabase Client CDN (defer om te voorkomen dat de pagina blokkeert) -->
 <script defer src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="puzzles_embedded.js?v=18"></script>
-<script src="netto_frontend_puzzles.js?v=18"></script>
-<script src="netto_race_sets.js?v=18"></script>
-<script src="netto_race_pool.js?v=18"></script>
-<script src="netto_breinkrakers.js?v=18"></script>
-<link rel="stylesheet" href="css/styles.css?v=18">
+<script src="puzzles_embedded.js?v=19"></script>
+<script src="netto_frontend_puzzles.js?v=19"></script>
+<script src="netto_race_sets.js?v=19"></script>
+<script src="netto_race_pool.js?v=19"></script>
+<script src="netto_breinkrakers.js?v=19"></script>
+<link rel="stylesheet" href="css/styles.css?v=19">
 
 </head>
 <body>
@@ -79,7 +79,7 @@
         <button class="sidebar-item" onclick="openHowItWorks()"><span class="num">07</span><span class="label">Hoe werkt het?</span><span class="arrow">→</span></button>
         <button class="sidebar-item" onclick="openAbout()"><span class="num">08</span><span class="label">About Us</span><span class="arrow">→</span></button>
         <button class="sidebar-item" onclick="openSettings()"><span class="num">09</span><span class="label">Settings</span><span class="arrow">→</span></button>
-        <button class="sidebar-item" onclick="showNoticeToast('Binnenkort: stuur jouw eigen feiten-trio in!')"><span class="num">10</span><span class="label">Vraag insturen</span><span class="arrow">→</span></button>
+        <button class="sidebar-item" onclick="openSubmitQuestion()"><span class="num">10</span><span class="label">Vraag insturen</span><span class="arrow">→</span></button>
       </div>
     </div>
 
@@ -564,6 +564,73 @@
     </div>
   </main>
 
+  <!-- ============ VRAAG INSTUREN ============ -->
+  <main class="library-screen settings-screen" id="submitScreen">
+    <div class="library-page-inner race-page-inner">
+      <div class="library-page-top"><button class="library-back" onclick="closeSubmitQuestion()">← Terug</button><span class="library-page-kicker">NETTO · VRAAG INSTUREN</span></div>
+
+      <section class="race-panel settings-panel">
+        <div class="race-kicker">NETTO · JOUW FEITEN</div>
+        <h1 class="race-title">Stuur je <span class="script">vraag in.</span></h1>
+        <p class="race-intro">Bedenk drie feiten met een getal als antwoord. Wij maken er een puzzel van — staat die erin, dan zie je jouw naam erbij.</p>
+
+        <form id="submitQuestionForm" onsubmit="submitQuestion(event)">
+          <div class="submit-q-grid">
+            <div class="submit-q-block">
+              <label for="subQ1">Vraag 1</label>
+              <textarea id="subQ1" rows="2" maxlength="200" placeholder="Hoeveel toetsen heeft een standaard concertpiano (zwart + wit)?" required></textarea>
+              <div class="submit-a-row">
+                <input type="text" id="subA1" inputmode="numeric" placeholder="Antwoord" autocomplete="off" required>
+                <span class="submit-op" id="subOperatorBadge">×</span>
+              </div>
+            </div>
+            <div class="submit-q-block">
+              <label for="subQ2">Vraag 2</label>
+              <textarea id="subQ2" rows="2" maxlength="200" placeholder="Hoeveel erkende planeten telt ons zonnestelsel?" required></textarea>
+              <div class="submit-a-row">
+                <input type="text" id="subA2" inputmode="numeric" placeholder="Antwoord" autocomplete="off" required>
+                <span class="submit-op">=</span>
+              </div>
+            </div>
+            <div class="submit-q-block">
+              <label for="subQ3">Vraag 3 (resultaat)</label>
+              <textarea id="subQ3" rows="2" maxlength="200" placeholder="Hoeveel toetsen heeft ... × planeten = ?" required></textarea>
+              <div class="submit-a-row">
+                <input type="text" id="subA3" inputmode="numeric" placeholder="Antwoord" autocomplete="off" required>
+              </div>
+            </div>
+          </div>
+
+          <div class="submit-extra">
+            <div class="submit-extra-field">
+              <label for="subOperator">Bewerking</label>
+              <select id="subOperator" onchange="updateSubmitPreview()">
+                <option value="×">× keer</option>
+                <option value="÷">÷ deel</option>
+                <option value="+">+ plus</option>
+                <option value="−">− min</option>
+              </select>
+            </div>
+            <div class="submit-extra-field">
+              <label for="subEmail">Je e-mail <span class="submit-optional">optioneel</span></label>
+              <input type="email" id="subEmail" maxlength="120" placeholder="alleen als je credits wilt">
+            </div>
+          </div>
+          <div class="submit-extra-field submit-note-field">
+            <label for="subNote">Toelichting <span class="submit-optional">optioneel</span></label>
+            <input type="text" id="subNote" maxlength="300" placeholder="Bron, context of een leuke noot">
+          </div>
+
+          <div class="submit-preview" id="submitPreview"> Vul alles in om je som te zien. </div>
+          <div class="auth-error-box" id="submitErrorBox" style="display:none;"></div>
+
+          <button class="btn-check race-start-button" type="submit" id="submitQuestionBtn">Verstuur inzending <span aria-hidden="true">→</span></button>
+          <p class="submit-terms">Door in te sturen geef je B-Force toestemming om je vraag (met naam of zonder) in het spel te gebruiken. Geen e-mail? Dan blijft je inzending anoniem.</p>
+        </form>
+      </section>
+    </div>
+  </main>
+
   <!-- ============ REKENMACHINE ============ -->
   <section class="calculator" id="calculator" aria-label="Rekenmachine">
     <div class="calculator-header">
@@ -723,7 +790,7 @@
     </div>
   </div>
 
-<script src="js/app.js?v=18"></script>
+<script src="js/app.js?v=19"></script>
 
 </body>
 </html>

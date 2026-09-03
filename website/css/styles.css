@@ -699,6 +699,31 @@
   .race-friends-actions { margin-top:14px; }
   @media (max-width:640px) { .race-config-grid, .race-online-layout { grid-template-columns:1fr; } .race-mode-tab { font-size:12px; padding:10px 4px; } }
 
+  /* ===== Vraag insturen ===== */
+  .submit-q-grid { display:grid; gap:14px; margin:16px 0; }
+  .submit-q-block { background:var(--surface-2); border:1px solid var(--border-color); border-radius:14px; padding:14px 16px; }
+  .submit-q-block label { display:block; color:#6B7280; font:600 10px 'JetBrains Mono',monospace; text-transform:uppercase; letter-spacing:.12em; margin-bottom:8px; }
+  .submit-q-block textarea { width:100%; resize:vertical; min-height:44px; border:2px solid var(--border-color); border-radius:10px; padding:10px 12px; font:500 13px 'Space Grotesk',sans-serif; color:var(--bg-dark); background:var(--surface); }
+  .submit-q-block textarea:focus { outline:none; border-color:var(--bg-main); }
+  .submit-a-row { display:flex; align-items:center; gap:8px; margin-top:10px; }
+  .submit-a-row input { flex:1; border:2px solid var(--border-color); border-radius:10px; padding:10px 12px; font:700 15px 'JetBrains Mono',monospace; color:var(--bg-dark); background:var(--surface); }
+  .submit-a-row input:focus { outline:none; border-color:var(--bg-main); }
+  .submit-op { width:34px; height:34px; border-radius:9px; background:var(--accent); display:flex; align-items:center; justify-content:center; font:700 17px 'JetBrains Mono',monospace; color:var(--bg-dark); flex-shrink:0; }
+  .submit-extra { display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:12px; }
+  .submit-extra-field label { display:block; color:#6B7280; font:600 10px 'JetBrains Mono',monospace; text-transform:uppercase; letter-spacing:.12em; margin-bottom:6px; }
+  .submit-extra-field select, .submit-extra-field input { width:100%; border:2px solid var(--border-color); border-radius:10px; padding:10px 12px; font:600 13px 'Space Grotesk',sans-serif; color:var(--bg-dark); background:var(--surface); }
+  .submit-extra-field select:focus, .submit-extra-field input:focus { outline:none; border-color:var(--bg-main); }
+  .submit-optional { color:#9CA3AF; text-transform:none; letter-spacing:0; font:500 10px 'Space Grotesk',sans-serif; }
+  .submit-note-field { margin-bottom:4px; }
+  .submit-preview { background:var(--surface-2); border:1px dashed var(--border-color); border-radius:12px; padding:14px 16px; margin:14px 0; display:flex; flex-wrap:wrap; align-items:center; gap:10px; color:#6B7280; font:600 13px 'Space Grotesk',sans-serif; }
+  .submit-preview.is-ok { border-color:var(--green); }
+  .submit-preview.is-bad { border-color:var(--red); }
+  .submit-preview-calc { background:var(--accent); border-radius:8px; padding:6px 12px; font:700 15px 'JetBrains Mono',monospace; color:var(--bg-dark); }
+  .submit-preview-ok { color:var(--green); font:700 12px 'JetBrains Mono',monospace; }
+  .submit-preview-bad { color:var(--red); font:700 12px 'JetBrains Mono',monospace; }
+  .submit-terms { color:#9CA3AF; font:500 11px 'Space Grotesk',sans-serif; margin-top:12px; line-height:1.5; }
+  @media (max-width:640px) { .submit-extra { grid-template-columns:1fr; } }
+
   /* ===== BREINKRAKERS ===== */
   .bk-start-panel { text-align:left; }
   .bk-reset-button { margin-top:10px; }

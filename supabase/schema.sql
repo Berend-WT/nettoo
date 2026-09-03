@@ -58,3 +58,27 @@ drop trigger if exists on_auth_user_created on auth.users;
 create trigger on_auth_user_created
   after insert on auth.users
   for each row execute function public.handle_new_user();
+
+-- 3) Question submissions: players submit their own fact-trios (no login required,
+--    no email link — just a stored row that B-Force reviews in the dashboard).
+create table if not exists public.question_submissions (
+  id           bigserial primary key,
+  q1           text not null,
+  a1           numeric not null,
+  q2           text not null,
+  a2           numeric not null,
+  q3           text not null,
+  a3           numeric not null,
+  operator     text  not null default '×' check (operator in ('×','÷','+','−')),
+  note         text,                    -- optionele toelichting/bron van de speler
+  email        text,                    -- optioneel, alleen als de speler credits wil
+  user_id      uuid references auth.users(id) on delete set null,  -- null = gast
+  status       text not null default 'nieuw' check (status in ('nieuw','geaccepteerd','geweigerd')),
+  created_at   timestamptz not null default now()
+);
+
+alter table public.question_submissions enable row level security;
+
+-- Iedereen (ook gasten) mag insturen; niemand mag andermans inzendingen lezen.
+create policy "question_submissions_insert_anyone" on public.question_submissions
+  for insert with check (true);

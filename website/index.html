@@ -6,7 +6,7 @@
 <title>Netto · dagelijkse schatting</title>
 <meta name="description" content="Schat drie feiten, vind het verband. Elke dag een nieuwe puzzel.">
 <meta name="theme-color" content="#14163B">
-<link rel="icon" type="image/svg+xml" href="favicon.svg?v=18">
+<link rel="icon" type="image/svg+xml" href="favicon.svg?v=19">
 <!-- Open Graph / social sharing -->
 <meta property="og:type" content="website">
 <meta property="og:title" content="Netto · dagelijkse schatting">
@@ -20,12 +20,12 @@
 <link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Caveat:wght@600;700&family=JetBrains+Mono:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
 <!-- Supabase Client CDN (defer om te voorkomen dat de pagina blokkeert) -->
 <script defer src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="puzzles_embedded.js?v=18"></script>
-<script src="netto_frontend_puzzles.js?v=18"></script>
-<script src="netto_race_sets.js?v=18"></script>
-<script src="netto_race_pool.js?v=18"></script>
-<script src="netto_breinkrakers.js?v=18"></script>
-<link rel="stylesheet" href="css/styles.css?v=18">
+<script src="puzzles_embedded.js?v=19"></script>
+<script src="netto_frontend_puzzles.js?v=19"></script>
+<script src="netto_race_sets.js?v=19"></script>
+<script src="netto_race_pool.js?v=19"></script>
+<script src="netto_breinkrakers.js?v=19"></script>
+<link rel="stylesheet" href="css/styles.css?v=19">
 
 </head>
 <body>
@@ -79,7 +79,7 @@
         <button class="sidebar-item" onclick="openHowItWorks()"><span class="num">07</span><span class="label">Hoe werkt het?</span><span class="arrow">→</span></button>
         <button class="sidebar-item" onclick="openAbout()"><span class="num">08</span><span class="label">About Us</span><span class="arrow">→</span></button>
         <button class="sidebar-item" onclick="openSettings()"><span class="num">09</span><span class="label">Settings</span><span class="arrow">→</span></button>
-        <button class="sidebar-item" onclick="showNoticeToast('Binnenkort: stuur jouw eigen feiten-trio in!')"><span class="num">10</span><span class="label">Vraag insturen</span><span class="arrow">→</span></button>
+        <button class="sidebar-item" onclick="openSubmitQuestion()"><span class="num">10</span><span class="label">Vraag insturen</span><span class="arrow">→</span></button>
       </div>
     </div>
 
@@ -322,34 +322,115 @@
       <div class="library-page-top"><button class="library-back" onclick="closePuzzleRace()">← Terug</button><span class="library-page-kicker">NETTO · NIEUWE MODUS</span></div>
 
       <section class="race-panel race-start-panel" id="raceStart">
-        <div class="race-kicker">NETTO · 5 MINUTEN</div>
-        <h1 class="race-title">Puzzel <span class="script">Race.</span></h1>
-        <p class="race-intro">Los in vijf minuten zoveel mogelijk puzzels exact op. Je krijgt ze één voor één: eerst Easy, daarna steeds moeilijker.</p>
-        <div class="race-rules">
-          <div class="race-rule"><strong>1</strong><span>Vul alle drie de antwoorden in.</span></div>
-          <div class="race-rule"><strong>2</strong><span>Na je antwoord ga je direct door.</span></div>
-          <div class="race-rule"><strong>3</strong><span>Je ziet meteen of je puzzel goed of fout was.</span></div>
+        <div class="race-mode-tabs" role="tablist" aria-label="Puzzel Race modus">
+          <button class="race-mode-tab active" id="raceModeSoloTab" type="button" role="tab" aria-selected="true" onclick="switchRaceMode('solo')">Solo</button>
+          <button class="race-mode-tab" id="raceModeOnlineTab" type="button" role="tab" aria-selected="false" onclick="switchRaceMode('online')">Play online</button>
+          <button class="race-mode-tab" id="raceModeFriendsTab" type="button" role="tab" aria-selected="false" onclick="switchRaceMode('friends')">Friends met code</button>
         </div>
-        <div class="race-best" id="raceBest"></div>
-        <button class="hero-cta race-start-button" type="button" onclick="startPuzzleRace()">Start solo race <span aria-hidden="true">→</span></button>
 
-        <div class="race-duel-setup" id="raceDuelSetup">
-          <div class="race-duel-divider"><span>of</span></div>
-          <div class="race-duel-grid">
-            <button class="race-duel-btn" type="button" onclick="createRaceRoom()">⚔ <b>Maak duel</b><span>krijg een room-code en deel die</span></button>
+        <section class="race-mode-panel" id="raceSoloSetup" role="tabpanel">
+          <div class="race-kicker">NETTO · PUZZEL RACE</div>
+          <h1 class="race-title">Puzzel <span class="script">Race.</span></h1>
+          <p class="race-intro">Kies je vraagset en tempo. Los in de tijdslimiet zoveel mogelijk puzzels exact op.</p>
+          <div class="race-config-grid">
+            <div class="race-config-card">
+              <label for="raceSoloSet">Vraagset</label>
+              <select id="raceSoloSet" onchange="selectRaceModeSet('solo', this.value)"></select>
+              <small>De puzzels worden per run willekeurig gekozen, zonder herhaling.</small>
+            </div>
+            <div class="race-config-card">
+              <span class="race-config-label">Tempo</span>
+              <div class="race-duration-options" id="raceSoloDurations">
+                <button type="button" data-duration="bullet" onclick="selectRaceDuration('solo', 'bullet')"><b>3 minuten</b><span>Bullet</span></button>
+                <button type="button" data-duration="snel" onclick="selectRaceDuration('solo', 'snel')"><b>5 minuten</b><span>Snel</span></button>
+                <button type="button" data-duration="blitz" onclick="selectRaceDuration('solo', 'blitz')"><b>10 minuten</b><span>Blitz</span></button>
+              </div>
+            </div>
+          </div>
+          <div class="race-best" id="raceBest"></div>
+          <button class="hero-cta race-start-button" type="button" onclick="startPuzzleRace()">Start solo race <span aria-hidden="true">→</span></button>
+        </section>
+
+        <section class="race-mode-panel" id="raceOnlineSetup" role="tabpanel" style="display:none;">
+          <div class="race-kicker">NETTO · PLAY ONLINE</div>
+          <h2 class="race-mode-heading">Vind een tegenstander.</h2>
+          <p class="race-intro">Maak een open game voor iedereen, of gebruik Friends met code voor een besloten duel.</p>
+          <div class="race-online-layout">
+            <div class="race-online-controls">
+              <div class="race-config-card">
+                <label for="raceOnlineSet">Vraagset</label>
+                <select id="raceOnlineSet" onchange="selectRaceModeSet('online', this.value)"></select>
+              </div>
+              <div class="race-config-card">
+                <span class="race-config-label">Tijd</span>
+                <div class="race-duration-options" id="raceOnlineDurations">
+                  <button type="button" data-duration="bullet" onclick="selectRaceDuration('online', 'bullet')"><b>3 minuten</b><span>Bullet</span></button>
+                  <button type="button" data-duration="snel" onclick="selectRaceDuration('online', 'snel')"><b>5 minuten</b><span>Snel</span></button>
+                  <button type="button" data-duration="blitz" onclick="selectRaceDuration('online', 'blitz')"><b>10 minuten</b><span>Blitz</span></button>
+                </div>
+              </div>
+              <div class="race-config-card">
+                <span class="race-config-label">Type game</span>
+                <div class="race-visibility-options">
+                  <button class="active" id="raceOpenVisibilityBtn" type="button" onclick="selectOnlineVisibility('open')">Open game</button>
+                  <button id="raceClosedVisibilityBtn" type="button" onclick="selectOnlineVisibility('closed')">Closed game</button>
+                </div>
+                <div id="raceOpenControls">
+                  <button class="btn-check race-online-create" type="button" onclick="createOpenRaceGame()">Maak open game →</button>
+                  <small>Andere spelers zien deze game rechts en kunnen direct joinen.</small>
+                </div>
+                <div id="raceClosedControls" style="display:none;">
+                  <small>Een closed game werkt met een persoonlijke code en start nooit automatisch.</small>
+                  <button class="btn-check race-online-create" type="button" onclick="createClosedRaceGame('online')">Maak closed game →</button>
+                  <div class="race-duel-join race-online-code-join">
+                    <input type="text" id="raceOnlineJoinCode" maxlength="6" placeholder="CODE" autocomplete="off" aria-label="Closed room-code">
+                    <button type="button" onclick="joinRaceRoom('raceOnlineJoinCode')">Join</button>
+                  </div>
+                  <button class="race-link-button" type="button" onclick="switchRaceMode('friends')">Of naar Friends met code →</button>
+                </div>
+              </div>
+            </div>
+            <aside class="race-open-games" aria-live="polite">
+              <div class="race-open-games-heading"><div><span class="race-config-label">OPEN GAMES</span><h3>Wie speelt er?</h3></div><button type="button" onclick="refreshOpenGames()" aria-label="Open games vernieuwen">↻</button></div>
+              <div id="raceOpenGamesList" class="race-open-games-list"><div class="race-open-games-empty">Open games laden…</div></div>
+            </aside>
+          </div>
+        </section>
+
+        <section class="race-mode-panel" id="raceFriendsSetup" role="tabpanel" style="display:none;">
+          <div class="race-kicker">NETTO · FRIENDS</div>
+          <h2 class="race-mode-heading">Speel met een code.</h2>
+          <p class="race-intro">Maak een gesloten duel en deel de code met je vriend. Alleen de host start het duel — er is geen automatische start.</p>
+          <div class="race-config-grid">
+            <div class="race-config-card">
+              <label for="raceFriendsSet">Vraagset</label>
+              <select id="raceFriendsSet" onchange="selectRaceModeSet('friends', this.value)"></select>
+            </div>
+            <div class="race-config-card">
+              <span class="race-config-label">Tijd</span>
+              <div class="race-duration-options" id="raceFriendsDurations">
+                <button type="button" data-duration="bullet" onclick="selectRaceDuration('friends', 'bullet')"><b>3 minuten</b><span>Bullet</span></button>
+                <button type="button" data-duration="snel" onclick="selectRaceDuration('friends', 'snel')"><b>5 minuten</b><span>Snel</span></button>
+                <button type="button" data-duration="blitz" onclick="selectRaceDuration('friends', 'blitz')"><b>10 minuten</b><span>Blitz</span></button>
+              </div>
+            </div>
+          </div>
+          <div class="race-duel-grid race-friends-actions">
+            <button class="race-duel-btn" type="button" onclick="createRaceRoom('closed')">⚔ <b>Maak gesloten game</b><span>krijg een code en deel die met je vriend</span></button>
             <div class="race-duel-join">
               <input type="text" id="raceJoinCode" maxlength="6" placeholder="CODE" autocomplete="off" aria-label="Room-code">
               <button type="button" onclick="joinRaceRoom()">Join</button>
             </div>
           </div>
-          <div class="race-duel-note">Inloggen verplicht · zelfde 88 puzzels · wie het meest exact goed heeft wint</div>
-        </div>
+          <div class="race-duel-note">Inloggen verplicht · dezelfde set en tijd voor beide spelers · handmatig starten</div>
+        </section>
 
         <div class="race-duel-room" id="raceDuelRoom" style="display:none;">
           <div class="race-duel-code-row">
             <div>
               <div class="race-duel-code-label">Room-code</div>
               <div class="race-duel-code" id="raceRoomCode">—</div>
+              <div class="race-room-settings" id="raceRoomSettings"></div>
             </div>
             <button class="race-copy-btn" type="button" onclick="copyRaceRoomCode()">📋 Kopieer</button>
           </div>
@@ -479,6 +560,73 @@
           <div class="settings-sets" id="settingsSets"></div>
           <p class="settings-note">De gekozen set geldt vanaf je volgende solo-race. Daily-puzzels, Puzzels en Breinkrakers blijven onveranderd.</p>
         </div>
+      </section>
+    </div>
+  </main>
+
+  <!-- ============ VRAAG INSTUREN ============ -->
+  <main class="library-screen settings-screen" id="submitScreen">
+    <div class="library-page-inner race-page-inner">
+      <div class="library-page-top"><button class="library-back" onclick="closeSubmitQuestion()">← Terug</button><span class="library-page-kicker">NETTO · VRAAG INSTUREN</span></div>
+
+      <section class="race-panel settings-panel">
+        <div class="race-kicker">NETTO · JOUW FEITEN</div>
+        <h1 class="race-title">Stuur je <span class="script">vraag in.</span></h1>
+        <p class="race-intro">Bedenk drie feiten met een getal als antwoord. Wij maken er een puzzel van — staat die erin, dan zie je jouw naam erbij.</p>
+
+        <form id="submitQuestionForm" onsubmit="submitQuestion(event)">
+          <div class="submit-q-grid">
+            <div class="submit-q-block">
+              <label for="subQ1">Vraag 1</label>
+              <textarea id="subQ1" rows="2" maxlength="200" placeholder="Hoeveel toetsen heeft een standaard concertpiano (zwart + wit)?" required></textarea>
+              <div class="submit-a-row">
+                <input type="text" id="subA1" inputmode="numeric" placeholder="Antwoord" autocomplete="off" required>
+                <span class="submit-op" id="subOperatorBadge">×</span>
+              </div>
+            </div>
+            <div class="submit-q-block">
+              <label for="subQ2">Vraag 2</label>
+              <textarea id="subQ2" rows="2" maxlength="200" placeholder="Hoeveel erkende planeten telt ons zonnestelsel?" required></textarea>
+              <div class="submit-a-row">
+                <input type="text" id="subA2" inputmode="numeric" placeholder="Antwoord" autocomplete="off" required>
+                <span class="submit-op">=</span>
+              </div>
+            </div>
+            <div class="submit-q-block">
+              <label for="subQ3">Vraag 3 (resultaat)</label>
+              <textarea id="subQ3" rows="2" maxlength="200" placeholder="Hoeveel toetsen heeft ... × planeten = ?" required></textarea>
+              <div class="submit-a-row">
+                <input type="text" id="subA3" inputmode="numeric" placeholder="Antwoord" autocomplete="off" required>
+              </div>
+            </div>
+          </div>
+
+          <div class="submit-extra">
+            <div class="submit-extra-field">
+              <label for="subOperator">Bewerking</label>
+              <select id="subOperator" onchange="updateSubmitPreview()">
+                <option value="×">× keer</option>
+                <option value="÷">÷ deel</option>
+                <option value="+">+ plus</option>
+                <option value="−">− min</option>
+              </select>
+            </div>
+            <div class="submit-extra-field">
+              <label for="subEmail">Je e-mail <span class="submit-optional">optioneel</span></label>
+              <input type="email" id="subEmail" maxlength="120" placeholder="alleen als je credits wilt">
+            </div>
+          </div>
+          <div class="submit-extra-field submit-note-field">
+            <label for="subNote">Toelichting <span class="submit-optional">optioneel</span></label>
+            <input type="text" id="subNote" maxlength="300" placeholder="Bron, context of een leuke noot">
+          </div>
+
+          <div class="submit-preview" id="submitPreview"> Vul alles in om je som te zien. </div>
+          <div class="auth-error-box" id="submitErrorBox" style="display:none;"></div>
+
+          <button class="btn-check race-start-button" type="submit" id="submitQuestionBtn">Verstuur inzending <span aria-hidden="true">→</span></button>
+          <p class="submit-terms">Door in te sturen geef je B-Force toestemming om je vraag (met naam of zonder) in het spel te gebruiken. Geen e-mail? Dan blijft je inzending anoniem.</p>
+        </form>
       </section>
     </div>
   </main>
@@ -642,7 +790,7 @@
     </div>
   </div>
 
-<script src="js/app.js?v=18"></script>
+<script src="js/app.js?v=19"></script>
 
 </body>
 </html>
