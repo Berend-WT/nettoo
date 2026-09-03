@@ -694,6 +694,11 @@
   .race-open-room-note b { font:700 13px 'Space Grotesk',sans-serif; color:var(--bg-main); }
   .race-open-room-note span { font-size:12px; color:#4B5563; line-height:1.5; }
   .race-online-code-join { margin-top:12px; }
+  .race-joinbar { margin-top:14px; }
+  .race-joinbar .race-joinbar-text { margin:2px 0 0; font-size:12px; color:#6B7280; line-height:1.5; }
+  .race-joinbar .race-duel-join { margin-top:10px; }
+  .race-joinbar .race-duel-join input { max-width:260px; }
+  @media (max-width:640px) { .race-joinbar .race-duel-join input { max-width:none; } }
   .race-link-button { border:0; background:none; padding:0; margin-top:10px; cursor:pointer; color:var(--bg-main); font:700 12px 'Space Grotesk',sans-serif; text-decoration:underline; }
   .race-open-games { background:var(--surface-2); border:1px solid var(--border-color); border-radius:14px; padding:14px 16px; }
   .race-open-games-heading { display:flex; align-items:center; justify-content:space-between; gap:10px; margin-bottom:12px; }

@@ -6,7 +6,7 @@
 <title>Netto · dagelijkse schatting</title>
 <meta name="description" content="Schat drie feiten, vind het verband. Elke dag een nieuwe puzzel.">
 <meta name="theme-color" content="#14163B">
-<link rel="icon" type="image/svg+xml" href="favicon.svg?v=23">
+<link rel="icon" type="image/svg+xml" href="favicon.svg?v=26">
 <!-- Open Graph / social sharing -->
 <meta property="og:type" content="website">
 <meta property="og:title" content="Netto · dagelijkse schatting">
@@ -20,12 +20,12 @@
 <link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Caveat:wght@600;700&family=JetBrains+Mono:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
 <!-- Supabase Client CDN (defer om te voorkomen dat de pagina blokkeert) -->
 <script defer src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="puzzles_embedded.js?v=23"></script>
-<script src="netto_frontend_puzzles.js?v=23"></script>
-<script src="netto_race_sets.js?v=23"></script>
-<script src="netto_race_pool.js?v=23"></script>
-<script src="netto_breinkrakers.js?v=23"></script>
-<link rel="stylesheet" href="css/styles.css?v=25">
+<script src="puzzles_embedded.js?v=26"></script>
+<script src="netto_frontend_puzzles.js?v=26"></script>
+<script src="netto_race_sets.js?v=26"></script>
+<script src="netto_race_pool.js?v=26"></script>
+<script src="netto_breinkrakers.js?v=26"></script>
+<link rel="stylesheet" href="css/styles.css?v=26">
 
 </head>
 <body>
@@ -130,12 +130,7 @@
         </button>
         <button class="home-mode-card" onclick="openPuzzleRace()">
           <span class="home-mode-icon">⏱️</span>
-          <span class="home-mode-body"><b>Puzzel Race</b><small>5 minuten solo, zoveel mogelijk exact goed</small></span>
-          <span class="home-mode-arrow">→</span>
-        </button>
-        <button class="home-mode-card" onclick="openPuzzleRace()">
-          <span class="home-mode-icon">👥</span>
-          <span class="home-mode-body"><b>Speel met vrienden</b><small>Live duel via room-code</small></span>
+          <span class="home-mode-body"><b>Puzzel Race</b><small>Alleen of met vrienden — met of zonder code</small></span>
           <span class="home-mode-arrow">→</span>
         </button>
         <button class="home-mode-card" onclick="openBreinkrakers()">
@@ -293,7 +288,7 @@
         <ul class="how-list">
           <li><b>Streak</b> — speel elke dag en bouw een reeks op.</li>
           <li><b>Puzzel Race</b> — 5 minuten zoveel mogelijk exact goed, van makkelijk naar moeilijk.</li>
-          <li><b>Speel met vrienden</b> — live duel via room-code; wie de meeste goed heeft wint.</li>
+          <li><b>Play online</b> — live duel via een open game of room-code; wie de meeste goed heeft wint.</li>
           <li><b>Vraagsets wisselen</b> — pas je race aan met regio- of thema-sets in <b>Settings</b>.</li>
           <li><b>Breinkrakers</b> — een ketting van 4 vragen in één formule.</li>
         </ul>
@@ -386,10 +381,6 @@
                 <div id="raceClosedControls" style="display:none;">
                   <small>Een closed game werkt met een persoonlijke code en start nooit automatisch.</small>
                   <button class="btn-check race-online-create" type="button" onclick="createClosedRaceGame('online')">Maak closed game →</button>
-                  <div class="race-duel-join race-online-code-join">
-                    <input type="text" id="raceOnlineJoinCode" maxlength="6" placeholder="CODE" autocomplete="off" aria-label="Closed room-code">
-                    <button type="button" onclick="joinRaceRoom('raceOnlineJoinCode')">Join</button>
-                  </div>
                 </div>
               </div>
             </div>
@@ -397,6 +388,15 @@
               <div class="race-open-games-heading"><div><span class="race-config-label">OPEN GAMES</span><h3>Wie speelt er?</h3></div><button type="button" onclick="refreshOpenGames()" aria-label="Open games vernieuwen">↻</button></div>
               <div id="raceOpenGamesList" class="race-open-games-list"><div class="race-open-games-empty">Open games laden…</div></div>
             </aside>
+          </div>
+
+          <div class="race-config-card race-joinbar">
+            <span class="race-config-label">Sluit aan met een code</span>
+            <p class="race-joinbar-text">Heb je een code gekregen van iemand? Vul hem hier in en je komt direct in de closed game.</p>
+            <div class="race-duel-join race-online-code-join">
+              <input type="text" id="raceOnlineJoinCode" maxlength="6" placeholder="CODE" autocomplete="off" aria-label="Room-code">
+              <button type="button" onclick="joinRaceRoom('raceOnlineJoinCode')">Join →</button>
+            </div>
           </div>
         </section>
 
@@ -779,7 +779,7 @@
     </div>
   </div>
 
-<script src="js/app.js?v=25"></script>
+<script src="js/app.js?v=26"></script>
 
 </body>
 </html>
