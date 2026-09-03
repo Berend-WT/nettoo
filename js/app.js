@@ -1907,6 +1907,14 @@
 
   async function submitQuestion(event) {
     event.preventDefault();
+    // Inloggen is verplicht: zo is elke inzending herleidbaar en spam-baar per account.
+    if (!currentUser) {
+      const box = document.getElementById('submitErrorBox');
+      box.textContent = 'Log eerst in om een vraag in te sturen.';
+      box.style.display = 'block';
+      openAuthModal();
+      return;
+    }
     const box = document.getElementById('submitErrorBox');
     const showErr = (msg) => { box.textContent = msg; box.style.display = 'block'; };
     box.style.display = 'none';

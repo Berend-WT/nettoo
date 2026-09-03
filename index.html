@@ -6,7 +6,7 @@
 <title>Netto · dagelijkse schatting</title>
 <meta name="description" content="Schat drie feiten, vind het verband. Elke dag een nieuwe puzzel.">
 <meta name="theme-color" content="#14163B">
-<link rel="icon" type="image/svg+xml" href="favicon.svg?v=19">
+<link rel="icon" type="image/svg+xml" href="favicon.svg?v=20">
 <!-- Open Graph / social sharing -->
 <meta property="og:type" content="website">
 <meta property="og:title" content="Netto · dagelijkse schatting">
@@ -20,12 +20,12 @@
 <link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Caveat:wght@600;700&family=JetBrains+Mono:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
 <!-- Supabase Client CDN (defer om te voorkomen dat de pagina blokkeert) -->
 <script defer src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="puzzles_embedded.js?v=19"></script>
-<script src="netto_frontend_puzzles.js?v=19"></script>
-<script src="netto_race_sets.js?v=19"></script>
-<script src="netto_race_pool.js?v=19"></script>
-<script src="netto_breinkrakers.js?v=19"></script>
-<link rel="stylesheet" href="css/styles.css?v=19">
+<script src="puzzles_embedded.js?v=20"></script>
+<script src="netto_frontend_puzzles.js?v=20"></script>
+<script src="netto_race_sets.js?v=20"></script>
+<script src="netto_race_pool.js?v=20"></script>
+<script src="netto_breinkrakers.js?v=20"></script>
+<link rel="stylesheet" href="css/styles.css?v=20">
 
 </head>
 <body>
@@ -572,7 +572,7 @@
       <section class="race-panel settings-panel">
         <div class="race-kicker">NETTO · JOUW FEITEN</div>
         <h1 class="race-title">Stuur je <span class="script">vraag in.</span></h1>
-        <p class="race-intro">Bedenk drie feiten met een getal als antwoord. Wij maken er een puzzel van — staat die erin, dan zie je jouw naam erbij.</p>
+        <p class="race-intro">Bedenk drie feiten met een getal als antwoord. Wij maken er een puzzel van — staat die erin, dan zie je jouw naam erbij. <b>Inloggen verplicht.</b></p>
 
         <form id="submitQuestionForm" onsubmit="submitQuestion(event)">
           <div class="submit-q-grid">
@@ -625,7 +625,7 @@
           <div class="auth-error-box" id="submitErrorBox" style="display:none;"></div>
 
           <button class="btn-check race-start-button" type="submit" id="submitQuestionBtn">Verstuur inzending <span aria-hidden="true">→</span></button>
-          <p class="submit-terms">Door in te sturen geef je B-Force toestemming om je vraag (met naam of zonder) in het spel te gebruiken. Geen e-mail? Dan blijft je inzending anoniem.</p>
+          <p class="submit-terms">Door in te sturen geef je B-Force toestemming om je vraag (met naam of zonder) in het spel te gebruiken. Je e-mail is optioneel en blijft privé.</p>
         </form>
       </section>
     </div>
@@ -790,7 +790,7 @@
     </div>
   </div>
 
-<script src="js/app.js?v=19"></script>
+<script src="js/app.js?v=20"></script>
 
 </body>
 </html>
