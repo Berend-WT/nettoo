@@ -1,1 +1,25 @@
 *{box-sizing:border-box}body{margin:0;min-height:100vh;background:#252fb6;color:#14163b;font-family:Arial,sans-serif}.admin-shell{max-width:1000px;margin:auto;padding:32px 18px}.panel,.metric{background:#fff;border-radius:12px;padding:24px}.auth-panel{max-width:420px;margin:8vh auto}.eyebrow{font-size:11px;font-weight:700;letter-spacing:.12em;color:#6068ad}.muted-dark{color:#5d6474;line-height:1.5}.auth-panel h1,.dashboard-header h1{margin:8px 0 18px}.auth-panel label{display:block;margin-top:14px;font-size:12px;font-weight:700}.auth-panel input{display:block;width:100%;margin-top:6px;padding:11px;border:1px solid #cfd3e8;border-radius:7px;font:inherit}.auth-panel button{width:100%;margin-top:18px;padding:12px;border:0;border-radius:7px;background:#14163b;color:#fff;font-weight:700;cursor:pointer}.link-button{background:transparent!important;color:#252fb6!important;margin-top:8px!important}.message{min-height:20px;font-size:13px;color:#16794f}.message.error{color:#c62828}.dashboard-header{display:flex;justify-content:space-between;align-items:start;color:#fff;margin-bottom:24px}.dashboard-header p{color:#d7daff}.secondary{background:#fff;color:#14163b;border:0;border-radius:7px;padding:11px 14px;font-weight:700;cursor:pointer}.metric-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:20px}.metric span{display:block;color:#687080;font-size:11px;font-weight:700;text-transform:uppercase}.metric strong{display:block;margin-top:8px;font-size:32px}.panel h2{margin-top:0}@media(max-width:650px){.metric-grid{grid-template-columns:1fr 1fr}.dashboard-header{gap:14px;flex-direction:column}}
+/* ---- Vraag- & puzzel-review ---- */
+.review-filter{display:flex;gap:8px;margin:14px 0}
+.review-filter-btn{padding:8px 16px;border:1px solid #cfd3e8;border-radius:999px;background:#fff;font-weight:700;font-size:13px;cursor:pointer}
+.review-filter-btn.is-active{background:#14163b;color:#fff;border-color:#14163b}
+.review-list{display:grid;gap:12px}
+.review-card{border:1px solid #e2e5f2;border-radius:10px;padding:16px;background:#fbfbfe}
+.review-head{display:flex;justify-content:space-between;align-items:baseline;gap:10px;flex-wrap:wrap}
+.review-type{font-weight:700;font-size:14px}
+.review-meta{font-size:12px;color:#687080}
+.review-questions{margin:10px 0;padding-left:20px}
+.review-questions li{margin:4px 0;font-size:14px;line-height:1.45}
+.review-calc{display:inline-block;padding:5px 10px;border-radius:7px;font:700 13px 'Courier New',monospace}
+.review-calc.ok{background:#e3f5ea;color:#16794f}
+.review-calc.bad{background:#fdecea;color:#c62828}
+.review-calc.none{background:#eef1f7;color:#3a4157}
+.review-warning{font-size:13px;color:#b26a00;margin:8px 0 0}
+.review-note{font-size:13px;color:#5d6474;margin:8px 0 0}
+.review-actions{display:flex;gap:10px;margin-top:12px}
+.review-btn{padding:9px 16px;border:0;border-radius:7px;font-weight:700;font-size:13px;cursor:pointer}
+.review-btn.accept{background:#16794f;color:#fff}
+.review-btn.deny{background:#c62828;color:#fff}
+.review-status{padding:5px 12px;border-radius:999px;font-size:12px;font-weight:700}
+.review-status.acc{background:#e3f5ea;color:#16794f}
+.review-status.den{background:#fdecea;color:#c62828}

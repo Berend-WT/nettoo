@@ -724,6 +724,14 @@
   .submit-terms { color:#9CA3AF; font:500 11px 'Space Grotesk',sans-serif; margin-top:12px; line-height:1.5; }
   @media (max-width:640px) { .submit-extra { grid-template-columns:1fr; } }
 
+  /* ---- Vraag insturen: vraag/puzzel-tabs ---- */
+  .submit-mode-tabs { display:flex; gap:8px; margin:14px 0 6px; }
+  .submit-mode-tab { flex:1; padding:11px 14px; border-radius:12px; border:2px solid #e3e6ee; background:#fff; font:600 14px 'Inter',sans-serif; color:#3a4157; cursor:pointer; transition:border-color .15s, background .15s, transform .12s; }
+  .submit-mode-tab:hover { transform:translateY(-1px); border-color:var(--accent); }
+  .submit-mode-tab.is-active { border-color:var(--accent); background:#fff7e8; color:#1d2333; }
+  .submit-mode-hint { font-size:13px; color:#5b6172; margin:2px 0 10px; line-height:1.5; }
+  .submit-credit-badge { display:inline-flex; align-items:center; gap:6px; padding:4px 10px; border-radius:999px; background:#eef1f7; font-size:12px; font-weight:600; color:#3a4157; }
+
   /* ===== BREINKRAKERS ===== */
   .bk-start-panel { text-align:left; }
   .bk-reset-button { margin-top:10px; }
