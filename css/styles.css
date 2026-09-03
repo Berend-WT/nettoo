@@ -654,6 +654,51 @@
   .race-opponent-label { color:var(--bg-main); }
   @media (max-width:640px) { .race-duel-code { font-size:30px; } .race-duel-players { grid-template-columns:1fr; } }
 
+  /* ===== Race mode-tabs + lobby ===== */
+  .race-mode-tabs { display:flex; gap:6px; background:var(--surface-2); border:1px solid var(--border-color); border-radius:14px; padding:5px; margin-bottom:20px; }
+  .race-mode-tab { flex:1; border:0; background:transparent; border-radius:10px; padding:11px 8px; cursor:pointer; font:700 13px 'Space Grotesk',sans-serif; color:#6B7280; transition:background .15s ease,color .15s ease; }
+  .race-mode-tab:hover { color:var(--bg-dark); }
+  .race-mode-tab.active { background:var(--bg-main); color:#fff; box-shadow:0 4px 12px rgba(37,47,182,.25); }
+  .race-mode-heading { font:700 26px 'Archivo Black',sans-serif; margin:4px 0 8px; letter-spacing:-.02em; }
+  .race-config-grid { display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:16px; }
+  .race-config-card { background:var(--surface-2); border:1px solid var(--border-color); border-radius:14px; padding:14px 16px; }
+  .race-config-card label, .race-config-label { display:block; color:#6B7280; font:600 10px 'JetBrains Mono',monospace; text-transform:uppercase; letter-spacing:.12em; margin-bottom:8px; }
+  .race-config-card select { width:100%; border:2px solid var(--border-color); border-radius:10px; padding:10px 12px; font:600 13px 'Space Grotesk',sans-serif; color:var(--bg-dark); background:var(--surface); cursor:pointer; }
+  .race-config-card select:focus { outline:none; border-color:var(--bg-main); }
+  .race-config-card small { display:block; color:#9CA3AF; font:500 11px 'Space Grotesk',sans-serif; margin-top:8px; line-height:1.45; }
+  .race-duration-options { display:flex; gap:6px; }
+  .race-duration-options button { flex:1; border:2px solid var(--border-color); background:var(--surface); border-radius:10px; padding:9px 4px; cursor:pointer; text-align:center; transition:border-color .15s ease,background .15s ease; }
+  .race-duration-options button b { display:block; font:700 13px 'Space Grotesk',sans-serif; color:var(--bg-dark); }
+  .race-duration-options button span { display:block; color:#9CA3AF; font:600 10px 'JetBrains Mono',monospace; text-transform:uppercase; letter-spacing:.06em; margin-top:2px; }
+  .race-duration-options button:hover { border-color:#B6BCF0; }
+  .race-duration-options button.active { border-color:var(--bg-main); background:#EEF2FF; }
+  .race-duration-options button.active span { color:var(--bg-main); }
+  .race-online-layout { display:grid; grid-template-columns:1fr 1fr; gap:14px; align-items:start; }
+  .race-online-controls { display:grid; gap:12px; }
+  .race-online-create { width:100%; margin-top:10px; }
+  .race-visibility-options { display:flex; gap:6px; }
+  .race-visibility-options button { flex:1; border:2px solid var(--border-color); background:var(--surface); border-radius:10px; padding:10px 6px; cursor:pointer; font:700 12px 'Space Grotesk',sans-serif; color:#6B7280; }
+  .race-visibility-options button.active { border-color:var(--bg-main); background:#EEF2FF; color:var(--bg-main); }
+  .race-online-code-join { margin-top:12px; }
+  .race-link-button { border:0; background:none; padding:0; margin-top:10px; cursor:pointer; color:var(--bg-main); font:700 12px 'Space Grotesk',sans-serif; text-decoration:underline; }
+  .race-open-games { background:var(--surface-2); border:1px solid var(--border-color); border-radius:14px; padding:14px 16px; }
+  .race-open-games-heading { display:flex; align-items:center; justify-content:space-between; gap:10px; margin-bottom:12px; }
+  .race-open-games-heading h3 { font:700 16px 'Space Grotesk',sans-serif; color:var(--bg-dark); }
+  .race-open-games-heading button { border:1px solid var(--border-color); background:var(--surface); border-radius:8px; width:30px; height:30px; cursor:pointer; font-size:14px; color:#6B7280; }
+  .race-open-games-heading button:hover { color:var(--bg-main); border-color:var(--bg-main); }
+  .race-open-games-list { display:grid; gap:8px; max-height:340px; overflow-y:auto; }
+  .race-open-games-empty { color:#9CA3AF; font:600 12px 'JetBrains Mono',monospace; padding:10px 0; }
+  .race-open-game { display:flex; align-items:center; gap:10px; width:100%; border:1px solid var(--border-color); background:var(--surface); border-radius:12px; padding:11px 13px; cursor:pointer; text-align:left; transition:border-color .15s ease,transform .15s ease; }
+  .race-open-game:hover { border-color:var(--bg-main); transform:translateY(-1px); }
+  .race-open-game-player { font:700 13px 'Space Grotesk',sans-serif; color:var(--bg-dark); flex-shrink:0; max-width:40%; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .race-open-game-details { flex:1; min-width:0; }
+  .race-open-game-details b { display:block; font:600 12px 'Space Grotesk',sans-serif; color:var(--bg-dark); }
+  .race-open-game-details span { display:block; color:#9CA3AF; font:600 10px 'JetBrains Mono',monospace; }
+  .race-open-game-join { color:var(--bg-main); font:700 12px 'Space Grotesk',sans-serif; flex-shrink:0; }
+  .race-room-settings { color:#6B7280; font:600 12px 'Space Grotesk',sans-serif; margin-top:6px; }
+  .race-friends-actions { margin-top:14px; }
+  @media (max-width:640px) { .race-config-grid, .race-online-layout { grid-template-columns:1fr; } .race-mode-tab { font-size:12px; padding:10px 4px; } }
+
   /* ===== BREINKRAKERS ===== */
   .bk-start-panel { text-align:left; }
   .bk-reset-button { margin-top:10px; }
