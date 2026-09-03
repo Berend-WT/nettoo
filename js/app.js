@@ -881,10 +881,17 @@
 
   function validateAuthInput(email, password, username) {
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)) return 'Vul een geldig e-mailadres in.';
-    if (password.length < 8) return 'Je wachtwoord moet minimaal 8 tekens zijn.';
-    if (password.length > 72) return 'Je wachtwoord mag maximaal 72 tekens zijn.';
-    if (authMode === 'register' && username) {
-      if (username.length < 3 || username.length > 20) return 'Je spelersnaam moet 3 tot 20 tekens zijn.';
+    // Minimale wachtwoordlengte geldt alleen bij registreren: een bestaand
+    // account (bijv. met een kort wachtwoord van vóór deze regel) moet
+    // gewoon kunnen inloggen — Supabase bewaakt de echte verificatie.
+    if (authMode === 'register') {
+      if (password.length < 8) return 'Je wachtwoord moet minimaal 8 tekens zijn.';
+      if (password.length > 72) return 'Je wachtwoord mag maximaal 72 tekens zijn.';
+      if (username) {
+        if (username.length < 3 || username.length > 20) return 'Je spelersnaam moet 3 tot 20 tekens zijn.';
+      }
+    } else {
+      if (!password) return 'Vul je wachtwoord in.';
     }
     return null;
   }
