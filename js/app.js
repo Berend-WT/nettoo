@@ -1617,6 +1617,7 @@
   let raceQueue = [];
   let raceState = null;
   let raceMode = 'solo';
+  let raceOnlineVisibility = 'open'; // aan/uit-schakelaar in de online-tab
   let raceLobbyChannel = null;
   let raceLobbyReady = false;
   let raceAutoStartTimer = null;
@@ -1716,7 +1717,19 @@
   }
 
   function ensureRaceLobby() {
-    if (!supabaseClient || raceLobbyChannel) return;
+    if (!supabaseClient) return;
+    if (raceLobbyChannel) {
+      // Kanaal bestaat al: zorg dat het daadwerkelijk gesubscribed is (de
+      // lobby-listing vertrouwt op raceLobbyReady) en publish opnieuw — de
+      // sessie kan inmiddels een open host zijn geworden.
+      if (!raceLobbyReady) {
+        try { supabaseClient.removeChannel(raceLobbyChannel); } catch (_) {}
+        raceLobbyChannel = null;
+      } else {
+        publishOpenRaceEntry();
+        return;
+      }
+    }
     raceLobbyChannel = supabaseClient.channel('netto-race-lobby-v1', {
       config: { presence: { key: RACE_CLIENT_ID } }
     });
@@ -1729,10 +1742,13 @@
           raceLobbyReady = true;
           publishOpenRaceEntry();
           renderOpenGames();
+        } else if (status === 'CHANNEL_ERROR' || status === 'TIMED_OUT') {
+          // Kanaal kapot: volledig resetten zodat de volgende ensure het opnieuw probeert.
+          raceLobbyReady = false;
+          raceLobbyChannel = null;
         }
       });
   }
-
   function openRaceEntries() {
     if (!raceLobbyChannel) return [];
     const entries = [];
@@ -2061,14 +2077,14 @@
   }
 
   function renderRaceModeControls() {
-    ['solo', 'online', 'friends'].forEach(mode => {
+    ['solo', 'online'].forEach(mode => {
       renderRaceSetOptions(mode);
       renderRaceDurationOptions(mode);
     });
   }
 
   function switchRaceMode(mode) {
-    if (!['solo', 'online', 'friends'].includes(mode)) mode = 'solo';
+    if (!['solo', 'online'].includes(mode)) mode = 'solo';
     raceMode = mode;
     document.querySelectorAll('.race-mode-tab').forEach(button => {
       const active = button.id === `raceMode${mode[0].toUpperCase() + mode.slice(1)}Tab`;
@@ -2077,7 +2093,6 @@
     });
     document.getElementById('raceSoloSetup').style.display = mode === 'solo' ? 'block' : 'none';
     document.getElementById('raceOnlineSetup').style.display = mode === 'online' ? 'block' : 'none';
-    document.getElementById('raceFriendsSetup').style.display = mode === 'friends' ? 'block' : 'none';
     renderRaceModeControls();
     if (mode === 'online') {
       ensureRaceLobby();
@@ -2100,19 +2115,34 @@
 
   function selectOnlineVisibility(visibility) {
     const open = visibility === 'open';
-    document.getElementById('raceOpenVisibilityBtn')?.classList.toggle('active', open);
-    document.getElementById('raceClosedVisibilityBtn')?.classList.toggle('active', !open);
+    const checkbox = document.getElementById('raceVisibilityCheckbox');
+    if (checkbox) checkbox.checked = open;
+    toggleOnlineVisibility(open);
+  }
+
+  // Aan/uit-schakelaar in de online-tab: AAN = open game (zichtbaar in de lijst
+  // rechts), UIT = closed game (persoonlijke code, start nooit automatisch).
+  function toggleOnlineVisibility(open) {
+    const isOpen = open !== false && open !== 'closed';
+    raceOnlineVisibility = isOpen ? 'open' : 'closed';
+    const checkbox = document.getElementById('raceVisibilityCheckbox');
+    if (checkbox) checkbox.checked = isOpen;
+    const title = document.getElementById('raceVisibilityTitle');
+    const sub = document.getElementById('raceVisibilitySub');
+    if (title) title.textContent = isOpen ? 'Open game' : 'Closed game';
+    if (sub) sub.textContent = isOpen
+      ? 'Iedereen ziet jouw game in de lijst rechts en kan direct joinen. Start automatisch na 20 seconden.'
+      : 'Alleen spelers met jouw persoonlijke code kunnen meedoen. Er start niets automatisch.';
     const openControls = document.getElementById('raceOpenControls');
     const closedControls = document.getElementById('raceClosedControls');
-    if (openControls) openControls.style.display = open ? 'block' : 'none';
-    if (closedControls) closedControls.style.display = open ? 'none' : 'block';
+    if (openControls) openControls.style.display = isOpen ? 'block' : 'none';
+    if (closedControls) closedControls.style.display = isOpen ? 'none' : 'block';
   }
 
   function refreshOpenGames() {
     ensureRaceLobby();
     renderOpenGames();
   }
-
   function createOpenRaceGame() {
     const config = getRaceModeConfig('online');
     createRaceRoom('open', config);
@@ -2132,7 +2162,7 @@
     resetRaceDuelUi();
     renderRaceModeControls();
     switchRaceMode('solo');
-    selectOnlineVisibility('open');
+    toggleOnlineVisibility(raceOnlineVisibility === 'open');
     const best = Number(localStorage.getItem('netto_race_best') || 0);
     const bestEl = document.getElementById('raceBest');
     if (bestEl) bestEl.textContent = best > 0 ? `Jouw record: ${best} exact goed` : 'Nog geen record gezet — word de eerste.';
@@ -2362,8 +2392,7 @@
 
   function createRaceRoom(visibility = 'closed', config = null) {
     if (!requireRaceLogin()) return;
-    const mode = raceMode === 'online' ? 'online' : 'friends';
-    const selected = config || getRaceModeConfig(mode);
+    const selected = config || getRaceModeConfig('online');
     leaveRaceRoom();
     connectRaceRoom(generateRaceRoomCode(), 'host', {
       visibility,
@@ -2372,11 +2401,11 @@
     });
   }
 
-  function createClosedRaceGame(mode = 'online') {
-    createRaceRoom('closed', getRaceModeConfig(mode === 'friends' ? 'friends' : 'online'));
+  function createClosedRaceGame() {
+    createRaceRoom('closed', getRaceModeConfig('online'));
   }
 
-  function joinRaceRoom(inputId = 'raceJoinCode') {
+  function joinRaceRoom(inputId = 'raceOnlineJoinCode') {
     if (!requireRaceLogin()) return;
     const raw = (document.getElementById(inputId)?.value || '').trim().toUpperCase();
     if (!/^[A-Z2-9]{6}$/.test(raw)) { showSarcasticToast('Vul een geldige room-code in (6 tekens).'); return; }
@@ -2543,12 +2572,20 @@
     const setup = document.getElementById('raceDuelSetup');
     const room = document.getElementById('raceDuelRoom');
     if (setup) setup.style.display = 'none';
-    // Verberg de drie mode-panels zodra er een room actief is.
-    ['raceSoloSetup', 'raceOnlineSetup', 'raceFriendsSetup'].forEach(id => {
+    // Verberg de mode-panels zodra er een room actief is.
+    ['raceSoloSetup', 'raceOnlineSetup'].forEach(id => {
       const el = document.getElementById(id);
       if (el) el.style.display = 'none';
     });
     if (room) room.style.display = 'block';
+    // Open game: de code is irrelevant — toon in plaats daarvan de lobby-note.
+    const isRoomOpen = raceDuelSession && raceDuelSession.visibility === 'open';
+    const codeRow = document.getElementById('raceDuelCodeRow');
+    const copyBtn = room ? room.querySelector('.race-copy-btn') : null;
+    const note = document.getElementById('raceOpenRoomNote');
+    if (codeRow) codeRow.style.display = isRoomOpen ? 'none' : 'flex';
+    if (copyBtn) copyBtn.style.display = isRoomOpen ? 'none' : 'inline-flex';
+    if (note) note.style.display = isRoomOpen ? 'block' : 'none';
     const codeEl = document.getElementById('raceRoomCode');
     if (codeEl) codeEl.textContent = code;
     const startBtn = document.getElementById('raceDuelStartBtn');
@@ -2560,7 +2597,7 @@
     const room = document.getElementById('raceDuelRoom');
     if (setup) setup.style.display = 'block';
     if (room) room.style.display = 'none';
-    const joinInput = document.getElementById('raceJoinCode');
+    const joinInput = document.getElementById('raceOnlineJoinCode');
     if (joinInput) joinInput.value = '';
     const verdict = document.getElementById('raceDuelVerdict');
     if (verdict) verdict.style.display = 'none';
@@ -2919,6 +2956,7 @@
   window.selectRaceModeSet = selectRaceModeSet;
   window.selectRaceDuration = selectRaceDuration;
   window.selectOnlineVisibility = selectOnlineVisibility;
+  window.toggleOnlineVisibility = toggleOnlineVisibility;
   window.createOpenRaceGame = createOpenRaceGame;
   window.createClosedRaceGame = createClosedRaceGame;
   window.refreshOpenGames = refreshOpenGames;

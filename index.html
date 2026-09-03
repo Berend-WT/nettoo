@@ -25,7 +25,7 @@
 <script src="netto_race_sets.js?v=23"></script>
 <script src="netto_race_pool.js?v=23"></script>
 <script src="netto_breinkrakers.js?v=23"></script>
-<link rel="stylesheet" href="css/styles.css?v=23">
+<link rel="stylesheet" href="css/styles.css?v=25">
 
 </head>
 <body>
@@ -325,7 +325,6 @@
         <div class="race-mode-tabs" role="tablist" aria-label="Puzzel Race modus">
           <button class="race-mode-tab active" id="raceModeSoloTab" type="button" role="tab" aria-selected="true" onclick="switchRaceMode('solo')">Solo</button>
           <button class="race-mode-tab" id="raceModeOnlineTab" type="button" role="tab" aria-selected="false" onclick="switchRaceMode('online')">Play online</button>
-          <button class="race-mode-tab" id="raceModeFriendsTab" type="button" role="tab" aria-selected="false" onclick="switchRaceMode('friends')">Friends met code</button>
         </div>
 
         <section class="race-mode-panel" id="raceSoloSetup" role="tabpanel">
@@ -354,7 +353,7 @@
         <section class="race-mode-panel" id="raceOnlineSetup" role="tabpanel" style="display:none;">
           <div class="race-kicker">NETTO · PLAY ONLINE</div>
           <h2 class="race-mode-heading">Vind een tegenstander.</h2>
-          <p class="race-intro">Maak een open game voor iedereen, of gebruik Friends met code voor een besloten duel.</p>
+          <p class="race-intro">Zet de schakelaar op Open en je game verschijnt voor iedereen in de lijst rechts — of zet hem op Closed en deel je persoonlijke code.</p>
           <div class="race-online-layout">
             <div class="race-online-controls">
               <div class="race-config-card">
@@ -371,13 +370,18 @@
               </div>
               <div class="race-config-card">
                 <span class="race-config-label">Type game</span>
-                <div class="race-visibility-options">
-                  <button class="active" id="raceOpenVisibilityBtn" type="button" onclick="selectOnlineVisibility('open')">Open game</button>
-                  <button id="raceClosedVisibilityBtn" type="button" onclick="selectOnlineVisibility('closed')">Closed game</button>
+                <div class="race-visibility-row">
+                  <div class="race-visibility-copy">
+                    <b id="raceVisibilityTitle">Open game</b>
+                    <small id="raceVisibilitySub">Iedereen ziet jouw game in de lijst rechts en kan direct joinen.</small>
+                  </div>
+                  <label class="race-switch">
+                    <input type="checkbox" id="raceVisibilityCheckbox" checked onchange="toggleOnlineVisibility(this.checked)">
+                    <span class="race-switch-track"><span class="race-switch-thumb"></span></span>
+                  </label>
                 </div>
                 <div id="raceOpenControls">
                   <button class="btn-check race-online-create" type="button" onclick="createOpenRaceGame()">Maak open game →</button>
-                  <small>Andere spelers zien deze game rechts en kunnen direct joinen.</small>
                 </div>
                 <div id="raceClosedControls" style="display:none;">
                   <small>Een closed game werkt met een persoonlijke code en start nooit automatisch.</small>
@@ -386,7 +390,6 @@
                     <input type="text" id="raceOnlineJoinCode" maxlength="6" placeholder="CODE" autocomplete="off" aria-label="Closed room-code">
                     <button type="button" onclick="joinRaceRoom('raceOnlineJoinCode')">Join</button>
                   </div>
-                  <button class="race-link-button" type="button" onclick="switchRaceMode('friends')">Of naar Friends met code →</button>
                 </div>
               </div>
             </div>
@@ -397,36 +400,13 @@
           </div>
         </section>
 
-        <section class="race-mode-panel" id="raceFriendsSetup" role="tabpanel" style="display:none;">
-          <div class="race-kicker">NETTO · FRIENDS</div>
-          <h2 class="race-mode-heading">Speel met een code.</h2>
-          <p class="race-intro">Maak een gesloten duel en deel de code met je vriend. Alleen de host start het duel — er is geen automatische start.</p>
-          <div class="race-config-grid">
-            <div class="race-config-card">
-              <label for="raceFriendsSet">Vraagset</label>
-              <select id="raceFriendsSet" onchange="selectRaceModeSet('friends', this.value)"></select>
-            </div>
-            <div class="race-config-card">
-              <span class="race-config-label">Tijd</span>
-              <div class="race-duration-options" id="raceFriendsDurations">
-                <button type="button" data-duration="bullet" onclick="selectRaceDuration('friends', 'bullet')"><b>3 minuten</b><span>Bullet</span></button>
-                <button type="button" data-duration="snel" onclick="selectRaceDuration('friends', 'snel')"><b>5 minuten</b><span>Snel</span></button>
-                <button type="button" data-duration="blitz" onclick="selectRaceDuration('friends', 'blitz')"><b>10 minuten</b><span>Blitz</span></button>
-              </div>
-            </div>
-          </div>
-          <div class="race-duel-grid race-friends-actions">
-            <button class="race-duel-btn" type="button" onclick="createRaceRoom('closed')">⚔ <b>Maak gesloten game</b><span>krijg een code en deel die met je vriend</span></button>
-            <div class="race-duel-join">
-              <input type="text" id="raceJoinCode" maxlength="6" placeholder="CODE" autocomplete="off" aria-label="Room-code">
-              <button type="button" onclick="joinRaceRoom()">Join</button>
-            </div>
-          </div>
-          <div class="race-duel-note">Inloggen verplicht · dezelfde set en tijd voor beide spelers · handmatig starten</div>
-        </section>
 
         <div class="race-duel-room" id="raceDuelRoom" style="display:none;">
-          <div class="race-duel-code-row">
+          <div class="race-open-room-note" id="raceOpenRoomNote" style="display:none;">
+            <b>🌐 Open game actief</b>
+            <span>Jouw game staat in de lijst "Wie speelt er?" rechts. Andere spelers joinen direct — zodra er iemand binnen is, telt het duel automatisch af (of je start zelf).</span>
+          </div>
+          <div class="race-duel-code-row" id="raceDuelCodeRow">
             <div>
               <div class="race-duel-code-label">Room-code</div>
               <div class="race-duel-code" id="raceRoomCode">—</div>
@@ -799,7 +779,7 @@
     </div>
   </div>
 
-<script src="js/app.js?v=23"></script>
+<script src="js/app.js?v=25"></script>
 
 </body>
 </html>
