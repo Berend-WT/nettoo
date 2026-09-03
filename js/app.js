@@ -776,14 +776,16 @@
     if (currentUser) {
       document.getElementById('topbarUsername').textContent = currentUser.username || currentUser.email.split('@')[0];
       userBtn.classList.add('logged-in');
-      document.getElementById('sidebarAuthLabel').textContent = `Profiel (${currentUser.username || 'Speler'})`;
+      const sidebarAuthLabel = document.getElementById('sidebarAuthLabel');
+      if (sidebarAuthLabel) sidebarAuthLabel.textContent = `Profiel (${currentUser.username || 'Speler'})`;
       document.getElementById('profileUsername').textContent = currentUser.username || currentUser.email;
       document.getElementById('profileEmailSubtitle').textContent = currentUser.email;
       document.getElementById('cloudSyncBanner').style.display = 'none';
     } else {
       document.getElementById('topbarUsername').textContent = 'Inloggen';
       userBtn.classList.remove('logged-in');
-      document.getElementById('sidebarAuthLabel').textContent = 'Inloggen / Registreren';
+      const sidebarLabel = document.getElementById('sidebarAuthLabel');
+      if (sidebarLabel) sidebarLabel.textContent = 'Inloggen / Registreren';
     }
   }
 
