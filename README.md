@@ -21,9 +21,31 @@ Een quiz-puzzelgame waar je vragen uit een vragenbank (1.000+ vragen) combineert
 ├── netto_frontend_puzzles.js   ← puzzeldata voor de site (library + race + daily)
 ├── netto_breinkrakers.js       ← breinkrakers-puzzeldata
 ├── puzzles_embedded.js         ← dagpuzzels
+├── tools/sync_website.py       ← synchroniseert en controleert de website-kopie
 ├── vragen/                     ← vragenbank (xlsx) + duplicaten-review
 ├── puzzels/                    ← puzzelbanken (xlsx) + generatoren (maak_*.py)
-└── website/                    ← losse, zelfstandige kopie voor lokale tests
+└── website/                    ← gegenereerde, zelfstandige kopie voor lokale tests
+```
+
+## Frontendmodules
+
+`js/app.js` is alleen de bootstrap. De spellogica is per verantwoordelijkheid verdeeld:
+
+- `js/core.js` — configuratie, dagelijkse puzzel, scoring, accounts en navigatie;
+- `js/puzzle-modes.js` — generieke puzzelweergave, Library en Breinkrakers;
+- `js/race.js` — solo-race, themasets en online 1v1;
+- `js/submissions.js` — vraag- en puzzelinsturingen;
+- `js/library.js` — kaarten, archief, modals en algemene pagina-acties.
+
+De bestanden worden als gewone scripts in vaste volgorde geladen. Daardoor blijft de bestaande frontend zonder bundler werken.
+
+## Website-kopie synchroniseren
+
+Werk alleen in de project-root. Werk daarna de zelfstandige kopie bij en controleer hem:
+
+```bash
+python tools/sync_website.py
+python tools/sync_website.py --check
 ```
 
 ## Lokaal draaien

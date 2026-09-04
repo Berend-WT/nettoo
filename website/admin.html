@@ -1,0 +1,208 @@
+<!doctype html>
+<html lang="nl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Netto Admin</title>
+  <link rel="stylesheet" href="css/admin.css">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body>
+  <main class="admin-shell">
+    <section id="authView" class="panel auth-panel" hidden>
+      <p class="eyebrow">NETTO / ADMIN</p>
+      <h1>Admin login</h1>
+      <p class="muted-dark">Log in met je Supabase-account. Alleen een account dat in <code>admin_users</code> staat krijgt toegang.</p>
+      <form id="loginForm">
+        <label for="email">E-mailadres</label>
+        <input id="email" type="email" autocomplete="username" required>
+        <label for="password">Wachtwoord</label>
+        <input id="password" type="password" autocomplete="current-password" required>
+        <button type="submit">Inloggen</button>
+      </form>
+      <button id="forgotButton" class="link-button" type="button">Wachtwoord vergeten?</button>
+      <form id="forgotForm" hidden>
+        <label for="resetEmail">E-mailadres voor reset</label>
+        <input id="resetEmail" type="email" autocomplete="email" required>
+        <button type="submit">Resetlink sturen</button>
+      </form>
+      <form id="newPasswordForm" hidden>
+        <h2>Nieuw wachtwoord</h2>
+        <label for="newPassword">Nieuw wachtwoord</label>
+        <input id="newPassword" type="password" minlength="8" autocomplete="new-password" required>
+        <label for="confirmPassword">Herhaal wachtwoord</label>
+        <input id="confirmPassword" type="password" minlength="8" autocomplete="new-password" required>
+        <button type="submit">Opslaan</button>
+      </form>
+      <p id="authMessage" class="message" role="alert"></p>
+    </section>
+
+    <section id="dashboardView">
+      <header class="dashboard-header">
+        <div><p class="eyebrow">NETTO / ADMIN</p><h1>Dashboard</h1><p id="identity"></p></div>
+        <button id="logoutButton" class="secondary" type="button">Uitloggen</button>
+      </header>
+      <p id="dashboardMessage" class="message" role="alert"></p>
+      <section class="metric-grid">
+        <article class="metric"><span>Daily puzzles</span><strong id="dailyCount">—</strong></article>
+        <article class="metric"><span>Library puzzles</span><strong id="libraryCount">—</strong></article>
+        <article class="metric"><span>Users</span><strong id="userCount">—</strong></article>
+        <article class="metric"><span>User plays</span><strong id="playCount">—</strong></article>
+        <article class="metric"><span>Nieuwe reviews</span><strong id="reviewCount">—</strong></article>
+        <article class="metric"><span>Login events</span><strong id="loginCount">—</strong></article>
+      </section>
+
+      <section class="panel" id="reviewPanel">
+        <h2>Vraag- &amp; puzzel-review</h2>
+        <p class="muted-dark">Inzendingen van spelers. Accepteren of weigeren stuurt automatisch een melding naar de speler. Fouten in de berekening zie je direct.</p>
+        <div class="review-filter" id="reviewFilter">
+          <button type="button" class="review-filter-btn is-active" data-status="nieuw">Nieuw</button>
+          <button type="button" class="review-filter-btn" data-status="geaccepteerd">Geaccepteerd</button>
+          <button type="button" class="review-filter-btn" data-status="geweigerd">Geweigerd</button>
+        </div>
+        <div id="reviewList" class="review-list"><p class="muted-dark">Laden…</p></div>
+      </section>
+
+      <section class="panel"><h2>Status</h2><p class="muted-dark">Dit dashboard leest alleen gegevens waarvoor jouw Supabase-tabellen en RLS-policies toegang geven. Een ontbrekende optionele tabel wordt als een streepje getoond.</p></section>
+    </section>
+  </main>
+<script>
+(() => {
+  const SUPABASE_URL = 'https://bqatnnouxkjdzvvhqbly.supabase.co';
+  const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJxYXRubm91eGtqZHp2dmhxYmx5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODc4MzMwMDAsImV4cCI6MjEwMzQwOTAwMH0.KtjxuC3gyixJjQqKpwPd1b7wzg0VPbm-_EgeUc9iZAI';
+  const $ = id => document.getElementById(id);
+  const client = SUPABASE_ANON_KEY.startsWith('eyJ') ? window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY) : null;
+  const setMessage = (id, text, error = false) => { const el = $(id); el.textContent = text || ''; el.classList.toggle('error', error); };
+  const showAuth = () => { $('authView').hidden = false; $('dashboardView').hidden = true; };
+  const showDashboard = () => { $('authView').hidden = true; $('dashboardView').hidden = false; };
+
+  let currentReviewStatus = 'nieuw';
+
+  async function requireAdmin(user) {
+    if (!client) return;
+    const { data, error } = await client.from('admin_users').select('user_id').eq('user_id', user.id).maybeSingle();
+    if (error) throw new Error('Admincontrole mislukt: ' + error.message);
+    if (!data) throw new Error('Dit account staat niet in admin_users.');
+  }
+  async function tableCount(table) {
+    const { count, error } = await client.from(table).select('*', { count: 'exact', head: true });
+    return error ? null : count;
+  }
+
+  // ===== Review: inzendingen laden, renderen en beoordelen =====
+  const esc = v => String(v ?? '').replace(/[&<>"']/g, c => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[c]));
+  const fmt = n => (n === null || n === undefined) ? '?' : Number(n).toLocaleString('nl-NL');
+
+  function submissionCalc(row) {
+    if (row.type === 'puzzel') {
+      const op = row.operator || '×';
+      const expected = op === '×' ? row.a1 * row.a2 : op === '÷' ? row.a1 / row.a2 : op === '+' ? row.a1 + row.a2 : row.a1 - row.a2;
+      const exact = Number.isInteger(expected) && Math.abs(expected - Number(row.a3)) < 1e-9;
+      return { text: `${fmt(row.a1)} ${op} ${fmt(row.a2)} = ${fmt(row.a3)}`, exact, expected: fmt(expected) };
+    }
+    return { text: null, exact: true, expected: null };
+  }
+
+  function renderSubmission(row) {
+    const calc = submissionCalc(row);
+    const date = row.created_at ? new Date(row.created_at).toLocaleString('nl-NL', { dateStyle: 'short', timeStyle: 'short' }) : '';
+    const isNieuw = row.status === 'nieuw';
+    const calcHtml = calc.text
+      ? `<span class="review-calc ${calc.exact ? 'ok' : 'bad'}">${esc(calc.text)}${calc.exact ? ' ✓' : ` ✗ (moet ${calc.expected} zijn)`}</span>`
+      : '<span class="review-calc none">losse vraag · antwoord ' + (row.a1 !== null && row.a1 !== undefined ? esc(fmt(row.a1)) : 'onbekend') + '</span>';
+    const answerHtml = row.type !== 'puzzel' && (row.a1 === null || row.a1 === undefined)
+      ? '<p class="review-warning">⚠ Antwoord ontbreekt — zoek het zelf uit voor acceptatie.</p>'
+      : '';
+    const actions = isNieuw
+      ? `<div class="review-actions">
+           <button type="button" class="review-btn accept" onclick="reviewSubmission(${row.id},'geaccepteerd')">✓ Accepteren</button>
+           <button type="button" class="review-btn deny" onclick="reviewSubmission(${row.id},'geweigerd')">✕ Weigeren</button>
+         </div>`
+      : `<div class="review-actions"><span class="review-status ${row.status === 'geaccepteerd' ? 'acc' : 'den'}">${row.status}</span></div>`;
+    return `<article class="review-card">
+      <div class="review-head">
+        <span class="review-type">${row.type === 'puzzel' ? '🧩 Puzzel' : '❓ Vraag'}</span>
+        <span class="review-meta">${esc(row.username || 'anoniem')} · ${date}</span>
+      </div>
+      <ol class="review-questions">
+        <li><b>${esc(row.q1)}</b>${row.a1 !== null && row.a1 !== undefined ? ` — <b>${esc(fmt(row.a1))}</b>` : ''}</li>
+        ${row.q2 ? `<li><b>${esc(row.q2)}</b> — <b>${esc(fmt(row.a2))}</b></li>` : ''}
+        ${row.q3 ? `<li><b>${esc(row.q3)}</b> — <b>${esc(fmt(row.a3))}</b></li>` : ''}
+      </ol>
+      ${calcHtml}
+      ${answerHtml}
+      ${row.note ? `<p class="review-note">💬 ${esc(row.note)}</p>` : ''}
+      ${actions}
+    </article>`;
+  }
+
+  async function loadSubmissions() {
+    const list = $('reviewList');
+    if (!client) { list.innerHTML = '<p class="muted-dark">Supabase-key ontbreekt in admin.html.</p>'; return; }
+    try {
+      let query = client.from('question_submissions').select('*').order('created_at', { ascending: false }).limit(100);
+      if (currentReviewStatus) query = query.eq('status', currentReviewStatus);
+      const { data, error } = await query;
+      if (error) throw error;
+      if (!data || !data.length) { list.innerHTML = `<p class="muted-dark">Geen ${currentReviewStatus}-inzendingen.</p>`; return; }
+      list.innerHTML = data.map(renderSubmission).join('');
+    } catch (err) {
+      list.innerHTML = `<p class="muted-dark">Kon niet laden: ${esc(err.message)}. Draai eerst sectie 3–5 van supabase/schema.sql.</p>`;
+    }
+  }
+
+  async function reviewSubmission(id, status) {
+    if (!client) return;
+    const verb = status === 'geaccepteerd' ? 'accepteren' : 'weigeren';
+    if (!confirm(`Inzending #${id} ${verb}? De speler krijgt hier automatisch een melding van.`)) return;
+    const { error } = await client.rpc('admin_review_submission', { p_id: id, p_status: status });
+    setMessage('dashboardMessage', error ? 'Fout: ' + error.message : `Inzending #${id} ${status}. Speler is op de hoogte gebracht.`, !!error);
+    if (!error) await loadSubmissions();
+  }
+  window.reviewSubmission = reviewSubmission;
+
+  $('reviewFilter').addEventListener('click', event => {
+    const btn = event.target.closest('.review-filter-btn');
+    if (!btn) return;
+    currentReviewStatus = btn.dataset.status;
+    document.querySelectorAll('.review-filter-btn').forEach(b => b.classList.toggle('is-active', b === btn));
+    loadSubmissions();
+  });
+
+  async function loadDashboard(user) {
+    await requireAdmin(user);
+    showDashboard(); $('identity').textContent = user.email || user.id;
+    if (!client) { ['dailyCount','libraryCount','userCount','playCount','reviewCount','loginCount'].forEach(id => $(id).textContent = '—'); return; }
+    const [daily, library, users, plays, reviews, logins] = await Promise.all(['puzzles','library_puzzles','profiles','user_plays','question_submissions','login_events'].map(tableCount));
+    const { data: playerRows, error } = await client.from('user_plays').select('user_id');
+    const unique = error ? null : new Set((playerRows || []).map(row => row.user_id)).size;
+    [$('dailyCount'),$('libraryCount'),$('userCount'),$('playCount'),$('reviewCount'),$('loginCount')].forEach((el,i) => el.textContent = [daily,library,users,plays,reviews,logins][i] ?? '—');
+    loadSubmissions();
+  }
+
+  $('loginForm').addEventListener('submit', async event => {
+    event.preventDefault(); setMessage('authMessage','');
+    const { data, error } = await client.auth.signInWithPassword({ email: $('email').value.trim(), password: $('password').value });
+    if (error) { setMessage('authMessage', error.message, true); return; }
+    try { await loadDashboard(data.user); } catch (err) { await client.auth.signOut(); setMessage('authMessage', err.message, true); }
+  });
+  $('forgotButton').addEventListener('click', () => { $('forgotForm').hidden = !$('forgotForm').hidden; $('resetEmail').value = $('email').value; });
+  $('forgotForm').addEventListener('submit', async event => {
+    event.preventDefault(); setMessage('authMessage','');
+    const { error } = await client.auth.resetPasswordForEmail($('resetEmail').value.trim(), { redirectTo: window.location.href.split('#')[0] });
+    setMessage('authMessage', error ? error.message : 'Resetlink verstuurd. Controleer je e-mail.');
+  });
+  $('newPasswordForm').addEventListener('submit', async event => {
+    event.preventDefault();
+    if ($('newPassword').value !== $('confirmPassword').value) { setMessage('authMessage','De wachtwoorden komen niet overeen.',true); return; }
+    const { error } = await client.auth.updateUser({ password: $('newPassword').value });
+    if (error) { setMessage('authMessage',error.message,true); return; }
+    $('newPasswordForm').hidden = true; $('loginForm').hidden = false; $('forgotButton').hidden = false; setMessage('authMessage','Wachtwoord gewijzigd. Log opnieuw in.');
+  });
+  $('logoutButton').addEventListener('click', async () => { await client.auth.signOut(); showAuth(); setMessage('authMessage','Uitgelogd.'); });
+  client?.auth.onAuthStateChange((event) => { if (event === 'PASSWORD_RECOVERY') { $('loginForm').hidden = true; $('forgotButton').hidden = true; $('forgotForm').hidden = true; $('newPasswordForm').hidden = false; } });
+  client?.auth.getSession().then(async ({ data }) => { if (!data.session) { showAuth(); return; } try { await loadDashboard(data.session.user); } catch (err) { await client.auth.signOut(); setMessage('authMessage', err.message, true); } });
+})();
+</script>
+</body>
+</html>
