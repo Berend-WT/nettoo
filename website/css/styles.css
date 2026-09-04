@@ -240,17 +240,31 @@
   .hero-cta:active { transform: translateY(0); box-shadow: 0 4px 12px rgba(244,184,96,0.28); }
   .hero-cta svg { width: 18px; height: 18px; stroke: var(--bg-dark); }
   .hero-meta { margin-top: 22px; font-family: 'JetBrains Mono', monospace; font-size: 12px; color: #A9AEEF; }
-  .hero-carousel { position:relative; min-height:350px; }
-  .hero-slide { display:none; animation:heroSlideIn .35s ease; }
-  .hero-slide.active { display:block; }
+  .hero-carousel { position:relative; display:grid; grid-template-columns:minmax(0,1fr); min-height:350px; padding-bottom:26px; }
+  .hero-slide {
+    grid-area:1 / 1; display:flex; width:100%; flex-direction:column; align-items:center;
+    visibility:hidden; opacity:0; pointer-events:none;
+  }
+  .hero-slide.active { visibility:visible; opacity:1; pointer-events:auto; animation:heroSlideIn .35s ease; }
   .hero-carousel-arrow { position:absolute; top:50%; transform:translateY(-50%); width:42px; height:42px; border:0; border-radius:50%; background:rgba(255,255,255,.9); color:var(--bg-dark); cursor:pointer; font:700 20px 'JetBrains Mono',monospace; box-shadow:0 5px 15px rgba(0,0,0,.18); }
   .hero-carousel-arrow.prev { left:-64px; }
   .hero-carousel-arrow.next { right:-64px; }
-  .hero-dots { display:flex; justify-content:center; gap:7px; margin-top:18px; }
+  .hero-dots { position:absolute; right:0; bottom:0; left:0; display:flex; justify-content:center; gap:7px; margin:0; }
   .hero-dot { width:8px; height:8px; border:0; padding:0; border-radius:50%; background:#A9AEEF; cursor:pointer; }
   .hero-dot.active { background:var(--accent); transform:scale(1.25); }
   @keyframes heroSlideIn { from { opacity:0; transform:translateX(18px); } to { opacity:1; transform:translateX(0); } }
   @media(max-width:760px){.hero-carousel-arrow.prev{left:0}.hero-carousel-arrow.next{right:0}.hero-inner{padding:0 44px}}
+  @media(max-width:560px){
+    .screen-home { padding-top:94px; }
+    .hero-carousel { min-height:356px; padding-bottom:22px; }
+    .hero-eyebrow { margin-bottom:10px; font-size:10px; }
+    .hero-headline { font-size:34px; }
+    .hero-headline .script { font-size:44px; }
+    .hero-sub { margin:14px auto 18px; line-height:1.4; }
+    .hero-cta { padding:13px 20px; font-size:15px; }
+    .hero-meta { margin-top:12px; }
+    .home-modes { margin-top:24px; }
+  }
 
   /* -- Scherm 2: Puzzel -- */
   .inner { max-width: 620px; width: 100%; }
