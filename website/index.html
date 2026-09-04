@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="nl">
+<html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -25,7 +25,9 @@
 <script src="netto_race_sets.js?v=27"></script>
 <script src="netto_race_pool.js?v=27"></script>
 <script src="netto_breinkrakers.js?v=27"></script>
-<link rel="stylesheet" href="css/styles.css?v=27">
+<script src="netto_translations_en.js?v=34"></script>
+<script src="js/i18n.js?v=34"></script>
+<link rel="stylesheet" href="css/styles.css?v=34">
 
 </head>
 <body>
@@ -548,6 +550,20 @@
         <h1 class="race-title">Set<span class="script">tings.</span></h1>
 
         <div class="settings-section">
+          <h2 class="settings-heading">Taal</h2>
+          <div class="settings-row settings-language-row">
+            <div class="settings-row-text">
+              <b>Website-taal</b>
+              <span>Kies Engels of Nederlands. Je keuze wordt op dit apparaat onthouden.</span>
+            </div>
+            <div class="language-selector" role="radiogroup" aria-label="Website-taal">
+              <button type="button" data-language="en" role="radio" aria-checked="false" onclick="NettoI18n.setLanguage('en')">English</button>
+              <button type="button" data-language="nl" role="radio" aria-checked="false" onclick="NettoI18n.setLanguage('nl')">Nederlands</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="settings-section">
           <h2 class="settings-heading">Uiterlijk</h2>
           <div class="settings-row">
             <div class="settings-row-text">
@@ -814,12 +830,12 @@
   </div>
 
 <!-- De volgorde is bewust: modules delen de bestaande classic-script scope. -->
-<script src="js/core.js?v=33"></script>
-<script src="js/puzzle-modes.js?v=33"></script>
-<script src="js/race.js?v=33"></script>
-<script src="js/submissions.js?v=33"></script>
-<script src="js/library.js?v=33"></script>
-<script src="js/app.js?v=33"></script>
+<script src="js/core.js?v=34"></script>
+<script src="js/puzzle-modes.js?v=34"></script>
+<script src="js/race.js?v=34"></script>
+<script src="js/submissions.js?v=34"></script>
+<script src="js/library.js?v=34"></script>
+<script src="js/app.js?v=34"></script>
 
 </body>
 </html>

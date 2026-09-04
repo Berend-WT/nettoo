@@ -71,7 +71,7 @@ function renderLibraryStats() {
       const puzzleDate = p.date ? new Date(`${p.date}T00:00:00`) : new Date(selectedYear, selectedMonth - 1, Math.min(idx + 1, monthDays));
       const play = plays[p.date || `puzzle_${p.number || idx + 1}`];
       const row = document.createElement('div'); row.className = 'daily-archive-row';
-      const dateLabel = new Intl.DateTimeFormat('nl-NL', { day:'numeric', month:'long' }).format(puzzleDate);
+      const dateLabel = new Intl.DateTimeFormat(nettoNumberLocale(), { day:'numeric', month:'long' }).format(puzzleDate);
       row.innerHTML = `<span class="archive-number">${String(p.number || idx + 1).padStart(3,'0')}</span><div><div class="archive-name">${p.name || `Daily Puzzle #${p.number || idx + 1}`}</div><div class="archive-date">${dateLabel}</div></div><span class="archive-score" style="color:${play ? scoreColor(play.factor) : '#92959D'}">${play ? play.factor.toFixed(2)+'×' : '—'}</span><span class="archive-status ${play ? 'complete' : ''}">${play ? 'COMPLETE ✓' : 'PLAY →'}</span>`;
       row.onclick = () => { dailyArchivePuzzleView = true; activePuzzleIndex = DAILY_PUZZLES.indexOf(p); PUZZLE_DATA = p; loadActivePuzzle(); closeLibraryScreen(); showScreen('puzzle'); };
       list.appendChild(row);

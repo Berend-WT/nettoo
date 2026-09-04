@@ -6,6 +6,7 @@
   // =========================================================================
   let calculatorExpression = '';
   const CALC_OPENED_KEY = 'netto_calc_opened';
+  function nettoNumberLocale() { return window.NettoI18n?.locale() === 'nl' ? 'nl-NL' : 'en-GB'; }
   function toggleCalculator(open) {
     const calc = document.getElementById('calculator');
     calc.classList.toggle('open', open);
@@ -22,11 +23,12 @@
     if (toggle) toggle.style.padding = localStorage.getItem(CALC_OPENED_KEY) ? '10px' : '10px 18px';
   }
   function formatCalculatorNumber(value) {
-    if (!value || value === 'Fout') return value || '0';
+    if (!value || value === 'Fout' || value === 'Error') return value || '0';
     return value.replace(/\d+(?:\.\d+)?/g, (part) => {
       const [whole, decimal] = part.split('.');
-      const formatted = Number(whole).toLocaleString('nl-NL');
-      return decimal === undefined ? formatted : `${formatted},${decimal}`;
+      const formatted = Number(whole).toLocaleString(nettoNumberLocale());
+      const separator = window.NettoI18n?.locale() === 'nl' ? ',' : '.';
+      return decimal === undefined ? formatted : `${formatted}${separator}${decimal}`;
     });
   }
 
@@ -56,7 +58,7 @@
       calculatorExpression = String(Number(result.toFixed(10)));
       updateCalculatorDisplay();
     } catch (error) {
-      document.getElementById('calculatorDisplay').value = 'Fout';
+      document.getElementById('calculatorDisplay').value = window.NettoI18n?.locale() === 'nl' ? 'Fout' : 'Error';
       calculatorExpression = '';
     }
   }
@@ -433,10 +435,10 @@
       const played = playedDates.has(key);
       const isToday = key === todayKey;
       const isFuture = date > new Date(today.getFullYear(), today.getMonth(), today.getDate());
-      const label = new Intl.DateTimeFormat('nl-NL', { weekday:'long', day:'numeric', month:'long', year:'numeric' }).format(date);
+      const label = new Intl.DateTimeFormat(nettoNumberLocale(), { weekday:'long', day:'numeric', month:'long', year:'numeric' }).format(date);
       cells.push(`<span class="streak-calendar-day${played ? ' is-played' : ''}${isToday ? ' is-today' : ''}${isFuture ? ' is-future' : ''}" role="gridcell" aria-label="${label}${played ? ', daily gespeeld' : ', niet gespeeld'}" title="${played ? 'Daily gespeeld' : 'Niet gespeeld'}">${day}</span>`);
     }
-    monthLabel.textContent = new Intl.DateTimeFormat('nl-NL', { month:'long', year:'numeric' }).format(streakCalendarDate);
+    monthLabel.textContent = new Intl.DateTimeFormat(nettoNumberLocale(), { month:'long', year:'numeric' }).format(streakCalendarDate);
     grid.innerHTML = cells.join('');
     const currentMonth = new Date(today.getFullYear(), today.getMonth(), 1);
     document.getElementById('streakCalendarNext').disabled = streakCalendarDate >= currentMonth;
@@ -493,20 +495,24 @@
   // 3. LIVE DUIZENDTAL-FORMATTERING & SARCASTISCHE TOASTS
   // =========================================================================
   function formatDutchNumber(str) {
-    // Alleen cijfers en eventueel één komma
-    let clean = str.replace(/[^\d,]/g, '');
-    let parts = clean.split(',');
+    const isDutch = window.NettoI18n?.locale() === 'nl';
+    const decimalMark = isDutch ? ',' : '.';
+    const groupMark = isDutch ? '.' : ',';
+    const cleanPattern = isDutch ? /[^\d,]/g : /[^\d.]/g;
+    let clean = str.replace(cleanPattern, '');
+    let parts = clean.split(decimalMark);
     let whole = parts[0].replace(/^0+(?=\d)/, ''); // Remove leading zeros
     if (whole === '') whole = '0';
-    
-    // Voeg punten toe voor duizendtallen
-    let formattedWhole = whole.replace(/\B(?=(\d{3})+(?!\d))/g, ".");
-    return parts.length > 1 ? `${formattedWhole},${parts[1].slice(0, 2)}` : formattedWhole;
+
+    let formattedWhole = whole.replace(/\B(?=(\d{3})+(?!\d))/g, groupMark);
+    return parts.length > 1 ? `${formattedWhole}${decimalMark}${parts[1].slice(0, 2)}` : formattedWhole;
   }
 
   function parseFormattedNumber(str) {
     if (!str) return NaN;
-    let clean = str.replace(/\./g, '').replace(',', '.');
+    const clean = window.NettoI18n?.locale() === 'nl'
+      ? str.replace(/\./g, '').replace(',', '.')
+      : str.replace(/,/g, '');
     return parseFloat(clean);
   }
 
@@ -727,7 +733,7 @@
 
   function fmt(n) {
     if (n === null || n === undefined || isNaN(Number(n))) return '';
-    return Number(n).toLocaleString('nl-NL');
+    return Number(n).toLocaleString(nettoNumberLocale());
   }
 
   function getFactorRating(factor) {
@@ -1470,7 +1476,7 @@
   let archiveMonth = { year: 2026, month: 8 };
   let heroSlideIndex = 0;
   let heroSlideTimer = null;
-  function monthLabel(month) { return new Intl.DateTimeFormat('nl-NL', { month:'long', year:'numeric' }).format(new Date(archiveMonth.year, month - 1, 1)); }
+  function monthLabel(month) { return new Intl.DateTimeFormat(nettoNumberLocale(), { month:'long', year:'numeric' }).format(new Date(archiveMonth.year, month - 1, 1)); }
   function changeArchiveMonth(delta) {
     const next = new Date(archiveMonth.year, archiveMonth.month - 1 + delta, 1);
     const active = new Date(2026, 7, 1);

@@ -1,11 +1,13 @@
 <!doctype html>
-<html lang="nl">
+<html lang="en">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <title>Netto Admin</title>
   <link rel="stylesheet" href="css/admin.css">
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="netto_translations_en.js?v=34"></script>
+  <script src="js/i18n.js?v=34"></script>
 </head>
 <body>
   <main class="admin-shell">
@@ -91,7 +93,8 @@
 
   // ===== Review: inzendingen laden, renderen en beoordelen =====
   const esc = v => String(v ?? '').replace(/[&<>"']/g, c => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[c]));
-  const fmt = n => (n === null || n === undefined) ? '?' : Number(n).toLocaleString('nl-NL');
+  const currentLocale = () => window.NettoI18n?.locale() === 'nl' ? 'nl-NL' : 'en-GB';
+  const fmt = n => (n === null || n === undefined) ? '?' : Number(n).toLocaleString(currentLocale());
 
   function submissionCalc(row) {
     if (row.type === 'puzzel') {
@@ -105,7 +108,7 @@
 
   function renderSubmission(row) {
     const calc = submissionCalc(row);
-    const date = row.created_at ? new Date(row.created_at).toLocaleString('nl-NL', { dateStyle: 'short', timeStyle: 'short' }) : '';
+    const date = row.created_at ? new Date(row.created_at).toLocaleString(currentLocale(), { dateStyle: 'short', timeStyle: 'short' }) : '';
     const isNieuw = row.status === 'nieuw';
     const calcHtml = calc.text
       ? `<span class="review-calc ${calc.exact ? 'ok' : 'bad'}">${esc(calc.text)}${calc.exact ? ' ✓' : ` ✗ (moet ${calc.expected} zijn)`}</span>`
