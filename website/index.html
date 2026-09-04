@@ -26,8 +26,8 @@
 <script src="netto_race_pool.js?v=27"></script>
 <script src="netto_breinkrakers.js?v=27"></script>
 <script src="netto_translations_en.js?v=34"></script>
-<script src="js/i18n.js?v=35"></script>
-<link rel="stylesheet" href="css/styles.css?v=35">
+<script src="js/i18n.js?v=36"></script>
+<link rel="stylesheet" href="css/styles.css?v=36">
 
 </head>
 <body>
@@ -111,62 +111,72 @@
   <!-- ============ SCHERM 1: HOME ============ -->
   <main class="screen screen-home active" id="screen-home">
     <div class="home-content">
-    <div class="hero-inner hero-carousel" id="heroCarousel">
-      <button class="hero-carousel-arrow prev" type="button" onclick="changeHeroSlide(-1)" aria-label="Vorige slide">←</button>
-      <section class="hero-slide active" data-slide="0">
-        <div class="hero-eyebrow">Netto · dagelijkse schatting</div>
-        <h1 class="hero-headline">Drie vragen.<br><span class="script">Eén verband.</span></h1>
-        <p class="hero-sub">Schat drie feiten. De derde volgt uit de eerste twee — weet je er één goed, dan kun je de rest afleiden. Elke dag een nieuwe puzzel.</p>
-        <button class="hero-cta" id="btnStartPuzzle" onclick="showScreen('puzzle')">Start dagelijkse puzzel <svg viewBox="0 0 24 24" fill="none" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button>
-        <div class="hero-meta" id="heroDateMeta">Nr. 032 · 28 augustus 2026</div>
-      </section>
-      <section class="hero-slide" data-slide="1">
-        <div class="hero-eyebrow">Netto · speel verder</div>
-        <h1 class="hero-headline">Nog één <span class="script">puzzel.</span></h1>
-        <p class="hero-sub">Ga verder waar je gebleven was en ontdek of je schatting nog scherper kan.</p>
-        <button class="hero-cta" id="btnContinuePuzzle" type="button" onclick="startNextPuzzle()">Speel puzzel 1 →</button>
-      </section>
-      <section class="hero-slide" data-slide="2">
-        <div class="hero-eyebrow">Netto · voor nieuwsgierige mensen</div>
-        <h1 class="hero-headline">Duik in de <span class="script">Library.</span></h1>
-        <p class="hero-sub">Doorzoek categorieën, operators en difficulties en vind jouw volgende uitdaging.</p>
-        <button class="hero-cta" type="button" onclick="openPremiumLibrary()">Open Library →</button>
-      </section>
-      <button class="hero-carousel-arrow next" type="button" onclick="changeHeroSlide(1)" aria-label="Volgende slide">→</button>
-      <div class="hero-dots" aria-label="Landing slides"><button class="hero-dot active" onclick="setHeroSlide(0)"></button><button class="hero-dot" onclick="setHeroSlide(1)"></button><button class="hero-dot" onclick="setHeroSlide(2)"></button></div>
-    </div>
+      <div class="home-landing-grid">
+        <section class="home-daily-card" aria-labelledby="homeDailyTitle">
+          <div class="home-daily-topline">
+            <span class="home-section-label">De Daily</span>
+            <span class="hero-meta" id="heroDateMeta">Nr. 032 · 28 augustus 2026</span>
+          </div>
+          <div class="home-daily-copy">
+            <h1 class="hero-headline" id="homeDailyTitle">Drie vragen.<br><span>Eén verband.</span></h1>
+            <p class="hero-sub">Schat drie feiten. Gebruik het verband om slimmer te spelen.</p>
+          </div>
+          <div class="home-equation" aria-hidden="true">
+            <span>?</span><b>×</b><span>?</span><b>=</b><span class="result">?</span>
+          </div>
+          <button class="hero-cta" id="btnStartPuzzle" onclick="showScreen('puzzle')">
+            <span>Speel de Daily</span>
+            <svg viewBox="0 0 24 24" fill="none" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+          </button>
+        </section>
 
-    <!-- Modus-knoppen: hieronder scrollen -->
-    <div class="home-modes">
-      <div class="home-modes-title">Kies je modus</div>
+        <aside class="home-quick-actions" aria-label="Snel verder">
+          <button class="home-quick-card home-quick-continue" id="btnContinuePuzzle" type="button" onclick="startNextPuzzle()">
+            <span class="home-section-label">Ga verder</span>
+            <strong>Speel puzzel 1</strong>
+            <span class="home-quick-detail">Ga verder waar je gebleven was</span>
+            <span class="home-quick-arrow" aria-hidden="true">↗</span>
+          </button>
+          <button class="home-quick-card home-quick-library" type="button" onclick="openPremiumLibrary()">
+            <span class="home-section-label">Library</span>
+            <strong>Vind je volgende uitdaging</strong>
+            <span class="home-quick-detail">Zoek op categorie, operator en niveau</span>
+            <span class="home-quick-arrow" aria-hidden="true">↗</span>
+          </button>
+        </aside>
+      </div>
+
+    <section class="home-modes" aria-labelledby="homeModesTitle">
+      <div class="home-modes-heading">
+        <div>
+          <span class="home-section-label">Ontdek Netto</span>
+          <h2 id="homeModesTitle">Meer manieren om te spelen</h2>
+        </div>
+        <button class="home-how-link" type="button" onclick="openHowItWorks()">Hoe werkt het? <span aria-hidden="true">→</span></button>
+      </div>
       <div class="home-modes-grid">
-        <button class="home-mode-card" onclick="openHowItWorks()">
-          <span class="home-mode-icon">❓</span>
-          <span class="home-mode-body"><b>Hoe werkt het?</b><small>Uitleg van feit-trio's, de wiskunde-twist en de multiplier</small></span>
-          <span class="home-mode-arrow">→</span>
-        </button>
         <button class="home-mode-card" onclick="openPuzzles()">
-          <span class="home-mode-icon">🧩</span>
+          <span class="home-mode-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><path d="M14 17.5h7M17.5 14v7"/></svg></span>
           <span class="home-mode-body"><b>Puzzels</b><small>Kies een moeilijkheid en speel alle puzzels</small></span>
           <span class="home-mode-arrow">→</span>
         </button>
         <button class="home-mode-card" onclick="openPuzzleRace()">
-          <span class="home-mode-icon">⏱️</span>
+          <span class="home-mode-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l3 2M9 2h6M12 5V2"/></svg></span>
           <span class="home-mode-body"><b>Puzzel Race</b><small>Solo, online of met vrienden</small></span>
           <span class="home-mode-arrow">→</span>
         </button>
         <button class="home-mode-card" onclick="openBreinkrakers()">
-          <span class="home-mode-icon">🧠</span>
+          <span class="home-mode-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9.5 4.5A3.5 3.5 0 0 0 6 8v.4A3.5 3.5 0 0 0 4 15a3.5 3.5 0 0 0 5.5 3M14.5 4.5A3.5 3.5 0 0 1 18 8v.4a3.5 3.5 0 0 1 2 6.6 3.5 3.5 0 0 1-5.5 3M9.5 4.5v15M14.5 4.5v15M9.5 9H7.8M14.5 14h1.7"/></svg></span>
           <span class="home-mode-body"><b>Breinkrakers</b><small>4 vragen in één formule</small></span>
           <span class="home-mode-arrow">→</span>
         </button>
         <button class="home-mode-card" onclick="openDailyPuzzles()">
-          <span class="home-mode-icon">📅</span>
+          <span class="home-mode-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M8 3v4M16 3v4M3 10h18M8 14h.01M12 14h.01M16 14h.01M8 18h.01M12 18h.01"/></svg></span>
           <span class="home-mode-body"><b>Daily Archive</b><small>Alle dagpuzzels sinds dag één</small></span>
           <span class="home-mode-arrow">→</span>
         </button>
       </div>
-    </div>
+    </section>
     </div>
   </main>
 
@@ -830,11 +840,11 @@
   </div>
 
 <!-- De volgorde is bewust: modules delen de bestaande classic-script scope. -->
-<script src="js/core.js?v=34"></script>
+<script src="js/core.js?v=36"></script>
 <script src="js/puzzle-modes.js?v=34"></script>
 <script src="js/race.js?v=34"></script>
 <script src="js/submissions.js?v=34"></script>
-<script src="js/library.js?v=34"></script>
+<script src="js/library.js?v=36"></script>
 <script src="js/app.js?v=34"></script>
 
 </body>

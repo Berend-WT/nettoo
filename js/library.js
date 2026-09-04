@@ -280,8 +280,6 @@ function renderLibraryStats() {
   window.changeArchiveMonth = changeArchiveMonth;
   window.showDailyResults = showDailyResults;
   window.showDailyQuestions = showDailyQuestions;
-  window.changeHeroSlide = changeHeroSlide;
-  window.setHeroSlide = setHeroSlide;
   window.startNextPuzzle = startNextPuzzle;
   window.openDailyPuzzles = openDailyPuzzles;
   window.openPuzzles = openPuzzles;

@@ -370,7 +370,6 @@
       });
       checkExistingPlay();
       updateContinuePuzzleButton();
-      startHeroSlideshow();
     } catch(err) {
       console.error("Fout tijdens initApp:", err);
     }
@@ -1474,8 +1473,6 @@
   }
 
   let archiveMonth = { year: 2026, month: 8 };
-  let heroSlideIndex = 0;
-  let heroSlideTimer = null;
   function monthLabel(month) { return new Intl.DateTimeFormat(nettoNumberLocale(), { month:'long', year:'numeric' }).format(new Date(archiveMonth.year, month - 1, 1)); }
   function changeArchiveMonth(delta) {
     const next = new Date(archiveMonth.year, archiveMonth.month - 1 + delta, 1);
@@ -1484,14 +1481,6 @@
     archiveMonth = { year: next.getFullYear(), month: next.getMonth() + 1 };
     renderDailyArchive();
   }
-  function setHeroSlide(index, resetTimer = true) {
-    heroSlideIndex = (index + 3) % 3;
-    document.querySelectorAll('.hero-slide').forEach((slide, i) => slide.classList.toggle('active', i === heroSlideIndex));
-    document.querySelectorAll('.hero-dot').forEach((dot, i) => dot.classList.toggle('active', i === heroSlideIndex));
-    if (resetTimer) startHeroSlideshow();
-  }
-  function changeHeroSlide(delta) { setHeroSlide(heroSlideIndex + delta); }
-  function startHeroSlideshow() { clearTimeout(heroSlideTimer); heroSlideTimer = setTimeout(() => { setHeroSlide(heroSlideIndex + 1, false); startHeroSlideshow(); }, 10000); }
   const LIBRARY_DIFFICULTY_ORDER = ['easy', 'intermediate', 'hard', 'extremely-hard'];
   const LIBRARY_DIFFICULTY_OFFSET = { easy: 0, intermediate: 50, hard: 100, 'extremely-hard': 150 };
   const LIBRARY_DIFFICULTY_LABEL = {
@@ -1528,9 +1517,12 @@
     const button = document.getElementById('btnContinuePuzzle');
     if (!button) return;
     const next = findNextIncompleteLibraryPuzzle();
-    button.textContent = next
-      ? `Speel puzzel ${next.number} →`
-      : 'Alle puzzels voltooid ✓';
+    const title = button.querySelector('strong');
+    if (title) {
+      title.textContent = next ? `Speel puzzel ${next.number}` : 'Alle puzzels voltooid ✓';
+    } else {
+      button.textContent = next ? `Speel puzzel ${next.number} →` : 'Alle puzzels voltooid ✓';
+    }
   }
 
   function startNextPuzzle() {
