@@ -295,6 +295,11 @@
   let authMode = 'login'; // 'login' of 'register'
   let currentUser = null;
   let currentLbTab = 'today';
+  // De Daily Archive gebruikt dezelfde kaart als de puzzel, maar wisselt na
+  // indienen naar een aparte resultatenstaat. Zo blijven vragen en review
+  // overzichtelijk en kunnen spelers met de pijlen tussen beide states gaan.
+  let dailyArchivePuzzleView = false;
+  let dailyReviewView = 'questions';
 
   // =========================================================================
   // 2. INITIALISATIE & LOCALSTORAGE SYNC
@@ -315,7 +320,13 @@
 
       // Koppel knoppen expliciet via event listeners
       const btnStart = document.getElementById('btnStartPuzzle');
-      if (btnStart) btnStart.onclick = () => showScreen('puzzle');
+      if (btnStart) btnStart.onclick = () => {
+        dailyArchivePuzzleView = false;
+        activePuzzleIndex = 0;
+        PUZZLE_DATA = DAILY_PUZZLES[0] || PUZZLE_ARCHIVE[0];
+        loadActivePuzzle();
+        showScreen('puzzle');
+      };
 
       const btnHamb = document.getElementById('hamburgerBtn');
       if (btnHamb) btnHamb.onclick = toggleMenu;
@@ -693,21 +704,37 @@
     const s2 = scoreVraag(g2, echt.a2);
     const s3 = scoreVraag(g3, echt.a3);
 
-    document.getElementById('a1').textContent = fmt(echt.a1);
-    document.getElementById('a2').textContent = fmt(echt.a2);
-    document.getElementById('a3').textContent = fmt(echt.a3);
+    const isSpotOn1 = Math.abs(g1 - echt.a1) < 0.001;
+    const isSpotOn2 = Math.abs(g2 - echt.a2) < 0.001;
+    const isSpotOn3 = Math.abs(g3 - echt.a3) < 0.001;
 
-    renderBadge('badge-q1', s1);
-    renderBadge('badge-q2', s2);
-    renderBadge('badge-q3', s3);
+    document.getElementById('a1').innerHTML = fmt(echt.a1) + (isSpotOn1 ? '<div class="spot-on-sub">Spot on! 🎯</div>' : `<div class="guess-sub">Jouw gok: ${fmt(g1)}</div>`);
+    document.getElementById('a2').innerHTML = fmt(echt.a2) + (isSpotOn2 ? '<div class="spot-on-sub">Spot on! 🎯</div>' : `<div class="guess-sub">Jouw gok: ${fmt(g2)}</div>`);
+    document.getElementById('a3').innerHTML = fmt(echt.a3) + (isSpotOn3 ? '<div class="spot-on-sub">Spot on! 🎯</div>' : `<div class="guess-sub">Jouw gok: ${fmt(g3)}</div>`);
 
-    document.getElementById('scoreBadge').textContent = avgFactor.toFixed(2) + '×';
+    renderBadge('badge-q1', s1, g1, echt.a1);
+    renderBadge('badge-q2', s2, g2, echt.a2);
+    renderBadge('badge-q3', s3, g3, echt.a3);
+
+    // Nauwkeurigheid (Optie A: 100 / avgFactor)
+    const accuracy = Math.round(100 / avgFactor);
+    document.getElementById('scoreBadge').textContent = `${accuracy}%`;
+    const factorEl = document.getElementById('scoreBadgeFactor');
+    if (factorEl) {
+      factorEl.textContent = `Gemiddelde afwijking: ${avgFactor.toFixed(2)}×`;
+    }
     
     let msg = "🎯 Meesterlijk geschat!";
-    if (avgFactor > 1.15) msg = "👏 Heel goed in de buurt!";
-    if (avgFactor > 1.50) msg = "🧐 Redelijke inschatting!";
-    if (avgFactor > 2.50) msg = "😅 Oef, rekenmachine nodig!";
+    if (isSpotOn1 && isSpotOn2 && isSpotOn3) msg = "👑 100% SPOT ON! Wiskundig Orakel!";
+    else if (accuracy >= 95) msg = "👑 Wiskundig Genie · Meesterlijk geschat!";
+    else if (accuracy >= 85) msg = "🎯 Scherpschutter · Heel strak in de buurt!";
+    else if (accuracy >= 70) msg = "💡 Scherp Inzicht · Goede schatting!";
+    else if (accuracy >= 50) msg = "🧭 Goeie Richting · Redelijke ordegrootte!";
+    else msg = "🎲 Wilde Gok · Oef, rekenmachine nodig!";
     document.getElementById('scoreBadgeMsg').textContent = msg;
+
+    // Getallenbalk tekenen
+    renderNumberLine(g1, g2, g3, echt.a1, echt.a2, echt.a3, PUZZLE_DATA.operator || '×');
 
     if (currentUser) {
       document.getElementById('cloudSyncBanner').style.display = 'none';
@@ -716,17 +743,138 @@
     }
 
     document.getElementById('results').classList.add('show');
+    if (dailyArchivePuzzleView) showDailyResults();
     if (activePuzzleIndex === 0) startDailyCountdown();
     else { const countdown = document.getElementById('dailyCountdown'); if (countdown) countdown.remove(); if (countdownTimer) clearInterval(countdownTimer); }
     renderDailyArchive();
   }
 
-  function renderBadge(elemId, factor) {
-    const r = getFactorRating(factor);
+  function renderBadge(elemId, factor, guess, actual) {
     const el = document.getElementById(elemId);
+    if (!el) return;
+    const isSpotOn = guess !== undefined && actual !== undefined && Math.abs(guess - actual) < 0.001;
+    if (isSpotOn) {
+      el.style.background = '#10B981';
+      el.style.color = '#FFFFFF';
+      el.innerHTML = `🎯 Spot on!`;
+      return;
+    }
+    const r = getFactorRating(factor);
+    const qAcc = Math.round(100 / factor);
     el.style.background = r.bg;
     el.style.color = r.color;
-    el.innerHTML = `${r.emoji} ${factor.toFixed(2)}×`;
+    el.innerHTML = `${r.emoji} ${qAcc}% (${factor.toFixed(2)}×)`;
+  }
+
+  // =========================================================================
+  // DE GETALLENBALK (6 PUNTEN: WERKELIJKHEID VS SCHATTINGEN)
+  // =========================================================================
+  function renderNumberLine(g1, g2, g3, a1, a2, a3, op) {
+    const container = document.getElementById('numberlineCard');
+    if (!container) return;
+
+    const pairs = [
+      { id: 1, name: 'Vraag 1', guess: g1, actual: a1, color: '#4F46E5' },
+      { id: 2, name: 'Vraag 2', guess: g2, actual: a2, color: '#D97706' },
+      { id: 3, name: 'Vraag 3 (Uitkomst)', guess: g3, actual: a3, color: '#059669' }
+    ];
+
+    const vals = [g1, a1, g2, a2, g3, a3].filter(v => Number.isFinite(v) && v > 0);
+    const minVal = vals.length ? Math.min(...vals) : 1;
+    const maxVal = vals.length ? Math.max(...vals) : 100;
+    const useLog = (maxVal / Math.max(1, minVal)) > 4;
+
+    function calcPct(val) {
+      if (minVal === maxVal) return 50.0;
+      let p;
+      if (useLog && minVal > 0 && val > 0) {
+        p = (Math.log10(val) - Math.log10(minVal)) / (Math.log10(maxVal) - Math.log10(minVal));
+      } else {
+        p = (val - minVal) / (maxVal - minVal);
+      }
+      return 8.0 + Math.max(0, Math.min(1, p)) * 84.0;
+    }
+
+    let ownCalcConsistent = false;
+    if (op === '×' || op === '*' || op === 'x') {
+      ownCalcConsistent = (g1 * g2 === g3);
+    } else if (op === '+') {
+      ownCalcConsistent = (g1 + g2 === g3);
+    } else if (op === '−' || op === '-') {
+      ownCalcConsistent = (g1 - g2 === g3);
+    } else if (op === '÷' || op === '/') {
+      ownCalcConsistent = (g2 !== 0 && g1 / g2 === g3);
+    }
+
+    const formulaTagHtml = ownCalcConsistent
+      ? `<span class="numberline-formula-tag consistent">✓ Jouw som klopte onderling! (${fmt(g1)} ${op} ${fmt(g2)} = ${fmt(g3)})</span>`
+      : `<span class="numberline-formula-tag">Jouw som: ${fmt(g1)} ${op} ${fmt(g2)} = ${fmt(g3)}</span>`;
+
+    let lanesHtml = '';
+    pairs.forEach(p => {
+      const isSpotOn = Math.abs(p.guess - p.actual) < 0.001;
+      const pctActual = calcPct(p.actual);
+      const pctGuess = calcPct(p.guess);
+      const minPct = Math.min(pctActual, pctGuess);
+      const widthPct = Math.max(1, Math.abs(pctActual - pctGuess));
+
+      if (isSpotOn) {
+        lanesHtml += `
+          <div class="numberline-lane">
+            <span class="numberline-lane-label" style="color:${p.color}">${p.name}</span>
+            <div class="numberline-track"></div>
+            <div class="numberline-point" style="left:${pctActual}%;">
+              <div class="numberline-point-marker spoton"></div>
+              <div class="numberline-point-label" style="color:#065F46; border-color:#34D399;">
+                Spot on! 🎯 (${fmt(p.actual)})
+              </div>
+            </div>
+          </div>
+        `;
+      } else {
+        lanesHtml += `
+          <div class="numberline-lane">
+            <span class="numberline-lane-label" style="color:${p.color}">${p.name}</span>
+            <div class="numberline-track"></div>
+            <div class="numberline-connector" style="left:${minPct}%; width:${widthPct}%; background:${p.color};"></div>
+
+            <div class="numberline-point" style="left:${pctActual}%;">
+              <div class="numberline-point-marker actual" style="border-color:${p.color}; background:#FFFFFF;"></div>
+              <div class="numberline-point-label" style="color:${p.color};">
+                🎯 ${fmt(p.actual)}
+              </div>
+            </div>
+
+            <div class="numberline-point" style="left:${pctGuess}%;">
+              <div class="numberline-point-marker" style="background:${p.color};"></div>
+              <div class="numberline-point-label" style="color:#1E293B;">
+                Jij: ${fmt(p.guess)}
+              </div>
+            </div>
+          </div>
+        `;
+      }
+    });
+
+    container.innerHTML = `
+      <div class="numberline-header">
+        <span class="numberline-title">📏 De Getallenbalk</span>
+        ${formulaTagHtml}
+      </div>
+      <div class="numberline-lanes">
+        ${lanesHtml}
+      </div>
+      <div class="numberline-axis">
+        <span>Min: ${fmt(minVal)}</span>
+        <span>${useLog ? 'Logaritmische schaal' : 'Relatieve schaal'}</span>
+        <span>Max: ${fmt(maxVal)}</span>
+      </div>
+      <div class="numberline-legend">
+        <div class="numberline-legend-item"><span style="display:inline-block; width:10px; height:10px; border-radius:2px; transform:rotate(45deg); border:2px solid #64748B;"></span> 🎯 Echt antwoord</div>
+        <div class="numberline-legend-item"><span style="display:inline-block; width:10px; height:10px; border-radius:99px; background:#64748B;"></span> ● Jouw schatting</div>
+        <div class="numberline-legend-item"><span style="display:inline-block; width:10px; height:10px; border-radius:99px; background:#10B981;"></span> 🎯 Spot on!</div>
+      </div>
+    `;
   }
 
   // =========================================================================
@@ -734,16 +882,28 @@
   // =========================================================================
   function shareScore() {
     const plays = getLocalPlays();
-    const play = plays[TODAY_STR];
+    const pKey = getActivePuzzleKey();
+    const play = plays[pKey] || plays[TODAY_STR];
     if (!play) return;
 
     const echt = PUZZEL_ECHT();
-    const r1 = getFactorRating(scoreVraag(play.g1, echt.a1));
-    const r2 = getFactorRating(scoreVraag(play.g2, echt.a2));
-    const r3 = getFactorRating(scoreVraag(play.g3, echt.a3));
+    const s1 = scoreVraag(play.g1, echt.a1);
+    const s2 = scoreVraag(play.g2, echt.a2);
+    const s3 = scoreVraag(play.g3, echt.a3);
     const streak = getLocalStreak();
+    const acc = Math.round(100 / play.factor);
 
-    const text = `Netto #${PUZZLE_DATA.number} · Factor ${play.factor.toFixed(2)}× 🎯\n1️⃣ ${r1.emoji} ${scoreVraag(play.g1, echt.a1).toFixed(2)}×\n2️⃣ ${r2.emoji} ${scoreVraag(play.g2, echt.a2).toFixed(2)}×\n3️⃣ ${r3.emoji} ${scoreVraag(play.g3, echt.a3).toFixed(2)}×\n🔥 Streak: ${streak} ${streak === 1 ? 'dag' : 'dagen'}\nhttps://netto.game`;
+    function formatLine(emoji, g, a, f) {
+      if (Math.abs(g - a) < 0.001) return `🎯 Spot on!`;
+      const qAcc = Math.round(100 / f);
+      return `${emoji} ${qAcc}% (${f.toFixed(2)}×)`;
+    }
+
+    const r1 = getFactorRating(s1);
+    const r2 = getFactorRating(s2);
+    const r3 = getFactorRating(s3);
+
+    const text = `Netto #${PUZZLE_DATA.number} · Score: ${acc}% 🎯 (${play.factor.toFixed(2)}×)\n1️⃣ ${formatLine(r1.emoji, play.g1, echt.a1, s1)}\n2️⃣ ${formatLine(r2.emoji, play.g2, echt.a2, s2)}\n3️⃣ ${formatLine(r3.emoji, play.g3, echt.a3, s3)}\n🔥 Streak: ${streak} ${streak === 1 ? 'dag' : 'dagen'}\nhttps://netto.game`;
 
     if (navigator.clipboard) {
       navigator.clipboard.writeText(text).then(() => {
@@ -1114,6 +1274,51 @@
 
   let countdownTimer = null;
 
+  function updateDailyReviewNav() {
+    const nav = document.getElementById('dailyReviewNav');
+    const questionsButton = document.getElementById('dailyQuestionsNav');
+    const resultsButton = document.getElementById('dailyResultsNav');
+    const position = document.getElementById('dailyReviewPosition');
+    if (!nav || !questionsButton || !resultsButton || !position) return;
+    nav.classList.add('show');
+    const showingResults = dailyReviewView === 'results';
+    questionsButton.disabled = !showingResults;
+    resultsButton.disabled = showingResults;
+    questionsButton.setAttribute('aria-disabled', String(!showingResults));
+    resultsButton.setAttribute('aria-disabled', String(showingResults));
+    position.textContent = showingResults ? 'Resultaat' : 'Vragen';
+  }
+
+  function showDailyResults() {
+    const questions = document.getElementById('dailyQuestionView');
+    const results = document.getElementById('results');
+    if (!questions || !results) return;
+    dailyReviewView = 'results';
+    questions.style.display = 'none';
+    results.classList.add('show');
+    updateDailyReviewNav();
+  }
+
+  function showDailyQuestions() {
+    const questions = document.getElementById('dailyQuestionView');
+    const results = document.getElementById('results');
+    if (!questions || !results) return;
+    dailyReviewView = 'questions';
+    questions.style.display = 'block';
+    results.classList.remove('show');
+    updateDailyReviewNav();
+  }
+
+  function resetDailyReviewView() {
+    const questions = document.getElementById('dailyQuestionView');
+    const nav = document.getElementById('dailyReviewNav');
+    const results = document.getElementById('results');
+    if (questions) questions.style.display = 'block';
+    if (nav) nav.classList.remove('show');
+    if (results) results.classList.remove('show');
+    dailyReviewView = 'questions';
+  }
+
   function londonMidnightTarget() {
     const now = new Date();
     const parts = new Intl.DateTimeFormat('en-GB', { timeZone:'Europe/London', year:'numeric', month:'2-digit', day:'2-digit' }).formatToParts(now);
@@ -1174,7 +1379,7 @@
   }
   function changeHeroSlide(delta) { setHeroSlide(heroSlideIndex + delta); }
   function startHeroSlideshow() { clearTimeout(heroSlideTimer); heroSlideTimer = setTimeout(() => { setHeroSlide(heroSlideIndex + 1, false); startHeroSlideshow(); }, 10000); }
-  function startNextPuzzle() { selectPuzzle(Math.min(activePuzzleIndex + 1, DAILY_PUZZLES.length - 1)); }
+  function startNextPuzzle() { dailyArchivePuzzleView = false; selectPuzzle(Math.min(activePuzzleIndex + 1, DAILY_PUZZLES.length - 1)); }
   let selectedDifficulty = 'easy';
   let libraryIndex = 0;
   let libraryPuzzles = (REBUILT_DATA.library || []).map((p, i) => ({ ...normalizeLibraryPuzzle(p), id: p.id || `local-${i + 1}`, difficulty: p.difficulty || getPuzzleDifficulty(p) }));
@@ -2708,7 +2913,7 @@
       const row = document.createElement('div'); row.className = 'daily-archive-row';
       const dateLabel = new Intl.DateTimeFormat('nl-NL', { day:'numeric', month:'long' }).format(puzzleDate);
       row.innerHTML = `<span class="archive-number">${String(p.number || idx + 1).padStart(3,'0')}</span><div><div class="archive-name">${p.name || `Daily Puzzle #${p.number || idx + 1}`}</div><div class="archive-date">${dateLabel}</div></div><span class="archive-score" style="color:${play ? scoreColor(play.factor) : '#92959D'}">${play ? play.factor.toFixed(2)+'×' : '—'}</span><span class="archive-status ${play ? 'complete' : ''}">${play ? 'COMPLETE ✓' : 'PLAY →'}</span>`;
-      row.onclick = () => { activePuzzleIndex = DAILY_PUZZLES.indexOf(p); PUZZLE_DATA = p; loadActivePuzzle(); closeLibraryScreen(); showScreen('puzzle'); };
+      row.onclick = () => { dailyArchivePuzzleView = true; activePuzzleIndex = DAILY_PUZZLES.indexOf(p); PUZZLE_DATA = p; loadActivePuzzle(); closeLibraryScreen(); showScreen('puzzle'); };
       list.appendChild(row);
     });
   }
@@ -2816,6 +3021,7 @@
   }
 
   function selectPuzzle(index) {
+    dailyArchivePuzzleView = false;
     activePuzzleIndex = index;
     PUZZLE_DATA = DAILY_PUZZLES[index] || PUZZLE_ARCHIVE[index];
     closeArchiveModal();
@@ -2841,7 +3047,7 @@
       input.disabled = false;
     });
     autoCalculatedInputs.clear();
-    document.getElementById('results').classList.remove('show');
+    resetDailyReviewView();
     document.getElementById('alreadyPlayedBanner').classList.remove('show');
     document.getElementById('btnCheck').style.display = 'block';
 
@@ -2849,6 +3055,8 @@
   }
 
   function goHome() {
+    dailyArchivePuzzleView = false;
+    resetDailyReviewView();
     showScreen('home');
     closeMenu();
   }
@@ -2910,6 +3118,8 @@
   window.handleLogout = handleLogout;
   window.switchLbTab = switchLbTab;
   window.changeArchiveMonth = changeArchiveMonth;
+  window.showDailyResults = showDailyResults;
+  window.showDailyQuestions = showDailyQuestions;
   window.changeHeroSlide = changeHeroSlide;
   window.setHeroSlide = setHeroSlide;
   window.startNextPuzzle = startNextPuzzle;

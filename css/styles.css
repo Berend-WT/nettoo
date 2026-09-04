@@ -259,6 +259,16 @@
   /* -- Resultaten sectie -- */
   .results { display: none; margin-top: 26px; padding-top: 22px; border-top: 2px dashed var(--border-color); animation: fadeIn 0.3s ease; }
   .results.show { display: block; }
+
+  /* Daily Archive: questions and results are two views in the same card. */
+  .daily-review-nav { display:none; align-items:center; justify-content:space-between; gap:10px; margin-top:22px; padding-top:16px; border-top:1px solid var(--border-color); }
+  .daily-review-nav.show { display:flex; }
+  .daily-review-nav button { display:inline-flex; align-items:center; gap:6px; min-width:96px; justify-content:center; border:1px solid var(--border-color); border-radius:10px; padding:9px 12px; background:var(--surface-2); color:var(--ink); cursor:pointer; font:700 12px 'Space Grotesk',sans-serif; transition:background .15s ease, border-color .15s ease, opacity .15s ease; }
+  .daily-review-nav button:hover:not(:disabled) { background:#EEF2FF; border-color:var(--bg-main); }
+  .daily-review-nav button:disabled { opacity:.42; cursor:default; }
+  .daily-review-position { color:#6B7280; font:700 10px 'JetBrains Mono',monospace; letter-spacing:.08em; text-transform:uppercase; }
+  @media (max-width:480px) { .daily-review-nav button { min-width:82px; padding:9px 8px; } .daily-review-position { font-size:9px; } }
+
   @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
 
   .results-grid { display: flex; flex-direction: column; gap: 10px; margin-bottom: 18px; }
@@ -820,3 +830,163 @@
   .settings-set-count { font:700 11px 'Space Grotesk',sans-serif; color:var(--bg-dark); background:var(--surface); border-radius:8px; padding:3px 8px; white-space:nowrap; }
   .settings-note { margin:12px 2px 0; font:400 12.5px 'Space Grotesk',sans-serif; color:#6b7280; }
   @media (max-width:640px) { .settings-sets { grid-template-columns:1fr; } }
+
+  /* =========================================================================
+     GETALLENBALK (NUMBERLINE) & SPOT-ON VISUALISATIE
+     ========================================================================= */
+  .numberline-card {
+    background: #FFFFFF;
+    border: 1.5px solid #E2E8F0;
+    border-radius: 16px;
+    padding: 16px 18px;
+    margin-bottom: 18px;
+    box-shadow: 0 4px 16px rgba(15, 23, 42, 0.05);
+  }
+  .numberline-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 14px;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .numberline-title {
+    font-size: 13.5px;
+    font-weight: 700;
+    color: var(--bg-dark);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .numberline-formula-tag {
+    font-size: 11px;
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 600;
+    padding: 3px 8px;
+    border-radius: 99px;
+    background: #F1F5F9;
+    color: #475569;
+  }
+  .numberline-formula-tag.consistent {
+    background: #DCFCE7;
+    color: #166534;
+  }
+  .numberline-lanes {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    margin: 14px 0 10px;
+  }
+  .numberline-lane {
+    position: relative;
+    height: 40px;
+  }
+  .numberline-lane-label {
+    position: absolute;
+    top: -4px;
+    left: 0;
+    font-size: 10.5px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    font-family: 'JetBrains Mono', monospace;
+  }
+  .numberline-track {
+    position: absolute;
+    top: 22px;
+    left: 0;
+    right: 0;
+    height: 6px;
+    background: #F1F5F9;
+    border-radius: 99px;
+  }
+  .numberline-connector {
+    position: absolute;
+    top: 22px;
+    height: 6px;
+    border-radius: 99px;
+    opacity: 0.45;
+  }
+  .numberline-point {
+    position: absolute;
+    top: 25px;
+    transform: translate(-50%, -50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    white-space: nowrap;
+    z-index: 2;
+    transition: transform 0.2s ease;
+  }
+  .numberline-point:hover {
+    transform: translate(-50%, -55%) scale(1.08);
+    z-index: 5;
+  }
+  .numberline-point-marker {
+    width: 14px;
+    height: 14px;
+    border-radius: 99px;
+    border: 2.5px solid #FFFFFF;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.25);
+  }
+  .numberline-point-marker.actual {
+    border-radius: 3px;
+    transform: rotate(45deg);
+  }
+  .numberline-point-marker.spoton {
+    width: 16px;
+    height: 16px;
+    border-radius: 99px;
+    background: #10B981 !important;
+    box-shadow: 0 0 8px rgba(16, 185, 129, 0.6);
+  }
+  .numberline-point-label {
+    position: absolute;
+    top: 15px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    font-weight: 700;
+    background: rgba(255,255,255,0.92);
+    padding: 1px 4px;
+    border-radius: 4px;
+    border: 1px solid #E2E8F0;
+    pointer-events: none;
+  }
+  .numberline-axis {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 14px;
+    padding-top: 6px;
+    border-top: 1px solid #E2E8F0;
+    font-size: 10px;
+    font-family: 'JetBrains Mono', monospace;
+    color: #94A3B8;
+  }
+  .numberline-legend {
+    display: flex;
+    justify-content: center;
+    gap: 16px;
+    margin-top: 8px;
+    font-size: 11px;
+    color: #64748B;
+    flex-wrap: wrap;
+  }
+  .numberline-legend-item {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+  }
+  .spot-on-sub {
+    color: #10B981;
+    font-weight: 700;
+    font-size: 12.5px;
+    margin-top: 3px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+  .guess-sub {
+    color: #64748B;
+    font-size: 12px;
+    margin-top: 2px;
+  }
