@@ -298,6 +298,7 @@
   let authMode = 'login'; // 'login' of 'register'
   let currentUser = null;
   let currentLbTab = 'today';
+  let streakCalendarDate = new Date(new Date().getFullYear(), new Date().getMonth(), 1);
   // De Daily Archive gebruikt dezelfde kaart als de puzzel, maar wisselt na
   // indienen naar een aparte resultatenstaat. Zo blijven vragen en review
   // overzichtelijk en kunnen spelers met de pijlen tussen beide states gaan.
@@ -343,6 +344,17 @@
       const topUserBtn = document.getElementById('topbarUserBtn');
       if (topUserBtn) topUserBtn.onclick = openAuthModal;
 
+      const streakButton = document.getElementById('streakButton');
+      if (streakButton) streakButton.onclick = toggleStreakCalendar;
+      const streakClose = document.getElementById('streakCalendarClose');
+      if (streakClose) streakClose.onclick = closeStreakCalendar;
+      const streakPrevious = document.getElementById('streakCalendarPrevious');
+      if (streakPrevious) streakPrevious.onclick = () => moveStreakCalendarMonth(-1);
+      const streakNext = document.getElementById('streakCalendarNext');
+      if (streakNext) streakNext.onclick = () => moveStreakCalendarMonth(1);
+      document.addEventListener('click', closeStreakCalendarOnOutsideClick);
+      document.addEventListener('keydown', closeStreakCalendarOnEscape);
+
       initInputs();
       loadUserProfile();
       applyTheme();
@@ -355,6 +367,7 @@
         }
       });
       checkExistingPlay();
+      updateContinuePuzzleButton();
       startHeroSlideshow();
     } catch(err) {
       console.error("Fout tijdens initApp:", err);
@@ -374,9 +387,106 @@
   }
 
   function updateStreakUI(streak) {
-    document.getElementById('topbarStreak').textContent = `🔥 ${streak}`;
+    document.getElementById('topbarStreak').textContent = streak;
+    const streakButton = document.getElementById('streakButton');
+    if (streakButton) {
+      const action = streakButton.getAttribute('aria-expanded') === 'true' ? 'Sluit kalender' : 'Open kalender';
+      streakButton.setAttribute('aria-label', `🔥 ${streak} ${streak === 1 ? 'dag' : 'dagen'} streak. ${action}`);
+    }
     const pStreak = document.getElementById('profileStreak');
     if (pStreak) pStreak.textContent = `🔥 Huidige streak: ${streak} ${streak === 1 ? 'dag' : 'dagen'}`;
+  }
+
+  function localDateKey(date) {
+    return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
+  }
+
+  function getPlayedDailyDates() {
+    const dates = new Set();
+    const dailyByNumber = new Map(DAILY_PUZZLES.map(puzzle => [Number(puzzle.number), puzzle.date]));
+    Object.entries(getLocalPlays()).forEach(([key, play]) => {
+      if (/^\d{4}-\d{2}-\d{2}$/.test(key)) {
+        dates.add(key);
+        return;
+      }
+      const puzzleDate = dailyByNumber.get(Number(play?.puzzleNumber));
+      if (puzzleDate) dates.add(puzzleDate);
+    });
+    return dates;
+  }
+
+  function renderStreakCalendar() {
+    const grid = document.getElementById('streakCalendarGrid');
+    const monthLabel = document.getElementById('streakCalendarMonth');
+    if (!grid || !monthLabel) return;
+    const year = streakCalendarDate.getFullYear();
+    const month = streakCalendarDate.getMonth();
+    const today = new Date();
+    const todayKey = localDateKey(today);
+    const playedDates = getPlayedDailyDates();
+    const daysInMonth = new Date(year, month + 1, 0).getDate();
+    const startOffset = (new Date(year, month, 1).getDay() + 6) % 7;
+    const cells = Array.from({ length: startOffset }, () => '<span aria-hidden="true"></span>');
+    for (let day = 1; day <= daysInMonth; day += 1) {
+      const date = new Date(year, month, day);
+      const key = localDateKey(date);
+      const played = playedDates.has(key);
+      const isToday = key === todayKey;
+      const isFuture = date > new Date(today.getFullYear(), today.getMonth(), today.getDate());
+      const label = new Intl.DateTimeFormat('nl-NL', { weekday:'long', day:'numeric', month:'long', year:'numeric' }).format(date);
+      cells.push(`<span class="streak-calendar-day${played ? ' is-played' : ''}${isToday ? ' is-today' : ''}${isFuture ? ' is-future' : ''}" role="gridcell" aria-label="${label}${played ? ', daily gespeeld' : ', niet gespeeld'}" title="${played ? 'Daily gespeeld' : 'Niet gespeeld'}">${day}</span>`);
+    }
+    monthLabel.textContent = new Intl.DateTimeFormat('nl-NL', { month:'long', year:'numeric' }).format(streakCalendarDate);
+    grid.innerHTML = cells.join('');
+    const currentMonth = new Date(today.getFullYear(), today.getMonth(), 1);
+    document.getElementById('streakCalendarNext').disabled = streakCalendarDate >= currentMonth;
+  }
+
+  function toggleStreakCalendar(event) {
+    event?.stopPropagation();
+    const popover = document.getElementById('streakCalendarPopover');
+    const button = document.getElementById('streakButton');
+    if (!popover || !button) return;
+    const opening = popover.hidden;
+    popover.hidden = !opening;
+    button.setAttribute('aria-expanded', String(opening));
+    const streak = getLocalStreak();
+    button.setAttribute('aria-label', `🔥 ${streak} ${streak === 1 ? 'dag' : 'dagen'} streak. ${opening ? 'Sluit kalender' : 'Open kalender'}`);
+    if (opening) renderStreakCalendar();
+  }
+
+  function closeStreakCalendar() {
+    const popover = document.getElementById('streakCalendarPopover');
+    const button = document.getElementById('streakButton');
+    if (!popover || popover.hidden) return;
+    popover.hidden = true;
+    button?.setAttribute('aria-expanded', 'false');
+    const streak = getLocalStreak();
+    button?.setAttribute('aria-label', `🔥 ${streak} ${streak === 1 ? 'dag' : 'dagen'} streak. Open kalender`);
+  }
+
+  function closeStreakCalendarOnOutsideClick(event) {
+    const popover = document.getElementById('streakCalendarPopover');
+    const button = document.getElementById('streakButton');
+    if (!popover || popover.hidden || popover.contains(event.target) || button?.contains(event.target)) return;
+    closeStreakCalendar();
+  }
+
+  function closeStreakCalendarOnEscape(event) {
+    if (event.key !== 'Escape') return;
+    const popover = document.getElementById('streakCalendarPopover');
+    if (!popover || popover.hidden) return;
+    closeStreakCalendar();
+    document.getElementById('streakButton')?.focus();
+  }
+
+  function moveStreakCalendarMonth(delta) {
+    const next = new Date(streakCalendarDate.getFullYear(), streakCalendarDate.getMonth() + delta, 1);
+    const today = new Date();
+    const currentMonth = new Date(today.getFullYear(), today.getMonth(), 1);
+    if (next > currentMonth) return;
+    streakCalendarDate = next;
+    renderStreakCalendar();
   }
 
   // =========================================================================
@@ -679,6 +789,7 @@
     // Opslaan in LocalStorage
     plays[pKey] = { g1, g2, g3, factor: avgFactor, puzzleNumber: PUZZLE_DATA.number, playedAt: new Date().toISOString() };
     localStorage.setItem('netto_plays', JSON.stringify(plays));
+    if (!document.getElementById('streakCalendarPopover')?.hidden) renderStreakCalendar();
 
     // Velden uitschakelen
     ['g1', 'g2', 'g3'].forEach(id => document.getElementById(id).disabled = true);
@@ -1375,7 +1486,61 @@
   }
   function changeHeroSlide(delta) { setHeroSlide(heroSlideIndex + delta); }
   function startHeroSlideshow() { clearTimeout(heroSlideTimer); heroSlideTimer = setTimeout(() => { setHeroSlide(heroSlideIndex + 1, false); startHeroSlideshow(); }, 10000); }
-  function startNextPuzzle() { dailyArchivePuzzleView = false; selectPuzzle(Math.min(activePuzzleIndex + 1, DAILY_PUZZLES.length - 1)); }
+  const LIBRARY_DIFFICULTY_ORDER = ['easy', 'intermediate', 'hard', 'extremely-hard'];
+  const LIBRARY_DIFFICULTY_OFFSET = { easy: 0, intermediate: 50, hard: 100, 'extremely-hard': 150 };
+  const LIBRARY_DIFFICULTY_LABEL = {
+    easy: 'Easy',
+    intermediate: 'Intermediate',
+    hard: 'Hard',
+    'extremely-hard': 'Extremely Hard'
+  };
+
+  function libraryPuzzleNumber(difficulty, index) {
+    return (LIBRARY_DIFFICULTY_OFFSET[difficulty] || 0) + index + 1;
+  }
+
+  function getSavedLibraryPlays() {
+    try {
+      return JSON.parse(localStorage.getItem('netto_library_plays') || '{}');
+    } catch (_) {
+      return {};
+    }
+  }
+
+  function findNextIncompleteLibraryPuzzle(puzzles = libraryPuzzles, plays = getSavedLibraryPlays()) {
+    for (const difficulty of LIBRARY_DIFFICULTY_ORDER) {
+      const set = puzzles.filter(puzzle => puzzle.difficulty === difficulty);
+      const index = set.findIndex(puzzle => !plays[puzzle.id] && !plays[`library_${puzzle.id}`]);
+      if (index >= 0) {
+        return { difficulty, index, number: libraryPuzzleNumber(difficulty, index), puzzle: set[index] };
+      }
+    }
+    return null;
+  }
+
+  function updateContinuePuzzleButton() {
+    const button = document.getElementById('btnContinuePuzzle');
+    if (!button) return;
+    const next = findNextIncompleteLibraryPuzzle();
+    button.textContent = next
+      ? `Speel puzzel ${next.number} →`
+      : 'Alle puzzels voltooid ✓';
+  }
+
+  function startNextPuzzle() {
+    dailyArchivePuzzleView = false;
+    const next = findNextIncompleteLibraryPuzzle();
+    if (!next) {
+      selectedDifficulty = 'easy';
+      openPuzzles();
+      showNoticeToast('Je hebt alle Library-puzzels voltooid. Lekker gewerkt!', '🏆');
+      return;
+    }
+    selectedDifficulty = next.difficulty;
+    openPuzzles();
+    playLibraryCard(next.puzzle.id);
+  }
+
   let selectedDifficulty = 'easy';
   let libraryIndex = 0;
   let libraryPuzzles = (REBUILT_DATA.library || []).map((p, i) => ({ ...normalizeLibraryPuzzle(p), id: p.id || `local-${i + 1}`, difficulty: p.difficulty || getPuzzleDifficulty(p) }));

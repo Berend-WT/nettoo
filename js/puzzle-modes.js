@@ -79,6 +79,7 @@
     const answers = [active.q1_answer,active.q2_answer,active.q3_answer];
     const factor = answers.reduce((sum,a,i) => sum + scoreVraag(guesses[i],a),0) / 3;
     const plays = JSON.parse(localStorage.getItem('netto_library_plays') || '{}'); plays[active.id] = { factor, guesses, completedAt:new Date().toISOString() }; localStorage.setItem('netto_library_plays',JSON.stringify(plays));
+    updateContinuePuzzleButton();
     const nextAction = prefix === 'library' ? 'libraryMove(1)' : 'premiumPuzzleMove(1)';
     document.getElementById(prefix + 'QuestionList').innerHTML = answers.map((a,i) => `<div class="library-question"><b>Vraag ${i+1}</b>${[active.q1_label,active.q2_label,active.q3_label][i]}<br><strong>Echt antwoord: ${fmt(a)} · ${scoreVraag(guesses[i],a).toFixed(2)}×</strong></div>`).join('') + `<div class="score-badge-container"><div class="score-badge-title">Jouw gemiddelde afwijking</div><div class="score-badge-val" style="color:${scoreColor(factor)}">${factor.toFixed(2)}×</div></div><button class="btn-check" onclick="${nextAction}">Volgende puzzel →</button>`;
     syncLibraryPlay(active, guesses[0], guesses[1], guesses[2], factor);
@@ -264,6 +265,31 @@
   }
   function bkSaveProgress(progress) { localStorage.setItem(BK_PROGRESS_KEY, JSON.stringify(progress)); }
 
+  function bkNormaliseProgress(progress) {
+    const clean = progress && typeof progress === 'object' ? progress : {};
+    const uniqueResults = new Map();
+    (Array.isArray(clean.results) ? clean.results : []).forEach(result => {
+      if (result && result.id) uniqueResults.set(result.id, result);
+    });
+    return {
+      index: Math.max(0, Math.min(Number.isInteger(clean.index) ? clean.index : 0, BK_DATA.length)),
+      results: Array.from(uniqueResults.values())
+    };
+  }
+
+  function bkResultMap(progress) {
+    return new Map(progress.results.map(result => [result.id, result]));
+  }
+
+  function bkFindNextIncompleteIndex(progress, afterIndex = -1) {
+    const completed = new Set(progress.results.map(result => result.id));
+    for (let offset = 1; offset <= BK_DATA.length; offset += 1) {
+      const index = (afterIndex + offset) % BK_DATA.length;
+      if (!completed.has(BK_DATA[index].id)) return index;
+    }
+    return -1;
+  }
+
   function openBreinkrakers() {
     closeMenu();
     showScreen('breinkrakers');
@@ -277,26 +303,39 @@
   }
 
   function renderBreinkrakersStart() {
+    const screen = document.getElementById('breinkrakersScreen');
+    screen.scrollTop = 0;
     document.getElementById('bkStart').style.display = 'block';
     document.getElementById('bkPlay').style.display = 'none';
     document.getElementById('bkDone').style.display = 'none';
-    const progress = bkLoadProgress();
-    const played = progress ? Math.min(progress.index || 0, BK_DATA.length) : 0;
-    const avg = progress && progress.results && progress.results.length
-      ? (progress.results.reduce((s, r) => s + r.factor, 0) / progress.results.length) : null;
-    document.getElementById('bkProgress').innerHTML = BK_DATA.length
-      ? `Vooruitgang: <b>${played}</b> van <b>${BK_DATA.length}</b> puzzels${avg !== null ? ` · gemiddelde tot nu toe: <span style="color:${scoreColor(avg)}">${avg.toFixed(2)}×</span>` : ''}`
+    const progress = bkNormaliseProgress(bkLoadProgress());
+    const resultMap = bkResultMap(progress);
+    const played = BK_DATA.filter(puzzle => resultMap.has(puzzle.id)).length;
+    const results = BK_DATA.map(puzzle => resultMap.get(puzzle.id)).filter(Boolean);
+    const exactCount = results.filter(result => result.exact).length;
+    const avg = results.length ? results.reduce((sum, result) => sum + result.factor, 0) / results.length : null;
+    document.getElementById('bkPlayedCount').textContent = `${played}/${BK_DATA.length}`;
+    document.getElementById('bkExactCount').textContent = exactCount;
+    document.getElementById('bkAverageScore').textContent = avg === null ? '—' : `${avg.toFixed(2)}×`;
+    document.getElementById('bkAverageScore').style.color = avg === null ? '' : scoreColor(avg);
+    document.getElementById('bkProgress').textContent = BK_DATA.length
+      ? `${BK_DATA.length} puzzels · kies waar je verdergaat`
       : 'Geen breinkrakers gevonden — draai maak_breinkrakers.py om ze te genereren.';
+    document.getElementById('bkCardGrid').innerHTML = BK_DATA.map((puzzle, index) => {
+      const result = resultMap.get(puzzle.id);
+      const color = result ? scoreColor(result.factor) : '';
+      const label = result ? `Score ${result.factor.toFixed(2)}×` : 'Open puzzel →';
+      return `<article class="library-flip-card is-open" role="button" tabindex="0" aria-label="Open Breinkraker ${index + 1}" onclick="startBreinkrakers(${index})" onkeydown="if(event.key==='Enter'||event.key===' ') { event.preventDefault(); startBreinkrakers(${index}); }"><div class="library-flip-card-inner"><div class="library-flip-front ${result ? 'played' : ''}" style="${result ? `background:${color};` : ''}"><strong>#${index + 1}</strong><span>${label}</span></div></div></article>`;
+    }).join('');
   }
 
-  function startBreinkrakers() {
+  function startBreinkrakers(selectedIndex) {
     if (!BK_DATA.length) { showNoticeToast('Er zijn nog geen breinkrakers beschikbaar. Draai maak_breinkrakers.py.'); return; }
-    const progress = bkLoadProgress() || { index: 0, results: [] };
-    progress.index = Math.min(progress.index || 0, BK_DATA.length);
-    if (!Array.isArray(progress.results)) progress.results = [];
+    const progress = bkNormaliseProgress(bkLoadProgress());
+    const requestedIndex = Number.isInteger(selectedIndex) ? selectedIndex : bkFindNextIncompleteIndex(progress);
+    progress.index = Math.max(0, Math.min(requestedIndex, BK_DATA.length - 1));
     bkState = progress;
     bkSubmitted = false;
-    if (bkState.index >= BK_DATA.length) { renderBreinkrakersDone(); return; }
     showBreinkrakersPuzzle(bkState.index);
   }
 
@@ -308,8 +347,7 @@
     document.getElementById('bkStart').style.display = 'none';
     document.getElementById('bkDone').style.display = 'none';
     document.getElementById('bkPlay').style.display = 'block';
-    const level = (p.difficulty || 'intermediate').replace(/-/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
-    document.getElementById('bkLevelLabel').textContent = level;
+    document.getElementById('bkPuzzleLabel').textContent = `Puzzel ${index + 1}`;
     document.getElementById('bkCounter').textContent = `${index + 1} / ${BK_DATA.length}`;
     document.getElementById('bkFormula').textContent = `▢ ${p.op1} ▢ ${p.op2} ▢ = ▢`;
     const note = localStorage.getItem('netto_auto_calc_note_seen') === 'true' ? '' : `<div class="auto-calc-note" role="status" aria-live="polite">↳ Antwoorden worden automatisch berekend als de berekening klopt.</div>`;
@@ -381,8 +419,13 @@
     const exact = guesses.every((g, i) => g === answers[i]);
     const vraagFactor = (g, a) => (a === 0 ? (g === 0 ? 1 : 10) : scoreVraag(g, a));
     const factor = answers.reduce((s, a, i) => s + vraagFactor(guesses[i], a), 0) / 4;
-    bkState.results.push({ id: p.id, factor, exact });
-    bkState.index += 1;
+    const currentIndex = bkState.index;
+    const newResult = { id: p.id, factor, exact };
+    const previousResultIndex = bkState.results.findIndex(result => result.id === p.id);
+    if (previousResultIndex >= 0) bkState.results[previousResultIndex] = newResult;
+    else bkState.results.push(newResult);
+    const nextIndex = bkFindNextIncompleteIndex(bkState, currentIndex);
+    bkState.index = nextIndex < 0 ? BK_DATA.length : nextIndex;
     bkSaveProgress(bkState);
     const rating = getFactorRating(factor);
     const labels = [p.q1.label, p.q2.label, p.q3.label, p.q4.label];

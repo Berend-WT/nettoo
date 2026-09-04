@@ -8,8 +8,10 @@ function renderLibraryStats() {
       document.getElementById('libraryStats').innerHTML = `<div class="library-stat"><b>${dailyDone}</b><span>Daily gespeeld</span></div><div class="library-stat"><b>${DAILY_PUZZLES.length}</b><span>Dagpuzzels</span></div>`;
       document.getElementById('libraryStats').style.gridTemplateColumns = 'repeat(2,1fr)';
     } else {
-      const done = libraryPuzzles.filter(p => getLocalPlays()[p.id] || getLocalPlays()[`library_${p.id}`]).length;
-      document.getElementById('libraryStats').innerHTML = `<div class="library-stat"><b>${done}</b><span>Library gespeeld</span></div><div class="library-stat"><b>${libraryPuzzles.length}</b><span>Puzzels</span></div>`;
+      const plays = getSavedLibraryPlays();
+      const currentSet = getLibrarySet(selectedDifficulty);
+      const done = currentSet.filter(p => plays[p.id] || plays[`library_${p.id}`]).length;
+      document.getElementById('libraryStats').innerHTML = `<div class="library-stat"><b>${done}</b><span>${LIBRARY_DIFFICULTY_LABEL[selectedDifficulty]} gespeeld</span></div><div class="library-stat"><b>${libraryPuzzles.length}</b><span>Puzzels</span></div>`;
       document.getElementById('libraryStats').style.gridTemplateColumns = 'repeat(2,1fr)';
     }
   }
@@ -26,12 +28,14 @@ function renderLibraryStats() {
     const grid = document.getElementById('libraryCardGrid');
     const source = getLibrarySet(selectedDifficulty);
     grid.innerHTML = source.map((p, i) => {
+      const number = libraryPuzzleNumber(selectedDifficulty, i);
       const play = libraryPlayFor(p);
       const color = play ? scoreColor(play.factor) : '';
       const frontStyle = play ? `background:${color};` : '';
       const label = play ? `Score ${play.factor.toFixed(2)}×` : 'Open puzzle →';
-      return `<article class="library-flip-card is-open" role="button" tabindex="0" aria-label="Open puzzel ${i + 1}" onclick="playLibraryCard('${p.id}')" onkeydown="if(event.key==='Enter'||event.key===' ') { event.preventDefault(); playLibraryCard('${p.id}'); }"><div class="library-flip-card-inner"><div class="library-flip-front ${play ? 'played' : ''}" style="${frontStyle}"><strong>#${i + 1}</strong><span>${label}</span></div></div></article>`;
+      return `<article class="library-flip-card is-open" role="button" tabindex="0" aria-label="Open puzzel ${number}" onclick="playLibraryCard('${p.id}')" onkeydown="if(event.key==='Enter'||event.key===' ') { event.preventDefault(); playLibraryCard('${p.id}'); }"><div class="library-flip-card-inner"><div class="library-flip-front ${play ? 'played' : ''}" style="${frontStyle}"><strong>#${number}</strong><span>${label}</span></div></div></article>`;
     }).join('');
+    renderLibraryStats();
   }
   function playLibraryCard(id) {
     const set = getLibrarySet(selectedDifficulty); const index = set.findIndex(p => p.id === id);
@@ -118,7 +122,7 @@ function renderLibraryStats() {
 
   function renderLibraryPuzzle() {
     const p = libraryPuzzles.filter(x => x.difficulty === selectedDifficulty)[libraryIndex]; if (!p) return;
-    renderPuzzleView('library', p, `${selectedDifficulty.replace('-', ' ')} · puzzel ${libraryIndex + 1}`);
+    renderPuzzleView('library', p, `Puzzel ${libraryPuzzleNumber(selectedDifficulty, libraryIndex)}`);
   }
 
   function renderPremiumPuzzleView() {

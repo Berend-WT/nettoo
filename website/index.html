@@ -49,10 +49,30 @@
     <button class="hamburger" id="hamburgerBtn" onclick="toggleMenu()" aria-label="Menu">
       <span></span><span></span><span></span>
     </button>
-    <div class="user-badge-bar">
-      <div class="streak-badge" id="topbarStreak">🔥 0</div>
-      <span style="opacity:0.3;">|</span>
+    <div class="user-badge-bar" aria-label="Speler en streak">
+      <button class="streak-badge" id="streakButton" type="button" aria-haspopup="dialog" aria-expanded="false" aria-controls="streakCalendarPopover">
+        <span class="streak-icon" aria-hidden="true">🔥</span>
+        <strong id="topbarStreak">0</strong>
+      </button>
+      <section class="streak-popover" id="streakCalendarPopover" role="dialog" aria-label="Daily streak kalender" hidden>
+        <div class="streak-popover-heading">
+          <div>
+            <span>Jouw daily’s</span>
+            <strong>Streakkalender</strong>
+          </div>
+          <button class="streak-popover-close" id="streakCalendarClose" type="button" aria-label="Kalender sluiten">×</button>
+        </div>
+        <div class="streak-calendar-nav">
+          <button id="streakCalendarPrevious" type="button" aria-label="Vorige maand">←</button>
+          <strong id="streakCalendarMonth"></strong>
+          <button id="streakCalendarNext" type="button" aria-label="Volgende maand">→</button>
+        </div>
+        <div class="streak-calendar-weekdays" aria-hidden="true"><span>ma</span><span>di</span><span>wo</span><span>do</span><span>vr</span><span>za</span><span>zo</span></div>
+        <div class="streak-calendar-grid" id="streakCalendarGrid" role="grid" aria-label="Speeldagen in deze maand"></div>
+        <div class="streak-calendar-legend"><span aria-hidden="true"></span> Daily gespeeld</div>
+      </section>
       <button class="user-btn" id="topbarUserBtn" onclick="openAuthModal()">
+        <svg class="user-btn-icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="3.5"></circle><path d="M5 20c.7-4 3.1-6 7-6s6.3 2 7 6"></path></svg>
         <span id="topbarUsername">Inloggen</span>
       </button>
     </div>
@@ -102,7 +122,7 @@
         <div class="hero-eyebrow">Netto · speel verder</div>
         <h1 class="hero-headline">Nog één <span class="script">puzzel.</span></h1>
         <p class="hero-sub">Ga verder waar je gebleven was en ontdek of je schatting nog scherper kan.</p>
-        <button class="hero-cta" type="button" onclick="startNextPuzzle()">Start puzzel 1 →</button>
+        <button class="hero-cta" id="btnContinuePuzzle" type="button" onclick="startNextPuzzle()">Speel puzzel 1 →</button>
       </section>
       <section class="hero-slide" data-slide="2">
         <div class="hero-eyebrow">Netto · voor nieuwsgierige mensen</div>
@@ -264,7 +284,7 @@
   <!-- ============ DAILY PUZZELS & LIBRARY ============ -->
   <main class="library-screen" id="libraryScreen">
     <div class="library-page-inner">
-      <div class="library-page-top"><button class="library-back" onclick="closeLibraryScreen()">← Terug</button><span class="library-page-kicker">NETTO · LIBRARY</span></div>
+      <div class="library-page-top"><button class="library-home" type="button" onclick="goHome()" aria-label="Netto — naar de landingpagina">Netto</button><span class="library-page-kicker">LIBRARY</span></div>
       <h1 class="library-page-title" id="libraryTitle">Daily Archive</h1>
       <p class="library-page-subtitle" id="librarySubtitle">Elke puzzel opnieuw spelen.</p>
       <div id="dailyDateControls" class="month-nav" style="display:none;">
@@ -473,30 +493,31 @@
 
   <!-- ============ BREINKRAKERS ============ -->
   <main class="library-screen breinkrakers-screen" id="breinkrakersScreen">
-    <div class="library-page-inner race-page-inner">
+    <div class="library-page-inner">
       <div class="library-page-top"><button class="library-back" onclick="closeBreinkrakers()">← Terug</button><span class="library-page-kicker">NETTO · BREINKRAKERS</span></div>
 
-      <section class="race-panel bk-start-panel" id="bkStart">
-        <div class="race-kicker">NETTO · 4 VRAGEN · 1 FORMULE</div>
-        <h1 class="race-title">Brein<span class="script">krakers.</span></h1>
-        <p class="race-intro">Vier vragen vormen één formule: <b>A (× of ÷) B, plus of min C = D</b>. Vul alle vier de antwoorden in en zie meteen hoe dicht je bij de waarheid zit.</p>
-        <div class="race-rules">
-          <div class="race-rule"><strong>1</strong><span>Vul alle vier de antwoorden in.</span></div>
-          <div class="race-rule"><strong>2</strong><span>De formule is altijd A × of ÷ B, plus of min C = D.</span></div>
-          <div class="race-rule"><strong>3</strong><span>Je score is je gemiddelde afwijking over de vier vragen.</span></div>
+      <section class="bk-library-overview" id="bkStart">
+        <h1 class="library-page-title">Breinkrakers</h1>
+        <p class="library-page-subtitle">Vier vragen vormen samen één formule. Kies een puzzel en vul alle vier de antwoorden in.</p>
+        <div class="library-stats" aria-label="Voortgang Breinkrakers">
+          <div class="library-stat"><b id="bkPlayedCount">0</b><span>Gespeeld</span></div>
+          <div class="library-stat"><b id="bkExactCount">0</b><span>Volledig exact</span></div>
+          <div class="library-stat"><b id="bkAverageScore">—</b><span>Gemiddelde score</span></div>
         </div>
-        <div class="race-best" id="bkProgress"></div>
-        <button class="hero-cta race-start-button" type="button" onclick="startBreinkrakers()">Start puzzel <span aria-hidden="true">→</span></button>
-        <button class="race-duel-leave bk-reset-button" type="button" onclick="resetBreinkrakers()">Voortgang wissen en opnieuw beginnen</button>
+        <div class="bk-catalog-toolbar">
+          <p class="bk-catalog-summary" id="bkProgress" role="status"></p>
+          <button class="bk-reset-button" type="button" onclick="resetBreinkrakers()">Voortgang wissen</button>
+        </div>
+        <div class="library-card-grid bk-card-grid" id="bkCardGrid"></div>
       </section>
 
-      <section class="race-panel race-play-panel" id="bkPlay" style="display:none;">
+      <section class="race-panel race-play-panel bk-play-panel" id="bkPlay" style="display:none;">
         <div class="race-topline">
           <div>
             <div class="race-mode-label">BREINKRAKERS</div>
-            <div class="race-level" id="bkLevelLabel">Intermediate</div>
+            <div class="race-level" id="bkPuzzleLabel">Puzzel 1</div>
           </div>
-          <div class="race-clock"><strong id="bkCounter">1 / 193</strong><span>puzzel</span></div>
+          <div class="race-clock"><strong id="bkCounter">1 / 199</strong><span>puzzel</span></div>
         </div>
         <div class="bk-formula" id="bkFormula" aria-label="Formule-skelet"></div>
         <div class="race-question-card">
@@ -504,6 +525,7 @@
           <div class="race-feedback" id="bkFeedback" role="status" aria-live="polite"></div>
           <button class="btn-check race-submit-button" id="bkSubmitButton" type="button" onclick="submitBreinkrakers()">Check mijn score</button>
         </div>
+        <button class="bk-overview-button" type="button" onclick="renderBreinkrakersStart()">← Alle Breinkrakers</button>
       </section>
 
       <section class="race-panel race-results-panel" id="bkDone" style="display:none;">
@@ -511,7 +533,7 @@
         <h2 class="race-results-title">Alle puzzels gespeeld 🎉</h2>
         <div class="race-score-card"><strong id="bkDoneScore">—</strong><span>gemiddelde afwijking</span></div>
         <p class="race-results-meta" id="bkDoneMeta"></p>
-        <button class="hero-cta race-restart-button" type="button" onclick="resetBreinkrakers()">Opnieuw spelen →</button>
+        <button class="hero-cta race-restart-button" type="button" onclick="renderBreinkrakersStart()">Terug naar alle puzzels →</button>
       </section>
     </div>
   </main>
@@ -792,12 +814,12 @@
   </div>
 
 <!-- De volgorde is bewust: modules delen de bestaande classic-script scope. -->
-<script src="js/core.js?v=28"></script>
-<script src="js/puzzle-modes.js?v=28"></script>
-<script src="js/race.js?v=28"></script>
-<script src="js/submissions.js?v=28"></script>
-<script src="js/library.js?v=28"></script>
-<script src="js/app.js?v=28"></script>
+<script src="js/core.js?v=33"></script>
+<script src="js/puzzle-modes.js?v=33"></script>
+<script src="js/race.js?v=33"></script>
+<script src="js/submissions.js?v=33"></script>
+<script src="js/library.js?v=33"></script>
+<script src="js/app.js?v=33"></script>
 
 </body>
 </html>
