@@ -21,13 +21,14 @@
 <!-- Supabase Client CDN (defer om te voorkomen dat de pagina blokkeert) -->
 <script defer src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="puzzles_embedded.js?v=27"></script>
-<script src="netto_frontend_puzzles.js?v=27"></script>
+<script src="netto_frontend_puzzles.js?v=38"></script>
 <script src="netto_race_sets.js?v=27"></script>
 <script src="netto_race_pool.js?v=27"></script>
 <script src="netto_breinkrakers.js?v=27"></script>
 <script src="netto_translations_en.js?v=34"></script>
-<script src="js/i18n.js?v=36"></script>
-<link rel="stylesheet" href="css/styles.css?v=36">
+<script src="js/i18n.js?v=40"></script>
+<link rel="stylesheet" href="css/styles.css?v=41">
+<link rel="stylesheet" href="css/refinement.css?v=40">
 
 </head>
 <body>
@@ -45,6 +46,7 @@
 
   <!-- Sarcastische Toast Container -->
   <div class="toast-container" id="toastContainer"></div>
+  <div class="confetti-layer" id="confettiLayer" aria-hidden="true" hidden></div>
 
   <!-- Vaste Topbar -->
   <header class="topbar">
@@ -82,37 +84,40 @@
 
   <!-- Sidebar Overlay & Menu -->
   <div class="overlay" id="overlay" onclick="toggleMenu()"></div>
-  <nav class="sidebar" id="sidebar">
-    <button class="sidebar-logo" onclick="goHome()" title="Naar home">Netto</button>
-    <div class="sidebar-tagline">dagelijkse schatting</div>
+  <nav class="sidebar" id="sidebar" aria-label="Hoofdnavigatie">
+    <div class="sidebar-header">
+      <button class="sidebar-logo" onclick="goHome()" title="Naar home">Netto</button>
+      <button class="sidebar-close" type="button" onclick="toggleMenu()" aria-label="Menu sluiten">×</button>
+    </div>
+    <div class="sidebar-tagline">het schattingsspel</div>
 
     <div class="sidebar-scroll">
       <div class="sidebar-group">
         <div class="sidebar-group-title">Spelen</div>
-        <button class="sidebar-item" onclick="openDailyPuzzles()"><span class="num">01</span><span class="label">Daily Archive</span><span class="arrow">→</span></button>
-        <button class="sidebar-item" onclick="openPuzzles()"><span class="num">02</span><span class="label">Puzzels</span><span class="arrow">→</span></button>
-        <button class="sidebar-item" onclick="openPuzzleRace()"><span class="num">03</span><span class="label">Puzzel Race</span><span class="arrow">→</span></button>
-        <button class="sidebar-item" onclick="openBreinkrakers()"><span class="num">04</span><span class="label">Breinkrakers</span><span class="arrow">→</span></button>
-        <button class="sidebar-item" onclick="openPremiumLibrary()"><span class="num">05</span><span class="label">Library <span aria-label="Premium">✦</span></span><span class="arrow">→</span></button>
+        <button class="sidebar-item" onclick="openDailyPuzzles()"><span class="sidebar-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M8 3v4M16 3v4M3 10h18M8 14h.01M12 14h.01M16 14h.01M8 18h.01M12 18h.01"/></svg></span><span class="label">Daily Archive</span><span class="arrow">→</span></button>
+        <button class="sidebar-item" onclick="openPuzzles()"><span class="sidebar-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><path d="M14 17.5h7M17.5 14v7"/></svg></span><span class="label">Puzzels</span><span class="arrow">→</span></button>
+        <button class="sidebar-item" onclick="openPuzzleRace()"><span class="sidebar-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l3 2M9 2h6M12 5V2"/></svg></span><span class="label">Puzzel Race</span><span class="arrow">→</span></button>
+        <button class="sidebar-item" onclick="openBreinkrakers()"><span class="sidebar-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9.5 4.5A3.5 3.5 0 0 0 6 8v.4A3.5 3.5 0 0 0 4 15a3.5 3.5 0 0 0 5.5 3M14.5 4.5A3.5 3.5 0 0 1 18 8v.4a3.5 3.5 0 0 1 2 6.6 3.5 3.5 0 0 1-5.5 3M9.5 4.5v15M14.5 4.5v15M9.5 9H7.8M14.5 14h1.7"/></svg></span><span class="label">Breinkrakers</span><span class="arrow">→</span></button>
+        <button class="sidebar-item" onclick="openPremiumLibrary()"><span class="sidebar-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H11v17H6.5A2.5 2.5 0 0 0 4 22V5.5ZM20 5.5A2.5 2.5 0 0 0 17.5 3H13v17h4.5A2.5 2.5 0 0 1 20 22V5.5Z"/></svg></span><span class="label">Library <span aria-label="Premium">✦</span></span><span class="arrow">→</span></button>
       </div>
       <div class="sidebar-group">
         <div class="sidebar-group-title">Meer</div>
-        <button class="sidebar-item" onclick="openLeaderboardModal()"><span class="num">06</span><span class="label">Leaderboard</span><span class="arrow">→</span></button>
-        <button class="sidebar-item" onclick="openHowItWorks()"><span class="num">07</span><span class="label">Hoe werkt het?</span><span class="arrow">→</span></button>
-        <button class="sidebar-item" onclick="openAbout()"><span class="num">08</span><span class="label">About Us</span><span class="arrow">→</span></button>
-        <button class="sidebar-item" onclick="openSettings()"><span class="num">09</span><span class="label">Settings</span><span class="arrow">→</span></button>
-        <button class="sidebar-item" onclick="openSubmitQuestion()"><span class="num">10</span><span class="label">Vraag insturen</span><span class="arrow">→</span></button>
+        <button class="sidebar-item" onclick="openLeaderboardModal()"><span class="sidebar-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 21h8M12 17v4M7 4h10v5a5 5 0 0 1-10 0V4Z"/><path d="M7 6H4v2a4 4 0 0 0 4 4M17 6h3v2a4 4 0 0 1-4 4"/></svg></span><span class="label">Leaderboard</span><span class="arrow">→</span></button>
+        <button class="sidebar-item" onclick="openHowItWorks()"><span class="sidebar-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M9.8 9a2.4 2.4 0 1 1 3.3 2.2c-.8.4-1.1.9-1.1 1.8M12 17h.01"/></svg></span><span class="label">Hoe werkt het?</span><span class="arrow">→</span></button>
+        <button class="sidebar-item" onclick="openAbout()"><span class="sidebar-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/></svg></span><span class="label">Over Netto</span><span class="arrow">→</span></button>
+        <button class="sidebar-item" onclick="openSettings()"><span class="sidebar-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h10M18 7h2M4 17h2M10 17h10"/><circle cx="16" cy="7" r="2"/><circle cx="8" cy="17" r="2"/></svg></span><span class="label">Instellingen</span><span class="arrow">→</span></button>
+        <button class="sidebar-item" onclick="openSubmitQuestion()"><span class="sidebar-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20h4l11-11a2.8 2.8 0 0 0-4-4L4 16v4Z"/><path d="m13.5 6.5 4 4"/></svg></span><span class="label">Vraag insturen</span><span class="arrow">→</span></button>
       </div>
     </div>
 
-    <button class="sidebar-footer" onclick="openAbout()" title="Over ons">Made by <b>B-Force</b></button>
+    <button class="sidebar-footer" onclick="openAbout()" title="Over Netto"><span>Over Netto</span><small>Made by B-Force</small><span class="arrow" aria-hidden="true">→</span></button>
   </nav>
 
   <!-- ============ SCHERM 1: HOME ============ -->
   <main class="screen screen-home active" id="screen-home">
     <div class="home-content">
       <div class="home-landing-grid">
-        <section class="home-daily-card" aria-labelledby="homeDailyTitle">
+        <section class="home-daily-card" data-operator="×" aria-labelledby="homeDailyTitle">
           <div class="home-daily-topline">
             <span class="home-section-label">De Daily</span>
             <span class="hero-meta" id="heroDateMeta">Nr. 032 · 28 augustus 2026</span>
@@ -121,8 +126,12 @@
             <h1 class="hero-headline" id="homeDailyTitle">Drie vragen.<br><span>Eén verband.</span></h1>
             <p class="hero-sub">Schat drie feiten. Gebruik het verband om slimmer te spelen.</p>
           </div>
-          <div class="home-equation" aria-hidden="true">
-            <span>?</span><b>×</b><span>?</span><b>=</b><span class="result">?</span>
+          <div class="home-equation" id="homeDailyEquation" aria-label="Categorieën van de Daily">
+            <span class="home-category-icon" id="homeDailyCategory1" role="img"></span>
+            <b id="homeDailyOperator">×</b>
+            <span class="home-category-icon" id="homeDailyCategory2" role="img"></span>
+            <b aria-hidden="true">=</b>
+            <span class="home-category-icon result" id="homeDailyCategory3" role="img"></span>
           </div>
           <button class="hero-cta" id="btnStartPuzzle" onclick="showScreen('puzzle')">
             <span>Speel de Daily</span>
@@ -174,6 +183,32 @@
           <span class="home-mode-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M8 3v4M16 3v4M3 10h18M8 14h.01M12 14h.01M16 14h.01M8 18h.01M12 18h.01"/></svg></span>
           <span class="home-mode-body"><b>Daily Archive</b><small>Alle dagpuzzels sinds dag één</small></span>
           <span class="home-mode-arrow">→</span>
+        </button>
+      </div>
+    </section>
+
+    <section class="home-more" aria-labelledby="homeMoreTitle">
+      <div class="home-modes-heading">
+        <div>
+          <span class="home-section-label">Meer</span>
+          <h2 id="homeMoreTitle">Meer van Netto</h2>
+        </div>
+      </div>
+      <div class="home-more-grid">
+        <button class="home-more-card" type="button" onclick="openAbout()">
+          <span class="home-more-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/></svg></span>
+          <span><b>Over Netto</b><small>Het idee achter het spel</small></span>
+          <span class="home-more-arrow" aria-hidden="true">↗</span>
+        </button>
+        <button class="home-more-card" type="button" onclick="openSubmitQuestion()">
+          <span class="home-more-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20h4l11-11a2.8 2.8 0 0 0-4-4L4 16v4Z"/><path d="m13.5 6.5 4 4"/></svg></span>
+          <span><b>Stuur een vraag in</b><small>Deel een feit of bouw een puzzel</small></span>
+          <span class="home-more-arrow" aria-hidden="true">↗</span>
+        </button>
+        <button class="home-more-card" type="button" onclick="openSettings()">
+          <span class="home-more-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7h10M18 7h2M4 17h2M10 17h10"/><circle cx="16" cy="7" r="2"/><circle cx="8" cy="17" r="2"/></svg></span>
+          <span><b>Instellingen</b><small>Taal, uiterlijk en race-vraagsets</small></span>
+          <span class="home-more-arrow" aria-hidden="true">↗</span>
         </button>
       </div>
     </section>
@@ -296,7 +331,7 @@
   <!-- ============ DAILY PUZZELS & LIBRARY ============ -->
   <main class="library-screen" id="libraryScreen">
     <div class="library-page-inner">
-      <div class="library-page-top"><button class="library-home" type="button" onclick="goHome()" aria-label="Netto — naar de landingpagina">Netto</button><span class="library-page-kicker">LIBRARY</span></div>
+      <div class="library-page-top"><button class="library-home" type="button" onclick="goHome()" aria-label="Netto — naar de landingpagina">Netto</button><span class="library-page-kicker" id="libraryPageKicker">LIBRARY</span></div>
       <h1 class="library-page-title" id="libraryTitle">Daily Archive</h1>
       <p class="library-page-subtitle" id="librarySubtitle">Elke puzzel opnieuw spelen.</p>
       <div id="dailyDateControls" class="month-nav" style="display:none;">
@@ -306,36 +341,52 @@
       </div>
       <div class="library-stats" id="libraryStats"></div>
       <section class="about-panel" id="aboutPanel" style="display:none;">
-        <h2>Onze missie</h2>
-        <p>Netto maakt nieuwsgierigheid speelbaar. We verbinden alledaagse feiten met slimme rekensommen, zodat je niet alleen gokt, maar leert denken in verhoudingen.</p>
-        <p>Elke puzzel is een kleine ontdekking: drie vragen, één verband en altijd een kans om dichter bij de waarheid te komen.</p>
+        <h2>Een spel over goed schatten.</h2>
+        <p>Je hoeft niet ieder feit te kennen. Netto beloont logisch nadenken, gevoel voor verhoudingen en een goede gok op het juiste moment.</p>
+        <p>B-Force maakt en controleert de vragen. Zie je iets dat scherper kan? Stuur je eigen vraag in; de beste komen terug in het spel.</p>
       </section>
 
       <section class="about-panel" id="howPanel" style="display:none;">
-        <h2>Hoe werkt Netto?</h2>
+        <h2>De korte versie</h2>
+        <p class="how-lede">Schat drie antwoorden. Gebruik de formule als extra aanwijzing. De laagste factor wint.</p>
+        <div class="how-equation" aria-label="A maal B is C"><span>A</span><b>×</b><span>B</span><b>=</b><span>C</span></div>
 
-        <h3>1. De drie vragen &amp; de wiskunde-twist</h3>
-        <p>Elke puzzel geeft je <b>drie feiten-vragen</b>. Je schat een getal per vraag. Maar er is een twist: de drie antwoorden hangen aan elkaar via een som.</p>
-        <p><b>Voorbeeld:</b> <i>Hoeveel sterren in onze Melkweg? × Hoeveel planeten per ster? = Hoeveel sterren-ish?</i> — de derde volgt uit de eerste twee. Ken je er één goed, dan kun je de rest afleiden.</p>
+        <section class="how-example" aria-labelledby="howExampleTitle">
+          <div class="how-example-heading">
+            <span>Voorbeeldpuzzel</span>
+            <h3 id="howExampleTitle">Een supermakkelijk voorbeeld</h3>
+            <p>De antwoorden zijn expres simpel, zodat je meteen ziet hoe het verband helpt.</p>
+          </div>
+          <div class="how-example-grid">
+            <article><span>Vraag 1 · A</span><p>Hoeveel poten heeft een hond?</p><strong>4</strong></article>
+            <article><span>Vraag 2 · B</span><p>Hoeveel benen heeft een mens?</p><strong>2</strong></article>
+            <article><span>Vraag 3 · C</span><p>Hoeveel poten heeft een spin?</p><strong>8</strong></article>
+          </div>
+          <div class="how-example-result"><strong>4 × 2 = 8</strong><span>Je weet dus al dat het derde antwoord 8 moet zijn.</span></div>
+        </section>
 
-        <h3>2. Scoren &amp; de multiplier</h3>
-        <p>Per vraag krijg je een <b>factor</b> (multiplier). Die is <b>1,00×</b> als je exact raadt en loopt op naarmate je verder van het echte antwoord zit:</p>
+        <ol class="how-steps">
+          <li><span class="how-step-number">01</span><div><h3>Schat de drie antwoorden</h3><p>Vul bij iedere vraag je beste schatting in. Exact weten hoeft niet.</p></div></li>
+          <li><span class="how-step-number">02</span><div><h3>Controleer het verband</h3><p>De eerste twee antwoorden vormen samen het derde. Gebruik een antwoord dat je vertrouwt om de andere twee te controleren.</p></div></li>
+          <li><span class="how-step-number">03</span><div><h3>Houd je factor laag</h3><p>Een exact antwoord scoort 1,00×. Zit je twee keer te hoog of te laag, dan scoor je 2,00×. Je eindscore is het gemiddelde van de drie.</p></div></li>
+        </ol>
+
+        <h3 class="how-score-heading">Zo lees je de score</h3>
         <div class="how-score-bars">
-          <div class="how-score-bar"><span class="tag tag-green">🟩 ≤1,15×</span><small>Spot on! Bijna perfect</small></div>
-          <div class="how-score-bar"><span class="tag tag-yellow">🟨 ≤1,50×</span><small>Dichtbij, mooie schatting</small></div>
-          <div class="how-score-bar"><span class="tag tag-orange">🟧 ≤2,50×</span><small>Ruime schatting</small></div>
-          <div class="how-score-bar"><span class="tag tag-red">🟥 meer</span><small>Ver uit de buurt</small></div>
+          <div class="how-score-bar"><span class="tag tag-green">1,00×</span><small>Exact</small></div>
+          <div class="how-score-bar"><span class="tag tag-yellow">≤ 1,15×</span><small>Zeer dichtbij</small></div>
+          <div class="how-score-bar"><span class="tag tag-orange">≤ 1,50×</span><small>Goede schatting</small></div>
+          <div class="how-score-bar"><span class="tag tag-red">&gt; 2,50×</span><small>Ruim ernaast</small></div>
         </div>
-        <p>Je <b>eindfactor</b> is het gemiddelde van de drie vragen. Hoe lager, hoe beter.</p>
 
-        <h3>3. Bonus &amp; meer</h3>
-        <ul class="how-list">
-          <li><b>Streak</b> — speel elke dag en bouw een reeks op.</li>
-          <li><b>Puzzel Race</b> — 5 minuten zoveel mogelijk exact goed, van makkelijk naar moeilijk.</li>
-          <li><b>Play online</b> — live duel via een open game of room-code; wie de meeste goed heeft wint.</li>
-          <li><b>Vraagsets wisselen</b> — pas je race aan met regio- of thema-sets in <b>Settings</b>.</li>
-          <li><b>Breinkrakers</b> — een ketting van 4 vragen in één formule.</li>
-        </ul>
+        <div class="how-next">
+          <h3>Wat wil je spelen?</h3>
+          <div class="how-next-grid">
+            <button type="button" onclick="goHome(); showScreen('puzzle')"><b>De Daily</b><span>Drie vragen, één keer per dag.</span><i aria-hidden="true">→</i></button>
+            <button type="button" onclick="openPuzzleRace()"><b>Puzzel Race</b><span>Zoveel mogelijk exact binnen de tijd.</span><i aria-hidden="true">→</i></button>
+            <button type="button" onclick="openBreinkrakers()"><b>Breinkrakers</b><span>Vier antwoorden in één formule.</span><i aria-hidden="true">→</i></button>
+          </div>
+        </div>
       </section>
       <div class="library-difficulties" id="libraryDifficulties">
         <button class="active" onclick="selectLibraryDifficulty('easy', this)">Easy <span>laden…</span></button>
@@ -358,7 +409,7 @@
   <!-- ============ PUZZEL RACE ============ -->
   <main class="library-screen race-screen" id="raceScreen">
     <div class="library-page-inner race-page-inner">
-      <div class="library-page-top"><button class="library-back" onclick="closePuzzleRace()">← Terug</button><span class="library-page-kicker">NETTO · NIEUWE MODUS</span></div>
+      <div class="library-page-top"><button class="library-home" onclick="goHome()">Netto</button><span class="library-page-kicker">NETTO · PUZZEL RACE</span></div>
 
       <section class="race-panel race-start-panel" id="raceStart">
         <div class="race-mode-tabs" role="tablist" aria-label="Puzzel Race modus">
@@ -506,7 +557,7 @@
   <!-- ============ BREINKRAKERS ============ -->
   <main class="library-screen breinkrakers-screen" id="breinkrakersScreen">
     <div class="library-page-inner">
-      <div class="library-page-top"><button class="library-back" onclick="closeBreinkrakers()">← Terug</button><span class="library-page-kicker">NETTO · BREINKRAKERS</span></div>
+      <div class="library-page-top"><button class="library-home" onclick="goHome()">Netto</button><span class="library-page-kicker">NETTO · BREINKRAKERS</span></div>
 
       <section class="bk-library-overview" id="bkStart">
         <h1 class="library-page-title">Breinkrakers</h1>
@@ -553,7 +604,7 @@
   <!-- ============ SETTINGS ============ -->
   <main class="library-screen settings-screen" id="settingsScreen">
     <div class="library-page-inner race-page-inner">
-      <div class="library-page-top"><button class="library-back" onclick="closeSettings()">← Terug</button><span class="library-page-kicker">NETTO · SETTINGS</span></div>
+      <div class="library-page-top"><button class="library-home" onclick="goHome()">Netto</button><span class="library-page-kicker">NETTO · SETTINGS</span></div>
 
       <section class="race-panel settings-panel">
         <div class="race-kicker">NETTO · INSTELLINGEN</div>
@@ -607,25 +658,44 @@
   <!-- ============ VRAAG INSTUREN ============ -->
   <main class="library-screen settings-screen" id="submitScreen">
     <div class="library-page-inner race-page-inner">
-      <div class="library-page-top"><button class="library-back" onclick="closeSubmitQuestion()">← Terug</button><span class="library-page-kicker">NETTO · VRAAG INSTUREN</span></div>
+      <div class="library-page-top"><button class="library-home" onclick="goHome()">Netto</button><span class="library-page-kicker">NETTO · VRAAG INSTUREN</span></div>
 
-      <section class="race-panel settings-panel">
+      <section class="race-panel settings-panel submit-panel">
         <div class="race-kicker">NETTO · JOUW FEITEN</div>
         <h1 class="race-title">Stuur je <span class="script">vraag in.</span></h1>
-        <p class="race-intro">Elke inzending wordt gereviewd. Word je vraag geaccepteerd, dan gebruiken we hem misschien in een toekomstige daily of puzzel — je krijgt daar dan een melding van. <b>Inloggen verplicht.</b></p>
+        <p class="race-intro">Heb je een feit met een verrassend getal? Stuur één vraag in of bouw direct een volledige Netto-puzzel. Wij controleren elke inzending.</p>
+        <span class="submit-login-note">Je moet ingelogd zijn om te versturen.</span>
 
-        <div class="submit-mode-tabs">
-          <button type="button" class="submit-mode-tab is-active" id="submitTabVraag" onclick="switchSubmitMode('vraag')">❓ Vraag</button>
-          <button type="button" class="submit-mode-tab" id="submitTabPuzzel" onclick="switchSubmitMode('puzzel')">🧩 Puzzel</button>
-        </div>
+        <div class="submit-workspace">
+          <aside class="submit-guide" aria-labelledby="submitGuideTitle">
+            <span class="submit-guide-kicker">Korte checklist</span>
+            <h2 id="submitGuideTitle">Maak je vraag controleerbaar.</h2>
+            <ul>
+              <li><span>01</span><p>Eén duidelijk antwoord dat als getal kan worden ingevoerd.</p></li>
+              <li><span>02</span><p>Noem een jaar, land of eenheid als dat verschil maakt.</p></li>
+              <li><span>03</span><p>Zet je bron of extra context bij de toelichting.</p></li>
+            </ul>
+          </aside>
 
-        <form id="submitQuestionForm" onsubmit="submitQuestion(event)">
-          <p class="submit-mode-hint" id="submitModeHint">Heb je een leuk feit met een getal als antwoord? Stuur het in — het antwoord mag je ook overslaan, dan zoeken wij het uit.</p>
+          <div class="submit-form-card">
+            <div class="submit-form-heading">
+              <div>
+                <span>Type inzending</span>
+                <h2>Wat wil je insturen?</h2>
+              </div>
+              <div class="submit-mode-tabs">
+                <button type="button" class="submit-mode-tab is-active" id="submitTabVraag" onclick="switchSubmitMode('vraag')">Vraag</button>
+                <button type="button" class="submit-mode-tab" id="submitTabPuzzel" onclick="switchSubmitMode('puzzel')">Puzzel</button>
+              </div>
+            </div>
+
+            <form id="submitQuestionForm" onsubmit="submitQuestion(event)">
+          <p class="submit-mode-hint" id="submitModeHint">Stuur één heldere vraag in. Weet je het antwoord niet zeker? Laat het leeg en voeg je bron of context toe.</p>
 
           <div class="submit-q-grid" id="submitPuzzelGrid">
             <div class="submit-q-block">
               <label for="subQ1">Vraag 1</label>
-              <textarea id="subQ1" rows="2" maxlength="200" placeholder="Hoeveel toetsen heeft een standaard concertpiano (zwart + wit)?" required></textarea>
+              <textarea id="subQ1" rows="2" maxlength="200" placeholder="Hoeveel toetsen heeft een standaardpiano?" required></textarea>
               <div class="submit-a-row">
                 <input type="text" id="subA1" inputmode="numeric" placeholder="Antwoord (mag leeg)" autocomplete="off">
                 <span class="submit-op" id="subOperatorBadge">×</span>
@@ -633,7 +703,7 @@
             </div>
             <div class="submit-q-block" data-puzzel-only>
               <label for="subQ2">Vraag 2</label>
-              <textarea id="subQ2" rows="2" maxlength="200" placeholder="Hoeveel erkende planeten telt ons zonnestelsel?"></textarea>
+              <textarea id="subQ2" rows="2" maxlength="200" placeholder="Hoeveel planeten telt ons zonnestelsel?"></textarea>
               <div class="submit-a-row">
                 <input type="text" id="subA2" inputmode="numeric" placeholder="Antwoord" autocomplete="off">
                 <span class="submit-op">=</span>
@@ -641,7 +711,7 @@
             </div>
             <div class="submit-q-block" data-puzzel-only>
               <label for="subQ3">Vraag 3 (resultaat)</label>
-              <textarea id="subQ3" rows="2" maxlength="200" placeholder="Hoeveel toetsen heeft ... × planeten = ?"></textarea>
+              <textarea id="subQ3" rows="2" maxlength="200" placeholder="Hoeveel toetsen hebben acht standaardpiano’s samen?"></textarea>
               <div class="submit-a-row">
                 <input type="text" id="subA3" inputmode="numeric" placeholder="Antwoord" autocomplete="off">
               </div>
@@ -661,21 +731,23 @@
           </div>
           <div class="submit-extra">
             <div class="submit-extra-field">
-              <label for="subUsername">Credits-naam <span class="submit-optional">optioneel</span></label>
-              <input type="text" id="subUsername" maxlength="20" placeholder="hoe je naam in het spel komt">
+              <label for="subUsername">Naam bij je vraag <span class="submit-optional">optioneel</span></label>
+              <input type="text" id="subUsername" maxlength="20" placeholder="bijv. Berend">
             </div>
           </div>
           <div class="submit-extra-field submit-note-field">
             <label for="subNote">Toelichting <span class="submit-optional">optioneel</span></label>
-            <input type="text" id="subNote" maxlength="300" placeholder="Bron, context of een leuke noot">
+            <input type="text" id="subNote" maxlength="300" placeholder="Bron of extra context">
           </div>
 
-          <div class="submit-preview" id="submitPreview"> Vul alles in om je som te zien. </div>
+          <div class="submit-preview" id="submitPreview">Je voorbeeld verschijnt hier.</div>
           <div class="auth-error-box" id="submitErrorBox" style="display:none;"></div>
 
           <button class="btn-check race-start-button" type="submit" id="submitQuestionBtn">Verstuur inzending <span aria-hidden="true">→</span></button>
-          <p class="submit-terms">Je inzending wordt gereviewd door B-Force. Bij acceptatie kan je vraag of puzzel in een toekomstige daily of puzzel verschijnen, en krijg je een melding in het spel. Met de credits-naam (optioneel) staat je naam erbij.</p>
-        </form>
+          <p class="submit-terms">B-Force controleert iedere inzending voordat die in het spel verschijnt. Je krijgt in Netto bericht over de uitkomst.</p>
+            </form>
+          </div>
+        </div>
       </section>
     </div>
   </main>
@@ -700,7 +772,7 @@
   <!-- ============ LIBRARY ✦ (PREMIUM PAGINA) ============ -->
   <main class="library-screen" id="premiumScreen">
     <div class="library-page-inner">
-      <div class="library-page-top"><button class="library-back" onclick="closePremiumScreen()">← Terug</button><span class="library-page-kicker">NETTO · LIBRARY ✦</span></div>
+      <div class="library-page-top"><button class="library-home" onclick="goHome()">Netto</button><span class="library-page-kicker">NETTO · LIBRARY ✦</span></div>
       <h1 class="library-page-title">Library</h1>
       <p class="library-page-subtitle">Alle puzzels en vragen doorzoekbaar.</p>
       <div class="library-stats" id="premiumStats"></div>
@@ -755,12 +827,12 @@
   <div class="modal-overlay" id="modalLeaderboard" onclick="closeModalOnBg(event, 'modalLeaderboard')">
     <div class="modal">
       <button class="modal-close" onclick="closeLeaderboardModal()">✕</button>
-      <h2 class="modal-title">Leaderboard 🏆</h2>
+      <h2 class="modal-title">Leaderboard</h2>
       <div class="modal-subtitle">Wie zat er vandaag het dichtst op de waarheid?</div>
 
       <div class="tab-buttons">
         <button class="tab-btn active" id="tabTodayBtn" onclick="switchLbTab('today')">Vandaag (#032)</button>
-        <button class="tab-btn" id="tabStreaksBtn" onclick="switchLbTab('streaks')">Top Streaks 🔥</button>
+        <button class="tab-btn" id="tabStreaksBtn" onclick="switchLbTab('streaks')">Top Streaks</button>
       </div>
 
       <div class="leaderboard-list" id="leaderboardList">
@@ -776,7 +848,7 @@
       
       <!-- Ingelogde weergave -->
       <div id="authLoggedInView" style="display:none;">
-        <h2 class="modal-title">Mijn Profiel 👤</h2>
+        <h2 class="modal-title">Mijn Profiel</h2>
         <div class="modal-subtitle" id="profileEmailSubtitle">ingelogd als gebruiker</div>
         <div style="background:#F8F9FE; border-radius:12px; padding:18px; margin-bottom:18px;">
           <div style="font-size:12px; color:#6B7280; margin-bottom:4px;">GEBRUIKERSNAAM</div>
@@ -822,7 +894,7 @@
 
       <!-- Wachtwoord vergeten weergave -->
       <div id="authForgotView" style="display:none;">
-        <h2 class="modal-title">Wachtwoord vergeten? 🔑</h2>
+        <h2 class="modal-title">Wachtwoord vergeten?</h2>
         <div class="modal-subtitle">Vul je e-mailadres in en we sturen je een link om een nieuw wachtwoord in te stellen.</div>
         <div id="forgotErrorBox" style="display:none; background:#FEF2F2; border:1px solid #FECACA; color:#B91C1C; border-radius:10px; padding:12px 14px; font-size:13px; margin-bottom:14px;"></div>
         <form onsubmit="handleForgotPassword(event)">
@@ -840,11 +912,11 @@
   </div>
 
 <!-- De volgorde is bewust: modules delen de bestaande classic-script scope. -->
-<script src="js/core.js?v=36"></script>
-<script src="js/puzzle-modes.js?v=34"></script>
-<script src="js/race.js?v=34"></script>
-<script src="js/submissions.js?v=34"></script>
-<script src="js/library.js?v=36"></script>
+<script src="js/core.js?v=41"></script>
+<script src="js/puzzle-modes.js?v=39"></script>
+<script src="js/race.js?v=37"></script>
+<script src="js/submissions.js?v=39"></script>
+<script src="js/library.js?v=41"></script>
 <script src="js/app.js?v=34"></script>
 
 </body>

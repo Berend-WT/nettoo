@@ -10,7 +10,7 @@
     document.getElementById('submitScreen').classList.add('active');
     switchSubmitMode(submitMode);
     const un = document.getElementById('subUsername');
-    if (un && currentUser) un.placeholder = currentUser.username || 'hoe je naam in het spel komt';
+    if (un && currentUser) un.placeholder = currentUser.username || 'bijv. Berend';
     updateSubmitPreview();
     checkSubmissionNotifications();
   }
@@ -27,9 +27,10 @@
     document.getElementById('submitTabPuzzel').classList.toggle('is-active', isPuzzel);
     document.querySelectorAll('#submitPuzzelGrid [data-puzzel-only]').forEach(el => { el.style.display = isPuzzel ? '' : 'none'; });
     document.getElementById('submitPuzzelExtra').style.display = isPuzzel ? '' : 'none';
+    document.getElementById('subA1').placeholder = isPuzzel ? 'Antwoord' : 'Antwoord (mag leeg)';
     document.getElementById('submitModeHint').textContent = isPuzzel
-      ? 'Bouw de puzzel zoals hij in het spel werkt: vraag 1 ×/÷/+/− vraag 2 = resultaat van vraag 3. Moeilijk? Begin dan gewoon bij "Vraag".'
-      : 'Heb je een leuk feit met een getal als antwoord? Stuur het in — het antwoord mag je ook overslaan, dan zoeken wij het uit.';
+      ? 'Maak drie vragen waarvan de antwoorden samen een kloppende formule vormen: A ×/÷/+/− B = C.'
+      : 'Stuur één heldere vraag in. Weet je het antwoord niet zeker? Laat het leeg en voeg je bron of context toe.';
     updateSubmitPreview();
   }
 
@@ -51,7 +52,7 @@
     const op = document.getElementById('subOperator').value;
     document.getElementById('subOperatorBadge').textContent = op;
     if (!q1) {
-      preview.textContent = isPuzzel ? 'Begin bij vraag 1 om je puzzel te zien.' : 'Typ je vraag hierboven.';
+      preview.textContent = isPuzzel ? 'Begin bij vraag 1 om je puzzel te zien.' : 'Je voorbeeld verschijnt zodra je een vraag invult.';
       preview.className = 'submit-preview';
       return;
     }
@@ -60,7 +61,7 @@
       preview.innerHTML = `<span class="submit-preview-calc">${escapeHtml(q1)}</span>` +
         (known
           ? `<span class="submit-preview-ok">✓ Antwoord: ${fmt(a1)}</span>`
-          : '<span class="submit-preview-ok">✓ Vraag klaar — antwoord laten we nakijken</span>');
+          : '<span class="submit-preview-ok">Antwoord controleren we tijdens de review</span>');
       preview.className = 'submit-preview is-ok';
       return;
     }
@@ -153,7 +154,7 @@
       if (error) throw error;
       ['subQ1','subQ2','subQ3','subA1','subA2','subA3','subNote'].forEach(id => { document.getElementById(id).value = ''; });
       updateSubmitPreview();
-      showNoticeToast('Ontvangen! Je inzending wordt gereviewd — je krijgt een melding als hij geaccepteerd is. 📮', '📮');
+      showNoticeToast('Inzending ontvangen. Je krijgt bericht zodra de review klaar is.', '✓');
     } catch (err) {
       showErr(mapAuthError(err.message));
     } finally {

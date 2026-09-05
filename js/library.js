@@ -194,7 +194,6 @@ function renderLibraryStats() {
     document.getElementById('q2-label').textContent = PUZZLE_DATA.q2_label;
     document.getElementById('q3-label').textContent = PUZZLE_DATA.q3_label;
     document.getElementById('operatorBadge').textContent = PUZZLE_DATA.operator || '×';
-    document.getElementById('heroDateMeta').textContent = `Daily · ${PUZZLE_DATA.name || `Puzzel #${activePuzzleIndex + 1}`}`;
     document.getElementById('puzzleEyebrow').textContent = `Netto · ${puzzleNr(PUZZLE_DATA.number)}`;
 
     // Reset velden en uitslag

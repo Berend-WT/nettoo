@@ -19,6 +19,7 @@ MIRROR_FILES = (
     "admin.html",
     "favicon.svg",
     "css/styles.css",
+    "css/refinement.css",
     "css/admin.css",
     "js/core.js",
     "js/puzzle-modes.js",

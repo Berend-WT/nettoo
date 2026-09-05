@@ -78,6 +78,7 @@
     }
     const answers = [active.q1_answer,active.q2_answer,active.q3_answer];
     const factor = answers.reduce((sum,a,i) => sum + scoreVraag(guesses[i],a),0) / 3;
+    if (guesses.every((guess, i) => isSpotOnAnswer(guess, answers[i]))) launchConfetti();
     const plays = JSON.parse(localStorage.getItem('netto_library_plays') || '{}'); plays[active.id] = { factor, guesses, completedAt:new Date().toISOString() }; localStorage.setItem('netto_library_plays',JSON.stringify(plays));
     updateContinuePuzzleButton();
     const nextAction = prefix === 'library' ? 'libraryMove(1)' : 'premiumPuzzleMove(1)';
@@ -237,14 +238,15 @@
     document.getElementById('libraryDifficulties').querySelectorAll('button').forEach((button, index) => { const level = ['easy','intermediate','hard','extremely-hard'][index]; const count = libraryPuzzles.filter(p => p.difficulty === level).length; button.innerHTML = `${level === 'extremely-hard' ? 'Extremely Hard' : level[0].toUpperCase() + level.slice(1)}<span>${count}</span>`; button.disabled = false; button.classList.toggle('active', level === selectedDifficulty); });
     document.getElementById('libraryPuzzleView').style.display = 'none';
     document.getElementById('dailyPuzzleList').style.display = isLibrary ? 'none' : 'block';
+    document.getElementById('libraryPageKicker').textContent = isLibrary ? 'NETTO · PUZZELS' : 'NETTO · DAILY ARCHIVE';
     document.getElementById('libraryTitle').textContent = isLibrary ? 'Puzzels' : 'Daily Archive';
     document.getElementById('librarySubtitle').textContent = isLibrary ? 'Kies een moeilijkheid en speel alle puzzels.' : 'Elke dagpuzzel sinds dag één. Speel ze opnieuw.';
     renderLibraryStats();
     if (mode === 'daily') renderDailyArchive();
     else { renderLibraryCards(); loadLibraryFromSupabase(); }
   }
-  function openAbout() { closeMenu(); showScreen('library'); document.getElementById('libraryScreen').classList.add('active'); document.getElementById('libraryTitle').textContent='About Us'; document.getElementById('librarySubtitle').textContent='Waarom we Netto bouwen.'; document.getElementById('libraryDifficulties').style.display='none'; document.getElementById('dailyPuzzleList').style.display='none'; document.getElementById('libraryPuzzleView').style.display='none'; document.getElementById('libraryStats').style.display='none'; document.getElementById('dailyDateControls').style.display='none'; document.getElementById('howPanel').style.display='none'; document.getElementById('aboutPanel').style.display='block'; }
-  function openHowItWorks() { closeMenu(); showScreen('library'); document.getElementById('libraryScreen').classList.add('active'); document.getElementById('libraryTitle').textContent='Hoe werkt het?'; document.getElementById('librarySubtitle').textContent='Van feit-trio tot multiplier.'; document.getElementById('libraryDifficulties').style.display='none'; document.getElementById('dailyPuzzleList').style.display='none'; document.getElementById('libraryPuzzleView').style.display='none'; document.getElementById('libraryStats').style.display='none'; document.getElementById('dailyDateControls').style.display='none'; document.getElementById('aboutPanel').style.display='none'; document.getElementById('howPanel').style.display='block'; }
+  function openAbout() { closeMenu(); showScreen('library'); document.getElementById('libraryScreen').classList.add('active'); document.getElementById('libraryPageKicker').textContent='NETTO · OVER'; document.getElementById('libraryTitle').textContent='Over Netto'; document.getElementById('librarySubtitle').textContent='Het idee achter het spel.'; document.getElementById('libraryDifficulties').style.display='none'; document.getElementById('dailyPuzzleList').style.display='none'; document.getElementById('libraryPuzzleView').style.display='none'; document.getElementById('libraryStats').style.display='none'; document.getElementById('dailyDateControls').style.display='none'; document.getElementById('howPanel').style.display='none'; document.getElementById('aboutPanel').style.display='block'; }
+  function openHowItWorks() { closeMenu(); showScreen('library'); document.getElementById('libraryScreen').classList.add('active'); document.getElementById('libraryPageKicker').textContent='NETTO · UITLEG'; document.getElementById('libraryTitle').textContent='Hoe werkt het?'; document.getElementById('librarySubtitle').textContent='Drie schattingen. Eén formule. De laagste factor wint.'; document.getElementById('libraryDifficulties').style.display='none'; document.getElementById('dailyPuzzleList').style.display='none'; document.getElementById('libraryPuzzleView').style.display='none'; document.getElementById('libraryStats').style.display='none'; document.getElementById('dailyDateControls').style.display='none'; document.getElementById('aboutPanel').style.display='none'; document.getElementById('howPanel').style.display='block'; }
   function closeLibraryScreen() { document.getElementById('libraryScreen').classList.remove('active'); stopLibraryTimer(); showScreen('home'); }
   function closeLibrary() { closeLibraryScreen(); }
 
@@ -417,6 +419,7 @@
     }
     const answers = [p.q1.answer, p.q2.answer, p.q3.answer, p.q4.answer];
     const exact = guesses.every((g, i) => g === answers[i]);
+    if (exact) launchConfetti();
     const vraagFactor = (g, a) => (a === 0 ? (g === 0 ? 1 : 10) : scoreVraag(g, a));
     const factor = answers.reduce((s, a, i) => s + vraagFactor(guesses[i], a), 0) / 4;
     const currentIndex = bkState.index;

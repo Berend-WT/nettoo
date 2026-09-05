@@ -541,6 +541,7 @@
     });
     const factor = answers.reduce((sum, a, i) => sum + scoreVraag(guesses[i], a), 0) / 3;
     const exact = guesses[0] === answers[0] && guesses[1] === answers[1] && guesses[2] === answers[2];
+    if (exact) launchConfetti();
     raceState.results.push({ puzzle: p, guesses, factor, exact });
     raceState.correct += exact ? 1 : 0;
     raceState.streak = exact ? raceState.streak + 1 : 0;

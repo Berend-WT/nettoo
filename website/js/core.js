@@ -313,6 +313,95 @@
   // Consistente nummering: Nr. 001, Nr. 028, Nr. 142 (3 cijfers)
   const puzzleNr = n => `Nr. ${String(n).padStart(3, '0')}`;
 
+  const DAILY_CATEGORY_ICON_KEYS = Object.freeze({
+    'Biologie & gezondheid': 'health',
+    'Boeken en literatuur': 'book',
+    'Dagelijks leven': 'home',
+    'Dieren': 'animal',
+    'Eten & drinken': 'food',
+    'Films en series': 'film',
+    'Filosofie, psychologie en religie': 'idea',
+    'Gebouwen en infrastructuur': 'building',
+    'Geografie': 'globe',
+    'Geschiedenis': 'history',
+    'Kunst en cultuur': 'art',
+    'Landbouw en industrie': 'industry',
+    'Milieu en duurzaamheid': 'leaf',
+    'Muziek': 'music',
+    'Natuurkunde': 'atom',
+    'Nederlands': 'flag',
+    'Politiek & recht': 'law',
+    'Records en vergelijkingen': 'chart',
+    'Scheikunde': 'chemistry',
+    'Spellen en speelgoed': 'game',
+    'Sport': 'sport',
+    'Sterrenkunde & ruimte': 'space',
+    'Taal': 'language',
+    'Technologie': 'technology',
+    'Topografie': 'map',
+    'Vervoer': 'transport',
+    'Wetenschap': 'atom',
+    'Wiskunde': 'math'
+  });
+
+  const DAILY_CATEGORY_ICON_DRAWINGS = Object.freeze({
+    animal: '<circle cx="8" cy="8" r="2"/><circle cx="16" cy="8" r="2"/><circle cx="5.5" cy="13" r="1.6"/><circle cx="18.5" cy="13" r="1.6"/><path d="M8 18c0-2.4 1.8-4 4-4s4 1.6 4 4c0 1.5-1.1 2.5-2.5 2.5-.7 0-1.1-.3-1.5-.7-.4.4-.8.7-1.5.7C9.1 20.5 8 19.5 8 18Z"/>',
+    art: '<path d="M12 3a9 9 0 1 0 0 18h1.2a1.8 1.8 0 0 0 0-3.6h-.8a1.8 1.8 0 0 1 0-3.6H15A6 6 0 0 0 21 8c0-3.3-4-5-9-5Z"/><circle cx="7.5" cy="10" r="1"/><circle cx="10" cy="6.8" r="1"/><circle cx="15" cy="7" r="1"/>',
+    atom: '<circle cx="12" cy="12" r="1.4"/><ellipse cx="12" cy="12" rx="9" ry="3.7"/><ellipse cx="12" cy="12" rx="9" ry="3.7" transform="rotate(60 12 12)"/><ellipse cx="12" cy="12" rx="9" ry="3.7" transform="rotate(120 12 12)"/>',
+    book: '<path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H11v17H6.5A2.5 2.5 0 0 0 4 22V5.5ZM20 5.5A2.5 2.5 0 0 0 17.5 3H13v17h4.5A2.5 2.5 0 0 1 20 22V5.5Z"/>',
+    building: '<path d="M4 21V7l8-4 8 4v14M8 10h2M14 10h2M8 14h2M14 14h2M10 21v-3h4v3"/>',
+    chart: '<path d="M4 20V5M4 20h16M7 16l4-5 3 2 5-7"/><path d="m16 6 3-.5.5 3"/>',
+    chemistry: '<path d="M9 3h6M10 3v6l-5 9a2 2 0 0 0 1.8 3h10.4A2 2 0 0 0 19 18l-5-9V3M7.5 16h9"/>',
+    film: '<rect x="3" y="6" width="18" height="14" rx="2"/><path d="M3 10h18M7 3l2 3M13 3l2 3M19 3l2 3"/>',
+    flag: '<path d="M5 21V4M5 5h12l-2 4 2 4H5"/>',
+    food: '<path d="M6 3v7M3.5 3v4A3.5 3.5 0 0 0 7 10.5V21M11 3v18M11 11h4V7a4 4 0 0 0-4-4Z"/>',
+    game: '<rect x="3" y="5" width="18" height="14" rx="5"/><path d="M8 9v6M5 12h6M16 10h.01M18 14h.01"/>',
+    globe: '<circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c3 3.2 3 14.8 0 18M12 3c-3 3.2-3 14.8 0 18"/>',
+    health: '<path d="M20.8 5.8a5.5 5.5 0 0 0-8.8-.9 5.5 5.5 0 0 0-8.8.9C.7 10 4.2 15.1 12 21c7.8-5.9 11.3-11 8.8-15.2Z"/><path d="M7 12h3l1.4-3 2 6 1.2-3H18"/>',
+    history: '<path d="M7 3h10M7 21h10M8 3c0 4.5 1.2 6.1 4 9-2.8 2.9-4 4.5-4 9M16 3c0 4.5-1.2 6.1-4 9 2.8 2.9 4 4.5 4 9"/>',
+    home: '<path d="m3 11 9-8 9 8M5 10v11h14V10M9 21v-7h6v7"/>',
+    idea: '<path d="M9 18h6M10 22h4M8.2 14.5A7 7 0 1 1 15.8 14.5C14.7 15.3 14 16 14 18h-4c0-2-.7-2.7-1.8-3.5Z"/>',
+    industry: '<path d="M3 21V9l6 3V8l6 4V5h6v16H3ZM7 16h2M12 16h2M17 16h2"/>',
+    language: '<path d="M4 5h10v10H8l-4 4V5ZM10 19h10V9h-3"/><path d="M7 9h4M9 7v4M14 13h3"/>',
+    law: '<path d="M3 21h18M5 18h14M7 18V9M12 18V9M17 18V9M4 8h16L12 3 4 8Z"/>',
+    leaf: '<path d="M20 4C11 4 5 8 5 15c0 3 2 5 5 5 7 0 10-7 10-16Z"/><path d="M4 21c3-6 7-9 12-12"/>',
+    map: '<path d="m3 6 6-3 6 3 6-3v15l-6 3-6-3-6 3V6ZM9 3v15M15 6v15"/>',
+    math: '<rect x="4" y="3" width="16" height="18" rx="2"/><path d="M8 7h8M8 12h.01M12 12h.01M16 12h.01M8 16h.01M12 16h.01M16 16h.01"/>',
+    music: '<path d="M9 18V6l10-2v12M9 10l10-2"/><circle cx="6" cy="18" r="3"/><circle cx="16" cy="16" r="3"/>',
+    space: '<path d="M8 17c-3.5 1-5.5.4-5.8-.7-.5-1.8 3.8-4.8 9.6-6.7s11-2 11.5-.2c.3 1.1-1.1 2.7-3.7 4.2"/><circle cx="13" cy="12" r="7"/>',
+    sport: '<circle cx="12" cy="12" r="9"/><path d="m8.5 4.5 1.4 4.2 4.4.1 1.3-4.2M3.4 10.2l3.5 2.6-1.3 4.3M18.5 17l-1.3-4.2 3.5-2.6M8 20l4-2.5 4 2.5M9.9 8.7l-3 4.1L12 17.5l5.2-4.7-2.9-4Z"/>',
+    technology: '<rect x="6" y="6" width="12" height="12" rx="2"/><path d="M9 1v3M15 1v3M9 20v3M15 20v3M1 9h3M1 15h3M20 9h3M20 15h3M10 10h4v4h-4z"/>',
+    transport: '<path d="M5 17h14l-1-6a3 3 0 0 0-3-2H9a3 3 0 0 0-3 2l-1 6ZM7 9l2-4h6l2 4M4 14h16M7 17v3M17 17v3"/><circle cx="8" cy="14" r="1"/><circle cx="16" cy="14" r="1"/>'
+  });
+
+  function dailyCategoryIcon(category) {
+    const key = DAILY_CATEGORY_ICON_KEYS[category] || 'idea';
+    const drawing = DAILY_CATEGORY_ICON_DRAWINGS[key] || DAILY_CATEGORY_ICON_DRAWINGS.idea;
+    return `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${drawing}</svg>`;
+  }
+
+  function renderHomeDailyPreview(puzzle = DAILY_PUZZLES[0] || PUZZLE_DATA) {
+    if (!puzzle) return;
+    const categories = Array.isArray(puzzle.categories) ? puzzle.categories : [];
+    const operator = puzzle.operator || '×';
+    const translatedCategories = categories.map(category => window.NettoI18n?.t(category) || category);
+    const meta = document.getElementById('heroDateMeta');
+    if (meta) meta.textContent = puzzle.number ? `Daily #${puzzle.number}` : 'Daily';
+    const operatorElement = document.getElementById('homeDailyOperator');
+    if (operatorElement) operatorElement.textContent = operator;
+    const equation = document.getElementById('homeDailyEquation');
+    if (equation) equation.setAttribute('aria-label', `${translatedCategories[0] || 'A'} ${operator} ${translatedCategories[1] || 'B'} = ${translatedCategories[2] || 'C'}`);
+    const card = document.querySelector('.home-daily-card');
+    if (card) card.dataset.operator = operator;
+    categories.slice(0, 3).forEach((category, index) => {
+      const icon = document.getElementById(`homeDailyCategory${index + 1}`);
+      if (!icon) return;
+      icon.innerHTML = dailyCategoryIcon(category);
+      icon.title = translatedCategories[index] || category;
+      icon.setAttribute('aria-label', translatedCategories[index] || category);
+    });
+  }
+
   function initApp() {
     try {
       if (document.getElementById('q1-label')) {
@@ -320,9 +409,9 @@
         document.getElementById('q2-label').textContent = PUZZLE_DATA.q2_label;
         document.getElementById('q3-label').textContent = PUZZLE_DATA.q3_label;
         document.getElementById('operatorBadge').textContent = PUZZLE_DATA.operator || '×';
-        document.getElementById('heroDateMeta').textContent = `${puzzleNr(PUZZLE_DATA.number)} · Dagelijkse Puzzel`;
         document.getElementById('puzzleEyebrow').textContent = `Netto · ${puzzleNr(PUZZLE_DATA.number)}`;
       }
+      renderHomeDailyPreview();
 
       // Koppel knoppen expliciet via event listeners
       const btnStart = document.getElementById('btnStartPuzzle');
@@ -742,6 +831,42 @@
     return { color: 'var(--red)', bg: '#FEE2E2', emoji: '🟥', label: 'Ver uit de buurt' };
   }
 
+  function isSpotOnAnswer(guess, actual) {
+    return Number.isFinite(guess) && Number.isFinite(actual) && Math.abs(guess - actual) < 0.001;
+  }
+
+  let confettiCleanupTimer = null;
+  function launchConfetti() {
+    const layer = document.getElementById('confettiLayer');
+    if (!layer) return;
+    if (confettiCleanupTimer) clearTimeout(confettiCleanupTimer);
+    layer.innerHTML = '';
+    layer.hidden = false;
+
+    const colors = ['#FFD84A', '#10B981', '#4F46E5', '#F97316', '#EF4444', '#FFFFFF'];
+    const fragment = document.createDocumentFragment();
+    for (let i = 0; i < 84; i += 1) {
+      const piece = document.createElement('span');
+      const shape = i % 5;
+      piece.className = `confetti-piece ${shape === 1 ? 'is-circle' : shape === 2 ? 'is-diamond' : shape === 3 ? 'is-strip' : ''}`;
+      piece.style.setProperty('--left', `${Math.random() * 100}%`);
+      piece.style.setProperty('--size', `${7 + Math.random() * 8}px`);
+      piece.style.setProperty('--color', colors[i % colors.length]);
+      piece.style.setProperty('--duration', `${2.1 + Math.random() * 1.2}s`);
+      piece.style.setProperty('--delay', `${Math.random() * 0.35}s`);
+      piece.style.setProperty('--drift', `${Math.round((Math.random() - 0.5) * 260)}px`);
+      piece.style.setProperty('--start-rotation', `${Math.round(Math.random() * 180 - 90)}deg`);
+      piece.style.setProperty('--spin', `${Math.round(Math.random() * 1080 - 540)}deg`);
+      fragment.appendChild(piece);
+    }
+    layer.appendChild(fragment);
+    confettiCleanupTimer = setTimeout(() => {
+      layer.hidden = true;
+      layer.innerHTML = '';
+      confettiCleanupTimer = null;
+    }, 3800);
+  }
+
   function getActivePuzzleKey() {
     return PUZZLE_DATA?.date || (activePuzzleIndex === 0 ? TODAY_STR : `puzzle_${PUZZLE_DATA.number}`);
   }
@@ -801,6 +926,9 @@
     document.getElementById('btnCheck').style.display = 'none';
 
     renderResultsUI(g1, g2, g3, avgFactor);
+    if ([g1, g2, g3].every((guess, i) => isSpotOnAnswer(guess, [PUZZEL_ECHT().a1, PUZZEL_ECHT().a2, PUZZEL_ECHT().a3][i]))) {
+      launchConfetti();
+    }
 
     // Sync naar Cloud / Supabase als ingelogd
     if (PUZZLE_DATA?.date === TODAY_STR) syncPlayToCloud(TODAY_STR, g1, g2, g3, avgFactor);
@@ -816,9 +944,9 @@
     const s2 = scoreVraag(g2, echt.a2);
     const s3 = scoreVraag(g3, echt.a3);
 
-    const isSpotOn1 = Math.abs(g1 - echt.a1) < 0.001;
-    const isSpotOn2 = Math.abs(g2 - echt.a2) < 0.001;
-    const isSpotOn3 = Math.abs(g3 - echt.a3) < 0.001;
+    const isSpotOn1 = isSpotOnAnswer(g1, echt.a1);
+    const isSpotOn2 = isSpotOnAnswer(g2, echt.a2);
+    const isSpotOn3 = isSpotOnAnswer(g3, echt.a3);
 
     document.getElementById('a1').innerHTML = fmt(echt.a1) + (isSpotOn1 ? '<div class="spot-on-sub">Spot on! 🎯</div>' : `<div class="guess-sub">Jouw gok: ${fmt(g1)}</div>`);
     document.getElementById('a2').innerHTML = fmt(echt.a2) + (isSpotOn2 ? '<div class="spot-on-sub">Spot on! 🎯</div>' : `<div class="guess-sub">Jouw gok: ${fmt(g2)}</div>`);
@@ -864,7 +992,7 @@
   function renderBadge(elemId, factor, guess, actual) {
     const el = document.getElementById(elemId);
     if (!el) return;
-    const isSpotOn = guess !== undefined && actual !== undefined && Math.abs(guess - actual) < 0.001;
+    const isSpotOn = isSpotOnAnswer(guess, actual);
     if (isSpotOn) {
       el.style.background = '#10B981';
       el.style.color = '#FFFFFF';
@@ -1460,6 +1588,7 @@
   }
 
   function showScreen(name) {
+    if (name === 'home') renderHomeDailyPreview();
     document.getElementById('screen-home').classList.toggle('active', name === 'home');
     document.getElementById('screen-puzzle').classList.toggle('active', name === 'puzzle');
     document.getElementById('libraryScreen').classList.toggle('active', name === 'library');
