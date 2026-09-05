@@ -425,6 +425,7 @@
   }
 
   function startRaceCore(isDuel, options = {}) {
+    stopRaceTimer();
     const session = raceDuelSession;
     const setKey = options.setKey || (session && session.setKey) || getRaceSetKey();
     const durationKey = options.durationKey || (session && session.durationKey) || 'snel';
@@ -438,7 +439,7 @@
     }
     raceQueue = buildRaceQueue(isDuel && session ? session.seed : undefined, setKey);
     if (!raceQueue.length) { showNoticeToast('Er zijn nog geen race-puzzels geladen.'); return; }
-    raceState = { index: 0, results: [], correct: 0, streak: 0, longestStreak: 0, remaining: totalSeconds, totalSeconds, durationKey, timerId: null };
+    raceState = { index: 0, results: [], correct: 0, streak: 0, longestStreak: 0, remaining: totalSeconds, totalSeconds, durationKey, timerId: null, progress: 0, endsAt: null };
     const inDuel = Boolean(isDuel && raceDuelSession);
     if (inDuel) raceDuelSession.opponent = { correct: 0, finished: false };
     const oppEl = document.getElementById('raceOpponentHistory');
@@ -456,7 +457,7 @@
   }
 
   function stopRaceTimer() {
-    if (raceState && raceState.timerId) { clearInterval(raceState.timerId); raceState.timerId = null; }
+    if (raceState && raceState.timerId) { cancelAnimationFrame(raceState.timerId); raceState.timerId = null; }
   }
 
   function startRaceTimer() {
@@ -464,23 +465,34 @@
     const el = document.getElementById('raceTimer');
     const clock = document.getElementById('raceClock');
     if (!el || !clock) return;
+    const fill = document.getElementById('raceProgressFill');
+    const durationMs = raceState.totalSeconds * 1000;
+    raceState.endsAt = Date.now() + (raceState.remaining * 1000);
+    let displayedSecond = -1;
+
     const render = () => {
-      const m = Math.floor(raceState.remaining / 60), s = raceState.remaining % 60;
-      el.textContent = `${m}:${String(s).padStart(2, '0')}`;
-      clock.classList.toggle('warn', raceState.remaining <= 60 && raceState.remaining > 10);
-      clock.classList.toggle('crit', raceState.remaining <= 10);
-      // Voortgangsbalk loopt mee met de tijd (geen vast aantal puzzels meer).
-      const fill = document.getElementById('raceProgressFill');
-      if (fill) fill.style.width = `${Math.round((1 - raceState.remaining / raceState.totalSeconds) * 100)}%`;
+      const remainingMs = Math.max(0, raceState.endsAt - Date.now());
+      const remainingSeconds = Math.ceil(remainingMs / 1000);
+      raceState.remaining = remainingSeconds;
+      raceState.progress = Math.min(1, Math.max(0, 1 - (remainingMs / durationMs)));
+
+      if (fill) fill.style.transform = `scaleX(${raceState.progress})`;
+      if (remainingSeconds !== displayedSecond) {
+        displayedSecond = remainingSeconds;
+        const m = Math.floor(remainingSeconds / 60), s = remainingSeconds % 60;
+        el.textContent = `${m}:${String(s).padStart(2, '0')}`;
+        clock.classList.toggle('warn', remainingSeconds <= 60 && remainingSeconds > 10);
+        clock.classList.toggle('crit', remainingSeconds <= 10);
+      }
+
+      if (remainingMs <= 0) {
+        raceState.timerId = null;
+        finishRace(true);
+        return;
+      }
+      raceState.timerId = requestAnimationFrame(render);
     };
     render();
-    raceState.timerId = setInterval(() => {
-      raceState.remaining -= 1;
-      if (raceState.remaining <= 0) {
-        raceState.remaining = 0; render(); stopRaceTimer(); finishRace(true); return;
-      }
-      render();
-    }, 1000);
   }
 
   function renderRacePuzzle() {
@@ -492,7 +504,7 @@
     document.getElementById('raceProgressLabel').textContent = `Puzzel ${raceState.index + 1}`;
     document.getElementById('raceCorrectCount').textContent = raceState.correct;
     document.getElementById('raceStreakCount').textContent = raceState.streak;
-    document.getElementById('raceProgressFill').style.width = `${Math.round((1 - raceState.remaining / RACE_TOTAL_SECONDS) * 100)}%`;
+    document.getElementById('raceProgressFill').style.transform = `scaleX(${raceState.progress || 0})`;
     document.getElementById('raceFeedback').textContent = '';
     document.getElementById('raceFeedback').className = 'race-feedback';
     const listEl = document.getElementById('raceQuestionList');
@@ -531,6 +543,7 @@
 
   function submitPuzzleRace() {
     if (!raceState) return;
+    if (raceState.endsAt !== null && Date.now() >= raceState.endsAt) { finishRace(true); return; }
     const p = raceQueue[raceState.index];
     if (!p) { finishRace(false); return; }
     const answers = [p.q1_answer, p.q2_answer, p.q3_answer];

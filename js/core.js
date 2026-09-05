@@ -1588,6 +1588,14 @@
   }
 
   function showScreen(name) {
+    stopPuzzleTimer('library');
+    stopPuzzleTimer('premium');
+    if (name === 'library') document.getElementById('libraryCardGrid').style.display = 'none';
+    if (name !== 'race' && raceState) {
+      stopRaceTimer();
+      raceState = null;
+      if (raceDuelSession) leaveRaceRoom();
+    }
     if (name === 'home') renderHomeDailyPreview();
     document.getElementById('screen-home').classList.toggle('active', name === 'home');
     document.getElementById('screen-puzzle').classList.toggle('active', name === 'puzzle');
@@ -1601,12 +1609,23 @@
     window.scrollTo(0, 0);
   }
 
-  let archiveMonth = { year: 2026, month: 8 };
+  function getArchiveDates() {
+    return DAILY_PUZZLES.map(p => p.date).filter(date => date && date <= TODAY_STR).sort();
+  }
+  function getArchiveBounds() {
+    const dates = getArchiveDates();
+    const first = dates[0] || TODAY_STR;
+    const last = dates[dates.length - 1] || TODAY_STR;
+    return { first: first.slice(0, 7), last: last.slice(0, 7) };
+  }
+  const latestArchiveMonth = getArchiveBounds().last.split('-').map(Number);
+  let archiveMonth = { year: latestArchiveMonth[0], month: latestArchiveMonth[1] };
   function monthLabel(month) { return new Intl.DateTimeFormat(nettoNumberLocale(), { month:'long', year:'numeric' }).format(new Date(archiveMonth.year, month - 1, 1)); }
   function changeArchiveMonth(delta) {
     const next = new Date(archiveMonth.year, archiveMonth.month - 1 + delta, 1);
-    const active = new Date(2026, 7, 1);
-    if (next > active) return;
+    const key = `${next.getFullYear()}-${String(next.getMonth() + 1).padStart(2, '0')}`;
+    const bounds = getArchiveBounds();
+    if (key < bounds.first || key > bounds.last) return;
     archiveMonth = { year: next.getFullYear(), month: next.getMonth() + 1 };
     renderDailyArchive();
   }

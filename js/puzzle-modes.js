@@ -21,6 +21,7 @@
     const el = document.getElementById(prefix + 'Timer');
     if (!el) return;
     const total = LIBRARY_TIMER_SECONDS[difficulty] ?? 120;
+    const endsAt = Date.now() + total * 1000;
     let remaining = total;
     const render = () => {
       const m = Math.floor(remaining / 60);
@@ -31,7 +32,7 @@
     };
     render();
     puzzleTimerIntervals[prefix] = setInterval(() => {
-      remaining -= 1;
+      remaining = Math.max(0, Math.ceil((endsAt - Date.now()) / 1000));
       if (remaining <= 0) {
         stopPuzzleTimer(prefix);
         el.textContent = '⏱ 0:00';
@@ -42,7 +43,6 @@
       render();
     }, 1000);
   }
-
   // ===== Generieke puzzle-view (werkt voor 'library' én 'premium' prefix) =====
   function renderPuzzleView(prefix, p, progressLabel, moveAction) {
     const listEl = document.getElementById(prefix + 'QuestionList');
@@ -60,8 +60,9 @@
   function submitPuzzleView(prefix, auto = false) {
     const active = prefix === 'library' ? libraryActivePuzzle : premiumActivePuzzle;
     if (!active) return;
-    stopPuzzleTimer(prefix);
-    const guesses = [0,1,2].map(i => parseFormattedNumber(document.getElementById(`${prefix}Answer${i}`).value));
+    const inputs = [0,1,2].map(i => document.getElementById(`${prefix}Answer${i}`));
+    if (inputs.some(input => !input)) return;
+    const guesses = inputs.map(input => parseFormattedNumber(input.value));
     if (guesses.some(v => !Number.isFinite(v) || v <= 0)) {
       if (auto) {
         // Timer expired with incomplete input: fill blanks with 1 so scoring
@@ -76,6 +77,7 @@
         return;
       }
     }
+    stopPuzzleTimer(prefix);
     const answers = [active.q1_answer,active.q2_answer,active.q3_answer];
     const factor = answers.reduce((sum,a,i) => sum + scoreVraag(guesses[i],a),0) / 3;
     if (guesses.every((guess, i) => isSpotOnAnswer(guess, answers[i]))) launchConfetti();
@@ -225,6 +227,7 @@
   }
 
   function openLibraryScreen(mode) {
+    stopLibraryTimer();
     libraryMode = mode;
     document.getElementById('libraryStats').style.display = 'grid';
     document.getElementById('dailyDateControls').style.display = mode === 'daily' ? 'flex' : 'none';
@@ -306,6 +309,7 @@
 
   function renderBreinkrakersStart() {
     const screen = document.getElementById('breinkrakersScreen');
+    screen.classList.remove('is-playing');
     screen.scrollTop = 0;
     document.getElementById('bkStart').style.display = 'block';
     document.getElementById('bkPlay').style.display = 'none';
@@ -346,17 +350,36 @@
     if (!p) { renderBreinkrakersDone(); return; }
     bkActivePuzzle = p;
     bkSubmitted = false;
+    const screen = document.getElementById('breinkrakersScreen');
+    screen.scrollTop = 0;
+    [0, 1, 2, 3].forEach(i => autoCalculatedInputs.delete(`bkAnswer${i}`));
+    document.getElementById('breinkrakersScreen').classList.add('is-playing');
     document.getElementById('bkStart').style.display = 'none';
     document.getElementById('bkDone').style.display = 'none';
     document.getElementById('bkPlay').style.display = 'block';
     document.getElementById('bkPuzzleLabel').textContent = `Puzzel ${index + 1}`;
     document.getElementById('bkCounter').textContent = `${index + 1} / ${BK_DATA.length}`;
-    document.getElementById('bkFormula').textContent = `▢ ${p.op1} ▢ ${p.op2} ▢ = ▢`;
     const note = localStorage.getItem('netto_auto_calc_note_seen') === 'true' ? '' : `<div class="auto-calc-note" role="status" aria-live="polite">↳ Antwoorden worden automatisch berekend als de berekening klopt.</div>`;
     document.getElementById('bkQuestionList').innerHTML = [p.q1, p.q2, p.q3, p.q4].map((q, i) => `
-      <div class="q-block"><div class="q-label">${q.label || 'Vraag niet beschikbaar'}</div><div class="input-wrapper"><input type="text" class="library-answer-input daily-style-input" id="bkAnswer${i}" inputmode="numeric" placeholder="Jouw schatting" oninput="bkTryAutoFill()"></div></div>
+      <div class="q-block"><div class="q-label">${q.label || 'Vraag niet beschikbaar'}</div><div class="input-wrapper"><input type="text" class="library-answer-input daily-style-input" id="bkAnswer${i}" inputmode="numeric" placeholder="Jouw schatting"></div></div>
       ${i < 3 ? `<div class="connector"><div class="connector-line"></div><div class="connector-badge ${i === 2 ? 'eq' : ''}">${[p.op1, p.op2, '='][i]}</div><div class="connector-line"></div></div>` : ''}`).join('') + note;
     if (note) localStorage.setItem('netto_auto_calc_note_seen', 'true');
+    [0, 1, 2, 3].forEach(i => {
+      const input = document.getElementById(`bkAnswer${i}`);
+      input.addEventListener('input', () => {
+        autoCalculatedInputs.delete(input.id);
+        input.classList.remove('auto-calculated');
+        input.removeAttribute('aria-label');
+        input.dataset.autoCalculated = 'false';
+        bkTryAutoFill();
+      });
+      input.addEventListener('keydown', event => {
+        if (event.key !== 'Enter') return;
+        event.preventDefault();
+        if (i < 3) document.getElementById(`bkAnswer${i + 1}`).focus();
+        else submitBreinkrakers();
+      });
+    });
     document.getElementById('bkFeedback').textContent = '';
     const btn = document.getElementById('bkSubmitButton');
     btn.textContent = 'Check mijn score';
@@ -365,13 +388,13 @@
   }
 
   function bkTryAutoFill() {
-    const p = bkActivePuzzle; if (!p) return;
+    const p = bkActivePuzzle; if (!p || !isAutoCalcEnabled()) return;
     const raws = [0, 1, 2, 3].map(i => document.getElementById(`bkAnswer${i}`).value);
     const vals = raws.map(v => parseFormattedNumber(v));
     const known = vals.map((v, i) => Number.isFinite(v) && v >= 0 && !(autoCalculatedInputs.has(`bkAnswer${i}`)));
     // Verouderde auto-waarden wissen zodra een handmatige ingang verandert:
     // bereken altijd opnieuw vanuit de niet-automatische velden.
-    ['bkAnswer2', 'bkAnswer3'].forEach(id => {
+    ['bkAnswer0', 'bkAnswer1', 'bkAnswer2', 'bkAnswer3'].forEach(id => {
       if (autoCalculatedInputs.has(id) && document.activeElement?.id !== id) clearAutoInput(id);
     });
     const fresh = [0, 1, 2, 3].map(i => parseFormattedNumber(document.getElementById(`bkAnswer${i}`).value));
@@ -443,6 +466,7 @@
   }
 
   function renderBreinkrakersDone() {
+    document.getElementById('breinkrakersScreen').classList.remove('is-playing');
     document.getElementById('bkPlay').style.display = 'none';
     document.getElementById('bkStart').style.display = 'none';
     document.getElementById('bkDone').style.display = 'block';
@@ -455,12 +479,4 @@
       : 'Nog geen puzzels gespeeld.';
     bkActivePuzzle = null;
     bkSubmitted = false;
-  }
-
-  function resetBreinkrakers() {
-    localStorage.removeItem(BK_PROGRESS_KEY);
-    bkState = { index: 0, results: [] };
-    bkActivePuzzle = null;
-    bkSubmitted = false;
-    renderBreinkrakersStart();
   }

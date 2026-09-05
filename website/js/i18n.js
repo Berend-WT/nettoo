@@ -7,6 +7,13 @@
   const language = SUPPORTED.has(savedLanguage) ? savedLanguage : 'en';
 
   const ui = {
+    'Hoeveel naamvallen heeft het Fins?': 'How many grammatical cases does Finnish have?',
+    'Hoeveel naamvallen heeft het Duits?': 'How many grammatical cases does German have?',
+    'Hoeveel naamvallen heeft het Latijn volgens de traditionele grammaticale indeling?': 'How many grammatical cases does Latin have in traditional grammar?',
+    '↳ Antwoorden worden automatisch berekend als de berekening klopt.': '↳ The remaining answer is calculated automatically when possible.',
+    '📏 De Getallenbalk': '📏 Your estimates',
+    '🎯 Echt antwoord': '🎯 Correct answer',
+    '● Jouw schatting': '● Your estimate',
     'Netto · dagelijkse schatting': 'Netto · daily estimation',
     'Schat drie feiten, vind het verband. Elke dag een nieuwe puzzel.': 'Estimate three facts and find the connection. A new puzzle every day.',
     'Drie vragen. Eén verband. Elke dag een nieuwe puzzel.': 'Three questions. One connection. A new puzzle every day.',
@@ -366,6 +373,11 @@
   };
 
   const dynamicRules = [
+    [/kies waar je verdergaat/gi, 'choose where to continue'],
+    [/Jouw som klopte onderling!/g, 'Your estimates fit the equation!'],
+    [/Jouw som:/g, 'Your equation:'],
+    [/\bEcht:/g, 'Correct:'],
+    [/\bjouw:/g, 'yours:'],
     [/\bPuzzel (\d+) van (\d+)\b/g, 'Puzzle $1 of $2'],
     [/\bPuzzel (\d+)\b/g, 'Puzzle $1'],
     [/\bVraag (\d+)\b/g, 'Question $1'],

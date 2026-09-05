@@ -55,22 +55,23 @@ function renderLibraryStats() {
     const monthDays = new Date(selectedYear, selectedMonth, 0).getDate();
     const monthNav = document.getElementById('activeArchiveMonth');
     if (monthNav) monthNav.textContent = monthLabel(selectedMonth);
-    const nextButton = document.getElementById('nextMonthBtn');
-    if (nextButton) nextButton.disabled = selectedYear === 2026 && selectedMonth === 8;
-    const previousButton = document.getElementById('previousMonthBtn');
-    if (previousButton) previousButton.disabled = selectedYear <= 2026 && selectedMonth <= 8 && selectedYear === 2026;
-    const activeDate = new Date(2026, 7, 28);
     const monthKey = `${selectedYear}-${String(selectedMonth).padStart(2,'0')}`;
-    const activeMonthKey = `${activeDate.getFullYear()}-${String(activeDate.getMonth() + 1).padStart(2,'0')}`;
-    const availableDays = monthKey === activeMonthKey ? activeDate.getDate() : (new Date(selectedYear, selectedMonth - 1, 1) < new Date(activeDate.getFullYear(), activeDate.getMonth(), 1) ? monthDays : 0);
+    const bounds = getArchiveBounds();
+    const nextButton = document.getElementById('nextMonthBtn');
+    if (nextButton) nextButton.disabled = monthKey >= bounds.last;
+    const previousButton = document.getElementById('previousMonthBtn');
+    if (previousButton) previousButton.disabled = monthKey <= bounds.first;
     const monthPuzzles = DAILY_PUZZLES.filter(p => {
       const date = p.date || `${selectedYear}-${String(selectedMonth).padStart(2,'0')}-${String(DAILY_PUZZLES.indexOf(p) + 1).padStart(2,'0')}`;
-      return date.startsWith(monthKey) && Number(date.slice(-2)) <= availableDays;
+      return date.startsWith(monthKey) && date <= TODAY_STR;
     }).sort((a,b) => String(b.date || '').localeCompare(String(a.date || '')));
     monthPuzzles.forEach((p, idx) => {
       const puzzleDate = p.date ? new Date(`${p.date}T00:00:00`) : new Date(selectedYear, selectedMonth - 1, Math.min(idx + 1, monthDays));
       const play = plays[p.date || `puzzle_${p.number || idx + 1}`];
       const row = document.createElement('div'); row.className = 'daily-archive-row';
+      row.setAttribute('role', 'button');
+      row.tabIndex = 0;
+      row.onkeydown = event => { if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); row.click(); } };
       const dateLabel = new Intl.DateTimeFormat(nettoNumberLocale(), { day:'numeric', month:'long' }).format(puzzleDate);
       row.innerHTML = `<span class="archive-number">${String(p.number || idx + 1).padStart(3,'0')}</span><div><div class="archive-name">${p.name || `Daily Puzzle #${p.number || idx + 1}`}</div><div class="archive-date">${dateLabel}</div></div><span class="archive-score" style="color:${play ? scoreColor(play.factor) : '#92959D'}">${play ? play.factor.toFixed(2)+'×' : '—'}</span><span class="archive-status ${play ? 'complete' : ''}">${play ? 'COMPLETE ✓' : 'PLAY →'}</span>`;
       row.onclick = () => { dailyArchivePuzzleView = true; activePuzzleIndex = DAILY_PUZZLES.indexOf(p); PUZZLE_DATA = p; loadActivePuzzle(); closeLibraryScreen(); showScreen('puzzle'); };
@@ -314,7 +315,6 @@ function renderLibraryStats() {
   window.closeBreinkrakers = closeBreinkrakers;
   window.startBreinkrakers = startBreinkrakers;
   window.submitBreinkrakers = submitBreinkrakers;
-  window.resetBreinkrakers = resetBreinkrakers;
   window.bkTryAutoFill = bkTryAutoFill;
   window.openSettings = openSettings;
   window.openHowItWorks = openHowItWorks;

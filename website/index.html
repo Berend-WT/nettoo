@@ -26,9 +26,9 @@
 <script src="netto_race_pool.js?v=27"></script>
 <script src="netto_breinkrakers.js?v=27"></script>
 <script src="netto_translations_en.js?v=34"></script>
-<script src="js/i18n.js?v=40"></script>
-<link rel="stylesheet" href="css/styles.css?v=41">
-<link rel="stylesheet" href="css/refinement.css?v=40">
+<script src="js/i18n.js?v=44"></script>
+<link rel="stylesheet" href="css/styles.css?v=43">
+<link rel="stylesheet" href="css/refinement.css?v=43">
 
 </head>
 <body>
@@ -569,21 +569,14 @@
         </div>
         <div class="bk-catalog-toolbar">
           <p class="bk-catalog-summary" id="bkProgress" role="status"></p>
-          <button class="bk-reset-button" type="button" onclick="resetBreinkrakers()">Voortgang wissen</button>
         </div>
         <div class="library-card-grid bk-card-grid" id="bkCardGrid"></div>
       </section>
 
-      <section class="race-panel race-play-panel bk-play-panel" id="bkPlay" style="display:none;">
-        <div class="race-topline">
-          <div>
-            <div class="race-mode-label">BREINKRAKERS</div>
-            <div class="race-level" id="bkPuzzleLabel">Puzzel 1</div>
-          </div>
-          <div class="race-clock"><strong id="bkCounter">1 / 199</strong><span>puzzel</span></div>
-        </div>
-        <div class="bk-formula" id="bkFormula" aria-label="Formule-skelet"></div>
-        <div class="race-question-card">
+      <section class="bk-play-panel" id="bkPlay" style="display:none;">
+        <div class="eyebrow"><span>Netto</span> · <span>Breinkrakers</span> · <span id="bkCounter">1 / 199</span></div>
+        <h1 class="headline" id="bkPuzzleLabel">Puzzel 1</h1>
+        <div class="card race-question-card bk-question-card">
           <div class="race-question-list" id="bkQuestionList"></div>
           <div class="race-feedback" id="bkFeedback" role="status" aria-live="polite"></div>
           <button class="btn-check race-submit-button" id="bkSubmitButton" type="button" onclick="submitBreinkrakers()">Check mijn score</button>
@@ -912,11 +905,11 @@
   </div>
 
 <!-- De volgorde is bewust: modules delen de bestaande classic-script scope. -->
-<script src="js/core.js?v=41"></script>
-<script src="js/puzzle-modes.js?v=39"></script>
-<script src="js/race.js?v=37"></script>
+<script src="js/core.js?v=44"></script>
+<script src="js/puzzle-modes.js?v=44"></script>
+<script src="js/race.js?v=44"></script>
 <script src="js/submissions.js?v=39"></script>
-<script src="js/library.js?v=41"></script>
+<script src="js/library.js?v=44"></script>
 <script src="js/app.js?v=34"></script>
 
 </body>

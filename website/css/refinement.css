@@ -186,7 +186,7 @@ textarea:focus-visible,
 .library-difficulties button.active {
   background: var(--bg-dark);
   border-color: rgba(255, 255, 255, .22);
-  box-shadow: inset 0 -2px 0 var(--accent);
+  box-shadow: none;
 }
 
 .library-card-grid,
@@ -363,7 +363,6 @@ textarea:focus-visible,
 
 .bk-catalog-summary { color: #E1E4FA; font-size: 11px; }
 
-.bk-reset-button,
 .bk-overview-button {
   min-height: 40px;
   border-radius: 8px;
@@ -385,15 +384,14 @@ textarea:focus-visible,
 
 .bk-card-grid .library-flip-front::after { content: none; }
 
-.bk-play-panel { max-width: 720px; }
+.breinkrakers-screen.is-playing { padding-top: 116px; }
+.breinkrakers-screen.is-playing .library-page-inner { max-width: 680px; }
+.breinkrakers-screen.is-playing .library-page-top { display: none; }
 
-.bk-formula {
-  margin-bottom: 22px;
-  color: var(--accent);
-  background: var(--bg-dark);
-  border: 0;
-  border-radius: 10px;
-}
+.bk-play-panel { max-width: 680px; margin: 0 auto; }
+.bk-play-panel .eyebrow { margin-bottom: 12px; }
+.bk-play-panel .headline { margin: 0 0 24px; }
+.bk-question-card { max-width: none; margin: 0; padding: 34px; }
 
 .bk-play-panel .library-question-list { gap: 10px; }
 .bk-formula-reveal { border-radius: 9px; }
@@ -546,7 +544,8 @@ textarea:focus-visible,
   .bk-library-overview .library-stat b { font-size: 19px; }
   .bk-library-overview .library-stat span { font-size: 8px; letter-spacing: .05em; }
   .bk-catalog-toolbar { align-items: stretch; }
-  .bk-reset-button { width: 100%; }
+  .breinkrakers-screen.is-playing { padding-top: 94px; }
+  .bk-question-card { padding: 28px 22px; }
   .settings-row { align-items: flex-start; }
   .settings-toggle { margin-top: 2px; }
 }

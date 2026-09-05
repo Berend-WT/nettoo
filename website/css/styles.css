@@ -720,7 +720,7 @@
   .race-clock.warn strong { color:var(--orange); }
   .race-clock.crit strong { color:var(--red); }
   .race-progress-track { height:6px; border-radius:99px; background:#EDEFFB; overflow:hidden; margin:14px 0 10px; }
-  .race-progress-fill { height:100%; width:0; border-radius:99px; background:var(--bg-main); transition:width .3s ease; }
+  .race-progress-fill { height:100%; width:100%; border-radius:99px; background:var(--bg-main); transform:scaleX(0); transform-origin:left center; will-change:transform; }
   .race-scoreline { display:flex; justify-content:space-between; color:#6B7280; font:600 12px 'JetBrains Mono',monospace; }
   .race-scoreline b { color:var(--ink); }
   .race-history-label { color:#6B7280; font:600 10px 'JetBrains Mono',monospace; text-transform:uppercase; letter-spacing:.1em; margin:14px 0 6px; }
@@ -902,32 +902,19 @@
   .bk-library-overview .library-page-subtitle { max-width:680px; line-height:1.5; }
   .bk-catalog-toolbar { display:flex; align-items:center; justify-content:space-between; gap:16px; margin:2px 0 8px; }
   .bk-catalog-summary { margin:0; color:#D7DAFF; font:600 12px 'JetBrains Mono',monospace; text-transform:uppercase; letter-spacing:.06em; }
-  .bk-reset-button, .bk-overview-button {
+  .bk-overview-button {
     border:1px solid rgba(255,255,255,.28); border-radius:10px; padding:10px 13px;
     background:rgba(255,255,255,.08); color:#fff; cursor:pointer;
     font:700 11px 'JetBrains Mono',monospace; text-transform:uppercase; letter-spacing:.04em;
     transition:background .15s ease, border-color .15s ease;
   }
-  .bk-reset-button:hover, .bk-overview-button:hover { background:rgba(255,255,255,.16); border-color:rgba(255,255,255,.48); }
+  .bk-overview-button:hover { background:rgba(255,255,255,.16); border-color:rgba(255,255,255,.48); }
   .bk-card-grid { grid-template-rows:none; grid-auto-rows:145px; padding-bottom:20px; }
   .bk-card-grid .library-flip-front { overflow:hidden; }
   .bk-card-grid .library-flip-front::after { content:'A × B ± C = D'; color:#A5A9CA; font:600 9px 'JetBrains Mono',monospace; letter-spacing:.04em; }
   .bk-card-grid .library-flip-front.played::after { color:rgba(255,255,255,.78); }
   .bk-play-panel { max-width:760px; margin-left:auto; margin-right:auto; }
   .bk-overview-button { display:block; margin:14px auto 0; }
-  .bk-formula {
-    font-family:'JetBrains Mono',monospace;
-    font-size:clamp(30px, 5.5vw, 46px);
-    font-weight:700;
-    letter-spacing:.14em;
-    text-align:center;
-    color:var(--bg-dark);
-    background:var(--surface-2);
-    border:1.5px solid var(--border-color);
-    border-radius:14px;
-    padding:20px 10px;
-    margin:0 0 16px;
-  }
   .bk-rating { margin-top:8px; font:700 15px 'Space Grotesk',sans-serif; }
   .bk-formula-reveal {
     font-family:'JetBrains Mono',monospace;
@@ -942,7 +929,6 @@
   }
   @media(max-width:560px){
     .bk-catalog-toolbar { align-items:flex-start; flex-direction:column; }
-    .bk-reset-button { width:100%; }
   }
 
   /* ===== SETTINGS ===== */
