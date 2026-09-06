@@ -35,3 +35,6 @@ __pycache__/
 
 # Groot databestand (251 MB, boven de GitHub-limiet van 100 MB)
 puzzels/niet unieke puzzels.xlsx
+# Kandidaat-fotos voor dailies: regenereerbaar, pas na goedkeuring vastleggen
+fotos/assets/daily/
+fotos/daily_fotovoorstellen.json
