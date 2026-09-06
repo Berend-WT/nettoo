@@ -250,9 +250,12 @@ function renderLibraryStats() {
   }
 
   function closeModalOnBg(e, modalId) {
-    if (e.target.id === modalId) {
-      document.getElementById(modalId).classList.remove('active');
+    if (e.target.id !== modalId) return;
+    if (modalId === 'modalStats') {
+      closeStatsModal();
+      return;
     }
+    document.getElementById(modalId).classList.remove('active');
   }
 
   // Expliciet binden aan window zodat inline onclick ALTIJD werkt
@@ -271,6 +274,10 @@ function renderLibraryStats() {
   window.openAuthModal = openAuthModal;
   window.closeAuthModal = closeAuthModal;
   window.closeModalOnBg = closeModalOnBg;
+  window.openStatsModal = openStatsModal;
+  window.closeStatsModal = closeStatsModal;
+  window.openStatsStreakCalendar = openStatsStreakCalendar;
+  window.shareStats = shareStats;
   window.checkAnswers = checkAnswers;
   window.shareScore = shareScore;
   window.toggleAuthMode = toggleAuthMode;

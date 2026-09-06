@@ -26,9 +26,9 @@
 <script src="netto_race_pool.js?v=27"></script>
 <script src="netto_breinkrakers.js?v=27"></script>
 <script src="netto_translations_en.js?v=34"></script>
-<script src="js/i18n.js?v=44"></script>
-<link rel="stylesheet" href="css/styles.css?v=43">
-<link rel="stylesheet" href="css/refinement.css?v=43">
+<script src="js/i18n.js?v=45"></script>
+<link rel="stylesheet" href="css/styles.css?v=44">
+<link rel="stylesheet" href="css/refinement.css?v=56">
 
 </head>
 <body>
@@ -54,9 +54,12 @@
       <span></span><span></span><span></span>
     </button>
     <div class="user-badge-bar" aria-label="Speler en streak">
-      <button class="streak-badge" id="streakButton" type="button" aria-haspopup="dialog" aria-expanded="false" aria-controls="streakCalendarPopover">
+      <button class="streak-badge" id="streakButton" type="button" aria-haspopup="dialog" aria-expanded="false" aria-controls="streakCalendarPopover" aria-label="Open kalender">
         <span class="streak-icon" aria-hidden="true">🔥</span>
         <strong id="topbarStreak">0</strong>
+      </button>
+      <button class="stats-button" id="statsButton" type="button" aria-haspopup="dialog" aria-controls="modalStats" aria-label="Open statistieken" onclick="openStatsModal()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8" aria-hidden="true"><path d="M5 20V10h3v10M11 20V4h3v16M17 20v-7h3v7M3 20h19"/></svg>
       </button>
       <section class="streak-popover" id="streakCalendarPopover" role="dialog" aria-label="Daily streak kalender" hidden>
         <div class="streak-popover-heading">
@@ -219,7 +222,7 @@
   <main class="screen" id="screen-puzzle">
     <div class="inner">
       <div class="eyebrow" id="puzzleEyebrow">Netto · nr. 032 · 28 aug</div>
-      <h1 class="headline">Schat het <span class="script">slim.</span></h1>
+      <h1 class="headline" id="dailyHeadline">Schat het <span class="script">slim.</span></h1>
 
       <div class="card">
         <div class="daily-question-view" id="dailyQuestionView">
@@ -262,6 +265,7 @@
           </div>
         </div>
 
+        <p id="dailyEquationError" class="daily-equation-error" role="alert" hidden></p>
         <button class="btn-check" id="btnCheck" onclick="checkAnswers()">Check mijn score</button>
         </div>
 
@@ -286,21 +290,21 @@
           <div class="results-grid">
             <div class="result-card-item">
               <div class="res-info">
-                <span class="res-lbl">Vraag 1 — echt antwoord</span>
+                <span class="res-lbl" id="reviewQuestion1">Vraag 1</span>
                 <span class="res-val" id="a1"></span>
               </div>
               <div class="res-badge" id="badge-q1"></div>
             </div>
             <div class="result-card-item">
               <div class="res-info">
-                <span class="res-lbl">Vraag 2 — echt antwoord</span>
+                <span class="res-lbl" id="reviewQuestion2">Vraag 2</span>
                 <span class="res-val" id="a2"></span>
               </div>
               <div class="res-badge" id="badge-q2"></div>
             </div>
             <div class="result-card-item">
               <div class="res-info">
-                <span class="res-lbl">Vraag 3 — echt antwoord</span>
+                <span class="res-lbl" id="reviewQuestion3">Vraag 3</span>
                 <span class="res-val" id="a3"></span>
               </div>
               <div class="res-badge" id="badge-q3"></div>
@@ -312,6 +316,7 @@
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
               Deel uitslag
             </button>
+            <button class="btn-stats-open" onclick="openStatsModal()">📊 Statistieken</button>
             <button class="btn-leaderboard-open" onclick="openLeaderboardModal()">
               🏆 Leaderboard
             </button>
@@ -322,6 +327,7 @@
             <span>🏆 Wil je meedoen in het <b>Leaderboard</b>?</span>
             <button onclick="openAuthModal()">Log in / Registreer</button>
           </div>
+          <button type="button" class="daily-home-button" onclick="goHome()"><svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="m3 10 9-7 9 7M5 9v12h5v-7h4v7h5V9"/></svg>Home</button>
         </div>
 
       </div>
@@ -816,6 +822,38 @@
     </div>
   </main>
 
+  <!-- ============ MODAL: STATISTIEKEN ============ -->
+  <div class="modal-overlay" id="modalStats" onclick="closeModalOnBg(event, 'modalStats')">
+    <div class="modal stats-modal" role="dialog" aria-modal="true" aria-labelledby="statsTitle">
+      <button class="modal-close" type="button" onclick="closeStatsModal()" aria-label="Statistieken sluiten">✕</button>
+      <span class="stats-eyebrow">NETTO · DAILY</span>
+      <h2 class="modal-title" id="statsTitle">Statistieken</h2>
+      <div class="modal-subtitle" id="statsSubtitle">Jouw Netto-prestaties door de tijd heen</div>
+
+      <div id="statsModes" class="stats-modes" role="group" aria-label="Statistics mode"></div>
+      <div class="stats-kpi-grid" aria-label="Statistieken">
+        <div class="stats-kpi"><span>Spot-on</span><strong id="statsSpotOn">0</strong></div>
+        <div class="stats-kpi"><span>Spot-on %</span><strong id="statsSpotOnRate">—</strong></div>
+        <div class="stats-kpi"><span id="statsPlayedLabel">Gespeeld</span><strong id="statsPlayed">0</strong><small id="statsPlayedHint">daily puzzels</small></div>
+        <div class="stats-kpi"><span id="statsAccuracyLabel">Gem. nauwkeurigheid</span><strong id="statsAccuracy">—</strong><small id="statsAccuracyHint">gemiddeld</small></div>
+        <div class="stats-kpi"><span id="statsCurrentStreakLabel">Huidige streak</span><strong id="statsCurrentStreak">🔥 0</strong><small id="statsCurrentStreakHint">opeenvolgende dagen</small></div>
+        <div class="stats-kpi"><span id="statsBestStreakLabel">Beste streak</span><strong id="statsBestStreak">🏆 0</strong><small id="statsBestStreakHint">record</small></div>
+      </div>
+
+      <section class="stats-distribution" aria-labelledby="statsDistributionTitle">
+        <div class="stats-section-heading"><h3 id="statsDistributionTitle">Scoreverdeling</h3><span id="statsDistributionHint">per daily</span></div>
+        <div id="statsDistribution" class="stats-bars"></div>
+      </section>
+
+      <div class="stats-empty" id="statsEmpty" hidden>Speel je eerste daily om hier statistieken te zien.</div>
+      <div class="stats-countdown" id="statsCountdown" role="timer" aria-live="off"></div>
+      <div class="stats-actions">
+        <button class="stats-calendar-link" type="button" onclick="openStatsStreakCalendar()" id="statsCalendarButton">Streakkalender bekijken</button>
+        <button class="btn-check stats-share-button" type="button" onclick="shareStats()" id="statsShareButton">Deel uitslag 🔗</button>
+      </div>
+    </div>
+  </div>
+
   <!-- ============ MODAL: LEADERBOARD ============ -->
   <div class="modal-overlay" id="modalLeaderboard" onclick="closeModalOnBg(event, 'modalLeaderboard')">
     <div class="modal">
@@ -905,9 +943,9 @@
   </div>
 
 <!-- De volgorde is bewust: modules delen de bestaande classic-script scope. -->
-<script src="js/core.js?v=44"></script>
+<script src="js/core.js?v=55"></script>
 <script src="js/puzzle-modes.js?v=44"></script>
-<script src="js/race.js?v=44"></script>
+<script src="js/race.js?v=47"></script>
 <script src="js/submissions.js?v=39"></script>
 <script src="js/library.js?v=44"></script>
 <script src="js/app.js?v=34"></script>

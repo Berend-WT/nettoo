@@ -114,4 +114,115 @@ test('Seeded duel queues match for both players', () => {
   assert.ok(left.length>0);
   assert.equal(left,run("buildRaceQueue(12345,'standaard').map(p=>p.id).join(',')"));
 });
+test('Daily statistics reject invalid dates and non-daily progress', () => {
+  storage.set('netto_plays', JSON.stringify({
+    '2026-09-03': {factor: 2}, '2026-09-04': {factor: 1},
+    '2026-02-31': {factor: 1}, '2027-01-01': {factor: 1},
+    library_1: {factor: 1, puzzleNumber: 1}, '2026-09-02': {factor: 0}
+  }));
+  storage.set('netto_streak', '999');
+  assert.equal(run('getDailyStatsSnapshot().entries.length'), 2);
+  assert.equal(run('getDailyStatsSnapshot().averageAccuracy'), 75);
+  assert.equal(run('getDailyStatsSnapshot().currentStreak'), 2);
+  assert.equal(run('getLocalStreak()'), 2);
+  assert.equal(run('getDailyStatsSnapshot().buckets.join(",")'), '1,0,0,1,0');
+});
+test('Statistics empty state disables sharing and uses an em dash', () => {
+  storage.set('netto_plays', '{}');
+  run('renderStatsModal()');
+  assert.equal(get('statsShareButton').disabled, true);
+  assert.equal(get('statsEmpty').hidden, false);
+  assert.equal(get('statsAccuracy').textContent, '—');
+});
+test('Streak tolerates today unfinished but breaks after a missed day', () => {
+  assert.equal(run("statsTrailingStreak(['2026-09-02','2026-09-03'])"), 0);
+  assert.equal(run("statsTrailingStreak(['2026-09-03','2026-09-04','2026-09-05'])"), 3);
+  assert.equal(run("statsLongestStreak(['2026-08-30','2026-08-31','2026-09-01'])"), 3);
+});
+test('Mode statistics isolate puzzle, brain teaser and race scores', () => {
+  const id = run('libraryPuzzles[0].id');
+  storage.set('netto_library_plays', JSON.stringify({[id]: {factor:1}, unknown: {factor:2}}));
+  storage.set('netto_breinkrakers_progress', JSON.stringify({results:[{factor:2,exact:false}]}));
+  storage.set('netto_race_stats', JSON.stringify([{factor:1,exact:true},{factor:2,exact:false}]));
+  run("statsMode='puzzles';renderStatsModal()");
+  assert.equal(get('statsPlayed').textContent,'1');
+  assert.equal(get('statsSpotOn').textContent,'1');
+  run("statsMode='brain';renderStatsModal()");
+  assert.equal(get('statsAccuracy').textContent,'50%');
+  assert.equal(get('statsSpotOn').textContent,'0');
+  run("statsMode='race';renderStatsModal()");
+  assert.equal(get('statsPlayed').textContent,'2');
+  assert.equal(get('statsSpotOnRate').textContent,'50%');
+  assert.equal(get('statsCalendarButton').hidden,true);
+  run("statsMode='daily'");
+});
+test('Daily review replaces inputs and can return to the questions', () => {
+  run('showDailyResults()');
+  assert.equal(get('dailyQuestionView').style.display,'none');
+  assert.equal(get('results').classList.contains('show'),true);
+  run('showDailyQuestions()');
+  assert.equal(get('dailyQuestionView').style.display,'block');
+  assert.equal(get('results').classList.contains('show'),false);
+  run('resetDailyReviewView()');
+  assert.equal(get('screen-puzzle').classList.contains('is-review'),false);
+});
+test('Ratio graph is symmetric, unit-independent and clips extreme estimates', () => {
+  assert.equal(run('dailyRatioPoint(4,4).y'),142);
+  assert.equal(run('dailyRatioPoint(2,4).y'),run('dailyRatioPoint(40000000,80000000).y'));
+  assert.equal(run('dailyRatioPoint(2,1).y + dailyRatioPoint(1,2).y'),284);
+  assert.equal(run('dailyRatioPoint(1000,1).clipped'),true);
+  assert.equal(run('dailyRatioPoint(1,1000).y'),244);
+  run('renderNumberLine(4,2,80000000,4,4,40000000)');
+  assert.equal((get('numberlineCard').innerHTML.match(/class="ratio-chart histogram-chart"/g)||[]).length,1);
+  assert.ok(!get('numberlineCard').innerHTML.includes('NaN'));
+});
+test('Histogram selection uses actual question data and explicit demo labels', () => {
+  run('renderNumberLine(4,2,8,4,4,16); selectDailyReviewQuestion(1)');
+  assert.ok(get('numberlineCard').innerHTML.includes('Sample data, not real players'));
+  assert.ok(!get('numberlineCard').innerHTML.includes('Yellow line: you'));
+  assert.ok(get('numberlineCard').innerHTML.includes('2× too low'));
+  assert.equal(get('selectedReviewQuestion').textContent,run('PUZZLE_DATA.q2_label'));
+  assert.equal((get('numberlineCard').innerHTML.match(/class="hist-bar"/g)||[]).length,12);
+  run('renderNumberLine(999999,1,1,1,1,1)');
+  assert.ok(get('numberlineCard').innerHTML.includes('outside the scale'));
+});
+test('Daily equation checks every operator and decimal rounding', () => {
+  for (const expression of ['dailyEquationMatches(4,2,8,"×")','dailyEquationMatches(8,2,4,"÷")','dailyEquationMatches(0.1,0.2,0.3,"+")','dailyEquationMatches(8,2,6,"−")']) assert.equal(run(expression),true);
+  assert.equal(run('dailyEquationMatches(4,2,9,"×")'),false);
+  assert.equal(run('dailyEquationMatches(4,0,1,"÷")'),false);
+});
+test('An inconsistent daily submission never saves or opens results', () => {
+  run("PUZZLE_DATA={...PUZZLE_DATA,operator:'×'};resetDailyReviewView()");
+  get('g1').value='4';get('g2').value='2';get('g3').value='9';
+  const before=storage.get('netto_plays');
+  run('checkAnswers()');
+  assert.equal(storage.get('netto_plays'),before);
+  assert.equal(get('dailyEquationError').hidden,false);
+  assert.equal(get('results').classList.contains('show'),false);
+});
+test('Review starts with an overview and switches to question detail', () => {
+  run('renderNumberLine(4,2,8,4,4,16)');
+  assert.equal(get('numberlineCard').classList.contains('is-overview'),true);
+  assert.ok(get('numberlineCard').innerHTML.includes('overview-row is-exact'));
+  run('selectDailyReviewQuestion(2)');
+  assert.equal(get('numberlineCard').classList.contains('is-overview'),false);
+});
+test('Score reveal settles on real score and respects reduced motion', () => {
+  frames.clear();
+  run('revealDailyScore(72,true)');
+  assert.equal(get('scoreBadge').textContent,'100%');
+  now += 1000;
+  const pending=[...frames.values()];frames.clear();pending.forEach(fn=>fn());
+  assert.equal(get('scoreBadge').textContent,'72%');
+  context.matchMedia=()=>({matches:true});
+  run('revealDailyScore(45,true)');
+  assert.equal(get('scoreBadge').textContent,'45%');
+  assert.equal(frames.size,0);
+});
+test('Histogram uses round ticks while keeping the exact answer', () => {
+  assert.equal(run('dailyHistogramTicks(9).includes(9)'),true);
+  assert.equal(run('dailyHistogramTicks(9).includes(4.5)'),false);
+  assert.equal(run('dailyHistogramTicks(9).every(Number.isInteger)'),true);
+  assert.equal(run('dailyHistogramTicks(80000000).includes(80000000)'),true);
+});
 console.log(`${passed} frontend regression checks passed.`);

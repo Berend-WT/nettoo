@@ -583,6 +583,13 @@
     if (!raceState) return;
     stopRaceTimer();
     const attempted = raceState.results.length;
+    if (!raceState.statsSaved) {
+      const saved = readStatsStorage('netto_race_stats', []);
+      const history = Array.isArray(saved) ? saved : [];
+      history.push(...raceState.results.map(result => ({ factor: result.factor, exact: result.exact, completedAt: new Date().toISOString() })));
+      localStorage.setItem('netto_race_stats', JSON.stringify(history));
+      raceState.statsSaved = true;
+    }
     const correct = raceState.correct;
     const longest = raceState.longestStreak;
     const best = Number(localStorage.getItem('netto_race_best') || 0);
