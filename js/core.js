@@ -85,6 +85,7 @@
   window.addEventListener('load', () => {
     initSupabaseClient();
     if (supabaseClient) syncDailiesFromSupabase();
+    bewaakDagwissel();
   });
 
   // Sessie-sync: log uit op apparaat A = ook uitgelogd op apparaat B,
@@ -137,7 +138,9 @@
     return dag.toISOString().slice(0, 10);
   }
 
-  const TODAY_STR = nettoDagSleutel();
+  // Geen const: bij de vrijgave om 12:00 Londense tijd schuift dit door zonder
+  // dat de speler de pagina hoeft te verversen. Zie bewaakDagwissel().
+  let TODAY_STR = nettoDagSleutel();
   
   const LIBRARY_SETS = {
     easy: [
@@ -367,6 +370,27 @@
   }
 
   let dailySyncGedaan = false;
+
+  // ===== Vrijgave oppikken zonder verversen =====
+  // Wie de pagina om 11:55 opent en om 12:05 nog openheeft, hoort de nieuwe
+  // daily te krijgen. Elke minuut kijken is simpeler dan uitrekenen hoeveel
+  // milliseconden het nog duurt, en het herstelt zichzelf nadat een laptop uit
+  // slaapstand komt — dan is een timer allang verlopen.
+  function bewaakDagwissel() {
+    const opnieuwControleren = () => {
+      const nieuweSleutel = nettoDagSleutel();
+      if (nieuweSleutel === TODAY_STR) return;
+      TODAY_STR = nieuweSleutel;
+      dailySyncGedaan = false;
+      syncDailiesFromSupabase();
+    };
+    setInterval(opnieuwControleren, 60000);
+    // Een achtergrondtab krijgt getemperde timers; bij terugkeer meteen kijken.
+    document.addEventListener('visibilitychange', () => {
+      if (!document.hidden) opnieuwControleren();
+    });
+    window.addEventListener('focus', opnieuwControleren);
+  }
 
   async function syncDailiesFromSupabase() {
     // Wordt zowel vanuit initApp als vanuit de load-listener aangeroepen; alleen
