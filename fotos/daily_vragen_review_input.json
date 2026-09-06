@@ -1,0 +1,842 @@
+[
+ {
+  "id": "1-q1",
+  "datum": "2026-08-01",
+  "nl": "In welk jaar vond de Slag bij Waterloo plaats?",
+  "antwoord": 1815,
+  "en_huidig": "What year did the Battle of Waterloo take place?",
+  "handmatig": false
+ },
+ {
+  "id": "1-q2",
+  "datum": "2026-08-01",
+  "nl": "Hoeveel hoofdstukken bevat The Hobbit?",
+  "antwoord": 19,
+  "en_huidig": "How many chapters does The Hobbit contain?",
+  "handmatig": false
+ },
+ {
+  "id": "1-q3",
+  "datum": "2026-08-01",
+  "nl": "In welk jaar werd het eerste succesvolle vaccin ontwikkeld?",
+  "antwoord": 1796,
+  "en_huidig": "In what year was the first successful vaccine developed?",
+  "handmatig": false
+ },
+ {
+  "id": "2-q1",
+  "datum": "2026-08-02",
+  "nl": "Hoeveel damstenen krijgt iedere speler bij de start van een standaard damspel?",
+  "antwoord": 20,
+  "en_huidig": "How many checkers does each player get at the start of a standard checker?",
+  "handmatig": false
+ },
+ {
+  "id": "2-q2",
+  "datum": "2026-08-02",
+  "nl": "Hoeveel letters heeft het Turkse alfabet?",
+  "antwoord": 29,
+  "en_huidig": "How many letters does the Turkish alphabet have?",
+  "handmatig": false
+ },
+ {
+  "id": "2-q3",
+  "datum": "2026-08-02",
+  "nl": "Hoeveel kilocalorieën bevat een Amerikaanse McDonald’s Big Mac?",
+  "antwoord": 580,
+  "en_huidig": "How many kilocalories does an American McDonald's Big Mac contain?",
+  "handmatig": false
+ },
+ {
+  "id": "3-q1",
+  "datum": "2026-08-03",
+  "nl": "Hoeveel kamers heeft Buckingham Palace?",
+  "antwoord": 775,
+  "en_huidig": "How many rooms does Buckingham Palace have?",
+  "handmatig": false
+ },
+ {
+  "id": "3-q2",
+  "datum": "2026-08-03",
+  "nl": "Hoeveel dagen doet de planeet Mars erover om rond de zon te draaien?",
+  "antwoord": 687,
+  "en_huidig": "How many days does the planet Mars take to orbit the sun?",
+  "handmatig": false
+ },
+ {
+  "id": "3-q3",
+  "datum": "2026-08-03",
+  "nl": "Hoeveel verdiepingen hebben de Petronas Twin Towers?",
+  "antwoord": 88,
+  "en_huidig": "How many floors do the Petronas Twin Towers have?",
+  "handmatig": false
+ },
+ {
+  "id": "4-q1",
+  "datum": "2026-08-04",
+  "nl": "Hoe lang duurde de langste voetbalwedstrijd ooit in minuten?",
+  "antwoord": 203,
+  "en_huidig": "How long did the longest football game ever last in minutes?",
+  "handmatig": false
+ },
+ {
+  "id": "4-q2",
+  "datum": "2026-08-04",
+  "nl": "Hoe zwaar was de zwaarste pompoen ooit in kilogram?",
+  "antwoord": 1247,
+  "en_huidig": "How heavy was the toughest pumpkin ever in kilograms?",
+  "handmatig": false
+ },
+ {
+  "id": "4-q3",
+  "datum": "2026-08-04",
+  "nl": "In welk jaar werd de eerste drukpers met losse letters in Europa gebruikt?",
+  "antwoord": 1450,
+  "en_huidig": "In what year was the first printing press with loose letters used in Europe?",
+  "handmatig": false
+ },
+ {
+  "id": "5-q1",
+  "datum": "2026-08-05",
+  "nl": "Hoeveel zuilen heeft de Grote Zuilenzaal van de Tempel van Karnak ongeveer?",
+  "antwoord": 134,
+  "en_huidig": "How many columns does the Great Pillar Hall of the Temple of Karnak have about?",
+  "handmatig": false
+ },
+ {
+  "id": "5-q2",
+  "datum": "2026-08-05",
+  "nl": "Wat is de diepte van het diepste zoetwatermeer ter wereld (Baikalmeer in Rusland) in meters?",
+  "antwoord": 1642,
+  "en_huidig": "What is the depth of the deepest freshwater lake in the world (Baikal Lake in Russia) in meters?",
+  "handmatig": false
+ },
+ {
+  "id": "5-q3",
+  "datum": "2026-08-05",
+  "nl": "Hoeveel treden heeft de trap van de CN Tower ongeveer?",
+  "antwoord": 1776,
+  "en_huidig": "How many steps does the staircase of the CN Tower have about?",
+  "handmatig": false
+ },
+ {
+  "id": "6-q1",
+  "datum": "2026-08-06",
+  "nl": "In welk jaar werd de eerste moderne volkstelling gehouden?",
+  "antwoord": 1665,
+  "en_huidig": "In what year was the first modern census held?",
+  "handmatig": false
+ },
+ {
+  "id": "6-q2",
+  "datum": "2026-08-06",
+  "nl": "Hoeveel Muzen (dochters van Zeus) telt de Griekse mythologie?",
+  "antwoord": 9,
+  "en_huidig": "How many Musians (daughters of Zeus) count Greek mythology?",
+  "handmatig": false
+ },
+ {
+  "id": "6-q3",
+  "datum": "2026-08-06",
+  "nl": "Hoe hoog is de Euromast in Rotterdam?",
+  "antwoord": 185,
+  "en_huidig": "How high is the Euromast in Rotterdam?",
+  "handmatig": false
+ },
+ {
+  "id": "7-q1",
+  "datum": "2026-08-07",
+  "nl": "Hoeveel duizend knipperbewegingen met je ogen maak je gemiddeld per dag?",
+  "antwoord": 15,
+  "en_huidig": "How many thousand blinks with your eyes do you make on average a day?",
+  "handmatig": false
+ },
+ {
+  "id": "7-q2",
+  "datum": "2026-08-07",
+  "nl": "Hoeveel kiesmannen telt het Amerikaanse Electoral College?",
+  "antwoord": 538,
+  "en_huidig": "How many electors does the U.S. electoral college have?",
+  "handmatig": false
+ },
+ {
+  "id": "7-q3",
+  "datum": "2026-08-07",
+  "nl": "Hoeveel meter hoog is de CN Tower?",
+  "antwoord": 553,
+  "en_huidig": "How many metres high is the CN Tower?",
+  "handmatig": false
+ },
+ {
+  "id": "8-q1",
+  "datum": "2026-08-08",
+  "nl": "Hoeveel spelers staan er per team op het veld bij honkbal?",
+  "antwoord": 9,
+  "en_huidig": "How many players per team are on the field at baseball?",
+  "handmatig": false
+ },
+ {
+  "id": "8-q2",
+  "datum": "2026-08-08",
+  "nl": "Hoeveel afzonderlijke riffen omvat het Great Barrier Reef ongeveer?",
+  "antwoord": 2900,
+  "en_huidig": "How many separate reefs does the Great Barrier Reef include?",
+  "handmatig": false
+ },
+ {
+  "id": "8-q3",
+  "datum": "2026-08-08",
+  "nl": "Hoeveel treden heeft de Burj Khalifa in Dubai?",
+  "antwoord": 2909,
+  "en_huidig": "How many steps does the Burj Khalifa have in Dubai?",
+  "handmatig": false
+ },
+ {
+  "id": "9-q1",
+  "datum": "2026-08-09",
+  "nl": "Hoe lang was de langste vrouw ooit in centimeters?",
+  "antwoord": 255,
+  "en_huidig": "How long was the longest woman ever in centimeters?",
+  "handmatig": false
+ },
+ {
+  "id": "9-q2",
+  "datum": "2026-08-09",
+  "nl": "Hoeveel meter hoog is Angel Falls ongeveer?",
+  "antwoord": 979,
+  "en_huidig": "How many metres tall is Angel Falls about?",
+  "handmatig": false
+ },
+ {
+  "id": "9-q3",
+  "datum": "2026-08-09",
+  "nl": "Hoeveel kilometer per uur is de geluidssnelheid op zeeniveau afgerond?",
+  "antwoord": 1234,
+  "en_huidig": "How many kilometers per hour is the sound speed at sea level rounded?",
+  "handmatig": false
+ },
+ {
+  "id": "10-q1",
+  "datum": "2026-08-10",
+  "nl": "Hoeveel kilogram weegt de tong van een blauwe vinvis ongeveer?",
+  "antwoord": 2700,
+  "en_huidig": "How many kilograms does a blue whale's tongue weigh?",
+  "handmatig": false
+ },
+ {
+  "id": "10-q2",
+  "datum": "2026-08-10",
+  "nl": "Hoeveel rechters telt het Internationaal Gerechtshof?",
+  "antwoord": 15,
+  "en_huidig": "How many judges does the International Court of Justice have?",
+  "handmatig": false
+ },
+ {
+  "id": "10-q3",
+  "datum": "2026-08-10",
+  "nl": "Hoeveel graden heeft een gestrekte hoek?",
+  "antwoord": 180,
+  "en_huidig": "How many degrees does a stretched angle have?",
+  "handmatig": false
+ },
+ {
+  "id": "11-q1",
+  "datum": "2026-08-11",
+  "nl": "Hoeveel kilo weegt een koningspinguin?",
+  "antwoord": 15,
+  "en_huidig": "How many kilograms does a king penguin weigh?",
+  "handmatig": false
+ },
+ {
+  "id": "11-q2",
+  "datum": "2026-08-11",
+  "nl": "Hoeveel landen heeft Coca-Cola als afzetmarkt ongeveer?",
+  "antwoord": 200,
+  "en_huidig": "How many countries have Coca-Cola as a market?",
+  "handmatig": false
+ },
+ {
+  "id": "11-q3",
+  "datum": "2026-08-11",
+  "nl": "Hoeveel ton goud wordt wereldwijd jaarlijks gewonnen?",
+  "antwoord": 3000,
+  "en_huidig": "How many tons of gold is won worldwide?",
+  "handmatig": false
+ },
+ {
+  "id": "12-q1",
+  "datum": "2026-08-12",
+  "nl": "In welk jaar werd de Magna Carta bezegeld?",
+  "antwoord": 1215,
+  "en_huidig": "What year was the Magna Carta sealed?",
+  "handmatig": false
+ },
+ {
+  "id": "12-q2",
+  "datum": "2026-08-12",
+  "nl": "Hoeveel aardse dagen duurt één volledige draai van Venus ongeveer?",
+  "antwoord": 243,
+  "en_huidig": "How many earthly days does one full turn of Venus last about?",
+  "handmatig": false
+ },
+ {
+  "id": "12-q3",
+  "datum": "2026-08-12",
+  "nl": "Hoeveel punten heeft een try in rugby union?",
+  "antwoord": 5,
+  "en_huidig": "How many points does a try in rugby union have?",
+  "handmatig": false
+ },
+ {
+  "id": "13-q1",
+  "datum": "2026-08-13",
+  "nl": "Hoeveel poten heeft een krab?",
+  "antwoord": 10,
+  "en_huidig": "How many legs does a crab have?",
+  "handmatig": false
+ },
+ {
+  "id": "13-q2",
+  "datum": "2026-08-13",
+  "nl": "Hoeveel diagonalen heeft een regelmatige twintighoek?",
+  "antwoord": 170,
+  "en_huidig": "How many diagonals has a regular 20-angle?",
+  "handmatig": false
+ },
+ {
+  "id": "13-q3",
+  "datum": "2026-08-13",
+  "nl": "Hoeveel filialen heeft Decathlon wereldwijd ongeveer?",
+  "antwoord": 1700,
+  "en_huidig": "How many branches does Decathlon have worldwide?",
+  "handmatig": false
+ },
+ {
+  "id": "14-q1",
+  "datum": "2026-08-14",
+  "nl": "Hoeveel kilometer fietst een Nederlander gemiddeld per jaar?",
+  "antwoord": 1065,
+  "en_huidig": "How many kilometres does a Dutchman cycle on average per year?",
+  "handmatig": false
+ },
+ {
+  "id": "14-q2",
+  "datum": "2026-08-14",
+  "nl": "Hoeveel tramlijnen heeft Amsterdam?",
+  "antwoord": 15,
+  "en_huidig": "How many tram lines does Amsterdam have?",
+  "handmatig": false
+ },
+ {
+  "id": "14-q3",
+  "datum": "2026-08-14",
+  "nl": "Welk percentage van het aardoppervlak bestaat uit oceanen en zeeën?",
+  "antwoord": 71,
+  "en_huidig": "What percentage of the Earth's surface is oceans and seas?",
+  "handmatig": false
+ },
+ {
+  "id": "15-q1",
+  "datum": "2026-08-15",
+  "nl": "In welk jaar werd de eerste exoplaneet rond een zonachtige ster ontdekt?",
+  "antwoord": 1995,
+  "en_huidig": "In what year was the first exoplanet discovered around a sun-like star?",
+  "handmatig": false
+ },
+ {
+  "id": "15-q2",
+  "datum": "2026-08-15",
+  "nl": "Hoeveel liften heeft de Burj Khalifa?",
+  "antwoord": 57,
+  "en_huidig": "How many lifts does the Burj Khalifa have?",
+  "handmatig": false
+ },
+ {
+  "id": "15-q3",
+  "datum": "2026-08-15",
+  "nl": "Hoeveel diagonalen heeft een regelmatige tienhoek?",
+  "antwoord": 35,
+  "en_huidig": "How many diagonals has a regular pentagon?",
+  "handmatig": false
+ },
+ {
+  "id": "16-q1",
+  "datum": "2026-08-16",
+  "nl": "Hoeveel procent van het Great Barrier Reef bestaat uit koraalriffen?",
+  "antwoord": 7,
+  "en_huidig": "What percent of the Great Barrier Reef is made up of coral reefs?",
+  "handmatig": false
+ },
+ {
+  "id": "16-q2",
+  "datum": "2026-08-16",
+  "nl": "Hoeveel letters heeft het Thaise alfabet?",
+  "antwoord": 44,
+  "en_huidig": "How many letters does the Thai alphabet have?",
+  "handmatig": false
+ },
+ {
+  "id": "16-q3",
+  "datum": "2026-08-16",
+  "nl": "Hoeveel metrostations heeft de Parijse metro?",
+  "antwoord": 308,
+  "en_huidig": "How many subway stations does the Paris subway have?",
+  "handmatig": false
+ },
+ {
+  "id": "17-q1",
+  "datum": "2026-08-17",
+  "nl": "Hoeveel treden heeft het Empire State Building van straatniveau tot het observatiedek?",
+  "antwoord": 1860,
+  "en_huidig": "How many steps does the Empire State Building have from street level to observation deck?",
+  "handmatig": false
+ },
+ {
+  "id": "17-q2",
+  "datum": "2026-08-17",
+  "nl": "Hoeveel afleveringen telt de serie Breaking Bad?",
+  "antwoord": 62,
+  "en_huidig": "How many episodes does the Breaking Bad series have?",
+  "handmatig": false
+ },
+ {
+  "id": "17-q3",
+  "datum": "2026-08-17",
+  "nl": "Hoeveel kilometer per uur zwemt een dolfijn gemiddeld?",
+  "antwoord": 30,
+  "en_huidig": "How many kilometres an hour does a dolphin swim on average?",
+  "handmatig": false
+ },
+ {
+  "id": "18-q1",
+  "datum": "2026-08-18",
+  "nl": "In welk jaar werd de eerste Nintendo Game Boy uitgebracht?",
+  "antwoord": 1989,
+  "en_huidig": "In what year was the first Nintendo Game Boy released?",
+  "handmatig": false
+ },
+ {
+  "id": "18-q2",
+  "datum": "2026-08-18",
+  "nl": "Hoeveel letters heeft het Armeense alfabet?",
+  "antwoord": 39,
+  "en_huidig": "How many letters does the Armenian alphabet have?",
+  "handmatig": false
+ },
+ {
+  "id": "18-q3",
+  "datum": "2026-08-18",
+  "nl": "Hoe lang waren de langste mouwen aan een kledingstuk ooit in meters?",
+  "antwoord": 51,
+  "en_huidig": "How long were the longest sleeves on a garment ever in metres?",
+  "handmatig": false
+ },
+ {
+  "id": "19-q1",
+  "datum": "2026-08-19",
+  "nl": "Hoeveel manieren kun je 3 renners op een podium van 8 deelnemers indelen?",
+  "antwoord": 336,
+  "en_huidig": "How many ways can you classify 3 riders on a stage of 8 participants?",
+  "handmatig": false
+ },
+ {
+  "id": "19-q2",
+  "datum": "2026-08-19",
+  "nl": "Hoeveel etappes telt de Tour de France doorgaans?",
+  "antwoord": 21,
+  "en_huidig": "How many stages does the Tour de France usually have?",
+  "handmatig": false
+ },
+ {
+  "id": "19-q3",
+  "datum": "2026-08-19",
+  "nl": "Hoeveel chromosomen heeft een gewone ui Allium cepa in een lichaamscel?",
+  "antwoord": 16,
+  "en_huidig": "How many chromosomes does an ordinary onion have Allium cepa in a body cell?",
+  "handmatig": false
+ },
+ {
+  "id": "20-q1",
+  "datum": "2026-08-20",
+  "nl": "Hoe zwaar was de zwaarste hamburger ooit in kilogram?",
+  "antwoord": 1164,
+  "en_huidig": "How heavy was the toughest hamburger ever in kilograms?",
+  "handmatig": false
+ },
+ {
+  "id": "20-q2",
+  "datum": "2026-08-20",
+  "nl": "Hoeveel procent van het lichaam was bedekt met tatoeages bij de meest getatoeëerde man?",
+  "antwoord": 97,
+  "en_huidig": "How many percent of the body was covered in tattoos with the most tattooed man?",
+  "handmatig": false
+ },
+ {
+  "id": "20-q3",
+  "datum": "2026-08-20",
+  "nl": "Hoeveel afleveringen telt de iconische serie Fawlty Towers?",
+  "antwoord": 12,
+  "en_huidig": "How many episodes does the iconic series Fawlty Towers have?",
+  "handmatig": false
+ },
+ {
+  "id": "21-q1",
+  "datum": "2026-08-21",
+  "nl": "Hoeveel start- en landingsbanen heeft Schiphol?",
+  "antwoord": 6,
+  "en_huidig": "How many runways does Schiphol have?",
+  "handmatig": false
+ },
+ {
+  "id": "21-q2",
+  "datum": "2026-08-21",
+  "nl": "Hoeveel toetsen heeft een standaard MIDI-pianotoetsenbord met vijf octaven?",
+  "antwoord": 61,
+  "en_huidig": "How many keys does a standard MIDI piano keyboard with five octaves?",
+  "handmatig": false
+ },
+ {
+  "id": "21-q3",
+  "datum": "2026-08-21",
+  "nl": "Hoeveel dagen telt een schrikkeljaar?",
+  "antwoord": 366,
+  "en_huidig": "How many days does a leap year have?",
+  "handmatig": false
+ },
+ {
+  "id": "22-q1",
+  "datum": "2026-08-22",
+  "nl": "Hoeveel kilometer lang is het Baikalmeer ongeveer?",
+  "antwoord": 636,
+  "en_huidig": "How many kilometres is Lake Baikal?",
+  "handmatig": false
+ },
+ {
+  "id": "22-q2",
+  "datum": "2026-08-22",
+  "nl": "Hoeveel centimeter breed is de Mona Lisa?",
+  "antwoord": 53,
+  "en_huidig": "How many centimeters is the Mona Lisa?",
+  "handmatig": false
+ },
+ {
+  "id": "22-q3",
+  "datum": "2026-08-22",
+  "nl": "Hoeveel hoofdgoden telt de Griekse mythologie op de berg Olympus (de Twaalf Olympiërs)?",
+  "antwoord": 12,
+  "en_huidig": "How many chief gods do Greek mythology count on Mount Olympus (the Twelve Olympics)?",
+  "handmatig": false
+ },
+ {
+  "id": "23-q1",
+  "datum": "2026-08-23",
+  "nl": "In welk jaar werd de eerste internationale telefonische verbinding gemaakt?",
+  "antwoord": 1892,
+  "en_huidig": "In what year was the first international telephone connection made?",
+  "handmatig": false
+ },
+ {
+  "id": "23-q2",
+  "datum": "2026-08-23",
+  "nl": "Hoeveel miljard neuronen (zenuwcellen) bevat het menselijk brein naar schatting?",
+  "antwoord": 86,
+  "en_huidig": "How many billion neurons (nerve cells) is estimated to contain the human brain?",
+  "handmatig": false
+ },
+ {
+  "id": "23-q3",
+  "datum": "2026-08-23",
+  "nl": "Hoeveel wielen heeft een Airbus A380?",
+  "antwoord": 22,
+  "en_huidig": "How many wheels does an Airbus A380 have?",
+  "handmatig": false
+ },
+ {
+  "id": "24-q1",
+  "datum": "2026-08-24",
+  "nl": "Hoeveel gram suiker zit er in een blikje Coca-Cola van 330 ml?",
+  "antwoord": 35,
+  "en_huidig": "How many grams of sugar is there in a can of Coca-Cola of 330 ml?",
+  "handmatig": false
+ },
+ {
+  "id": "24-q2",
+  "datum": "2026-08-24",
+  "nl": "Hoeveel witte toetsen heeft een concertpiano?",
+  "antwoord": 52,
+  "en_huidig": "How many white keys does a concert piano have?",
+  "handmatig": false
+ },
+ {
+  "id": "24-q3",
+  "datum": "2026-08-24",
+  "nl": "In welk jaar werd Antarctica voor het eerst waargenomen door een expeditie?",
+  "antwoord": 1820,
+  "en_huidig": "In what year was Antarctica first observed by an expedition?",
+  "handmatig": false
+ },
+ {
+  "id": "25-q1",
+  "datum": "2026-08-25",
+  "nl": "Hoeveel LEGO-steentjes worden er wereldwijd per seconde gemaakt?",
+  "antwoord": 1300,
+  "en_huidig": "How many LEGO bricks are made worldwide per second?",
+  "handmatig": false
+ },
+ {
+  "id": "25-q2",
+  "datum": "2026-08-25",
+  "nl": "Hoeveel speelkaarten zitten er in een standaard kaartspel (zonder jokers)?",
+  "antwoord": 52,
+  "en_huidig": "How many cards are in a standard card game (without jokers)?",
+  "handmatig": false
+ },
+ {
+  "id": "25-q3",
+  "datum": "2026-08-25",
+  "nl": "Hoeveel aardse uren duurt één volledige draai van Mars ongeveer?",
+  "antwoord": 25,
+  "en_huidig": "How many Earth hours does one full turn of Mars take about?",
+  "handmatig": false
+ },
+ {
+  "id": "26-q1",
+  "datum": "2026-08-26",
+  "nl": "In welk jaar werd de eerste digitale camera ontwikkeld?",
+  "antwoord": 1975,
+  "en_huidig": "In what year was the first digital camera developed?",
+  "handmatig": false
+ },
+ {
+  "id": "26-q2",
+  "datum": "2026-08-26",
+  "nl": "Hoeveel protonen heeft een neutraal atoom van goud?",
+  "antwoord": 79,
+  "en_huidig": "How many protons has a neutral atom of gold?",
+  "handmatig": false
+ },
+ {
+  "id": "26-q3",
+  "datum": "2026-08-26",
+  "nl": "Hoeveel gram eiwit bevat een Amerikaanse McDonald’s Big Mac?",
+  "antwoord": 25,
+  "en_huidig": "How many grams of protein does an American McDonald... contain Big Mac?",
+  "handmatig": false
+ },
+ {
+  "id": "27-q1",
+  "datum": "2026-08-27",
+  "nl": "Hoeveel millimeter per jaar verschuiven de aardplaten gemiddeld?",
+  "antwoord": 25,
+  "en_huidig": "How many millimeters per year do the earthplates shift on average?",
+  "handmatig": false
+ },
+ {
+  "id": "27-q2",
+  "datum": "2026-08-27",
+  "nl": "Hoeveel mannen ondertekenden de Amerikaanse Onafhankelijkheidsverklaring?",
+  "antwoord": 56,
+  "en_huidig": "How many men signed the American Declaration of Independence?",
+  "handmatig": false
+ },
+ {
+  "id": "27-q3",
+  "datum": "2026-08-27",
+  "nl": "Wat is de totale lengte van alle onderzeese internetkabels op aarde in duizend kilometer?",
+  "antwoord": 1400,
+  "en_huidig": "What is the total length of all submarine Internet cables on Earth in a thousand kilometers?",
+  "handmatig": false
+ },
+ {
+  "id": "28-q1",
+  "datum": "2026-08-28",
+  "nl": "Hoeveel letters heeft het Hebreeuwse alfabet?",
+  "antwoord": 22,
+  "en_huidig": "How many letters does the Hebrew alphabet have?",
+  "handmatig": false
+ },
+ {
+  "id": "28-q2",
+  "datum": "2026-08-28",
+  "nl": "Wat is de lengte van het Panamakanaal van de Atlantische naar de Stille Oceaan in km?",
+  "antwoord": 82,
+  "en_huidig": "What is the length of the Panama Canal from the Atlantic to the Pacific in km?",
+  "handmatig": false
+ },
+ {
+  "id": "28-q3",
+  "datum": "2026-08-28",
+  "nl": "In welk jaar werd de eerste stoomlocomotief gebouwd?",
+  "antwoord": 1804,
+  "en_huidig": "In what year was the first steam locomotive built?",
+  "handmatig": false
+ },
+ {
+  "id": "29-q1",
+  "datum": "2026-08-29",
+  "nl": "Hoeveel procent van de bekende plant- en diersoorten leeft in tropische regenwouden?",
+  "antwoord": 50,
+  "en_huidig": "How many percent of known plant and animal species live in tropical rainforests?",
+  "handmatig": false
+ },
+ {
+  "id": "29-q2",
+  "datum": "2026-08-29",
+  "nl": "Hoeveel verdiepingen heeft Taipei 101?",
+  "antwoord": 101,
+  "en_huidig": "How many floors does Taipei 101 have?",
+  "handmatig": false
+ },
+ {
+  "id": "29-q3",
+  "datum": "2026-08-29",
+  "nl": "Hoeveel is de som van de getallen 1 tot en met 100?",
+  "antwoord": 5050,
+  "en_huidig": "What is the sum of the numbers 1 to 100?",
+  "handmatig": false
+ },
+ {
+  "id": "30-q1",
+  "datum": "2026-08-30",
+  "nl": "Hoeveel Grammy’s heeft Beyoncé volgens de stand na de Grammy Awards van 2025 gewonnen?",
+  "antwoord": 35,
+  "en_huidig": "How many Grammys did Beyoncé win after the Grammy Awards of 2025?",
+  "handmatig": false
+ },
+ {
+  "id": "30-q2",
+  "datum": "2026-08-30",
+  "nl": "Welk percentage van het wereldwijde cement wordt geproduceerd in China?",
+  "antwoord": 55,
+  "en_huidig": "What percentage of global cement is produced in China?",
+  "handmatig": false
+ },
+ {
+  "id": "30-q3",
+  "datum": "2026-08-30",
+  "nl": "In welk jaar werd de eerste televisie-uitzending verzorgd?",
+  "antwoord": 1925,
+  "en_huidig": "In what year was the first television broadcast arranged?",
+  "handmatig": false
+ },
+ {
+  "id": "31-q1",
+  "datum": "2026-08-31",
+  "nl": "Hoeveel halve tonen bevat een octaaf?",
+  "antwoord": 12,
+  "en_huidig": "How many half tones does an octave contain?",
+  "handmatig": false
+ },
+ {
+  "id": "31-q2",
+  "datum": "2026-08-31",
+  "nl": "Welk percentage van het zoete water zit vast in ijs en gletsjers?",
+  "antwoord": 69,
+  "en_huidig": "What percentage of the fresh water is stuck in ice and glaciers?",
+  "handmatig": false
+ },
+ {
+  "id": "31-q3",
+  "datum": "2026-08-31",
+  "nl": "Wat is de hoogte van de Burj Khalifa in Dubai in meters?",
+  "antwoord": 828,
+  "en_huidig": "What is the height of the Burj Khalifa in Dubai in meters?",
+  "handmatig": false
+ },
+ {
+  "id": "32-q1",
+  "datum": "2026-09-01",
+  "nl": "Hoeveel torens heeft het Kremlin in Moskou?",
+  "antwoord": 20,
+  "en_huidig": "How many towers does the Kremlin have in Moscow?",
+  "handmatig": false
+ },
+ {
+  "id": "32-q2",
+  "datum": "2026-09-01",
+  "nl": "Hoeveel meter hoog is de Golden Gate Bridge boven het water?",
+  "antwoord": 227,
+  "en_huidig": "How many metres high is the Golden Gate Bridge above the water?",
+  "handmatig": false
+ },
+ {
+  "id": "32-q3",
+  "datum": "2026-09-01",
+  "nl": "Wat is de geschatte leeftijd van de planeet Aarde in miljoenen jaren?",
+  "antwoord": 4540,
+  "en_huidig": "What is the estimated age of planet Earth in millions of years?",
+  "handmatig": false
+ },
+ {
+  "id": "33-q1",
+  "datum": "2026-09-02",
+  "nl": "Hoeveel landen grenzen aan Zwitserland?",
+  "antwoord": 5,
+  "en_huidig": "How many countries border on Switzerland?",
+  "handmatig": false
+ },
+ {
+  "id": "33-q2",
+  "datum": "2026-09-02",
+  "nl": "Hoeveel verdiepingen heeft de Burj Khalifa?",
+  "antwoord": 163,
+  "en_huidig": "How many floors does the Burj Khalifa have?",
+  "handmatig": false
+ },
+ {
+  "id": "33-q3",
+  "datum": "2026-09-02",
+  "nl": "Hoe groot was het grootste permanente IMAX-scherm in vierkante meter?",
+  "antwoord": 815,
+  "en_huidig": "How big was the largest permanent IMAX screen in square meters?",
+  "handmatig": false
+ },
+ {
+  "id": "34-q1",
+  "datum": "2026-09-03",
+  "nl": "Welk percentage van het aardoppervlak bestaat uit land?",
+  "antwoord": 29,
+  "en_huidig": "What percentage of the earth's surface is land?",
+  "handmatig": false
+ },
+ {
+  "id": "34-q2",
+  "datum": "2026-09-03",
+  "nl": "Hoeveel dagen duurde de reis van de Mayflower naar Noord-Amerika?",
+  "antwoord": 66,
+  "en_huidig": "How many days did the Mayflower travel to North America?",
+  "handmatig": false
+ },
+ {
+  "id": "34-q3",
+  "datum": "2026-09-03",
+  "nl": "In welk jaar vertrok de eerste commerciële passagiersvlucht?",
+  "antwoord": 1914,
+  "en_huidig": "What year did the first commercial passenger flight leave?",
+  "handmatig": false
+ },
+ {
+  "id": "35-q1",
+  "datum": "2026-09-04",
+  "nl": "Hoeveel naamvallen heeft het Fins?",
+  "antwoord": 15,
+  "en_huidig": "How many names does it have in Finnish?",
+  "handmatig": true
+ },
+ {
+  "id": "35-q2",
+  "datum": "2026-09-04",
+  "nl": "Hoeveel procent van Antarctica is met ijs bedekt?",
+  "antwoord": 98,
+  "en_huidig": "What percent of Antarctica is covered in ice?",
+  "handmatig": false
+ },
+ {
+  "id": "35-q3",
+  "datum": "2026-09-04",
+  "nl": "Hoeveel meter diep is het Tanganyikameer op het diepste punt ongeveer?",
+  "antwoord": 1470,
+  "en_huidig": "How many meters deep is Lake Tanganyika at the deepest point about?",
+  "handmatig": false
+ }
+]
