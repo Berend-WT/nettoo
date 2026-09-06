@@ -117,7 +117,27 @@
   window.addEventListener('load', initAuthStateListener);
 
   // Datum & Actuele Dagpuzzels (12 Geverifieerde, niet-overlappende puzzels!)
-  const TODAY_STR = new Date().toISOString().split('T')[0];
+  // ===== Welke dag is het voor Netto? =====
+  // Een nieuwe daily komt vrij om 12:00 Londense tijd, niet om middernacht.
+  // Twaalf uur terugrekenen vanaf de Londense klok geeft precies dat
+  // omslagpunt, en klopt vanzelf rond zomer- en wintertijd.
+  // De RLS-policy op de puzzles-tabel rekent exact hetzelfde; wijkt dit af, dan
+  // vraagt de client een datum op die de database nog verbergt.
+  function nettoDagSleutel(moment = new Date()) {
+    const delen = new Intl.DateTimeFormat('en-GB', {
+      timeZone: 'Europe/London', hourCycle: 'h23',
+      year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit',
+    }).formatToParts(moment).reduce((acc, deel) => {
+      acc[deel.type] = deel.value;
+      return acc;
+    }, {});
+    const dag = new Date(Date.UTC(Number(delen.year), Number(delen.month) - 1, Number(delen.day)));
+    // Voor 12:00 Londense tijd loopt de daily van gisteren nog.
+    if (Number(delen.hour) < 12) dag.setUTCDate(dag.getUTCDate() - 1);
+    return dag.toISOString().slice(0, 10);
+  }
+
+  const TODAY_STR = nettoDagSleutel();
   
   const LIBRARY_SETS = {
     easy: [
