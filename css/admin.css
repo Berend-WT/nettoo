@@ -39,3 +39,32 @@ body{background-color:var(--admin-bg);background-image:linear-gradient(var(--adm
 .auth-panel button:focus-visible,.secondary:focus-visible,.review-btn:focus-visible,.review-filter-btn:focus-visible{outline:3px solid var(--admin-accent);outline-offset:3px}
 .review-filter{gap:6px}.review-filter-btn{border-radius:8px}.review-card{border-radius:9px;background:#fff}.review-actions{flex-wrap:wrap}
 @media(max-width:650px){.admin-shell{padding:28px 14px 52px}.dashboard-header{align-items:flex-start}.metric-grid{gap:8px}.metric{min-height:104px;padding:16px}.metric strong{font-size:30px}.panel{padding:20px 16px}.auth-panel{padding:24px 20px}.review-filter{overflow-x:auto;padding-bottom:4px}.review-filter-btn{flex:0 0 auto}}
+
+/* ===== Volgende daily samenstellen ===== */
+.composer-grid{display:grid;grid-template-columns:minmax(0,1fr) 320px;gap:20px;align-items:start}
+.composer-tabs{display:flex;gap:8px;margin-bottom:12px}
+.composer-tab{padding:9px 14px;border:1.5px solid #cfd3e8;border-radius:8px;background:#fff;font:inherit;font-weight:700;font-size:13px;cursor:pointer}
+.composer-tab.is-active{background:#14163b;color:#fff;border-color:#14163b}
+.composer-list{display:grid;gap:8px;max-height:420px;overflow-y:auto;padding-right:4px}
+.composer-card{display:grid;gap:4px;width:100%;padding:12px 14px;border:1.5px solid #cfd3e8;border-radius:9px;background:#fff;font:inherit;text-align:left;cursor:pointer}
+.composer-card:hover{border-color:#9aa2d8}
+.composer-card.is-active{border-color:#14163b;box-shadow:0 0 0 3px rgba(20,22,59,.12)}
+.composer-card-head{font-size:12px;font-weight:700;color:#6068ad}
+.composer-card-head em{color:#c62828;font-style:normal}
+.composer-card-q{font-size:14px}
+.composer-card-sum{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:12px;color:#5d6474}
+.composer-hint{margin-top:10px;font-size:13px}
+.composer-side{padding:16px;border:1.5px solid #cfd3e8;border-radius:10px;background:#f8f9fe}
+.composer-side h3{margin:0 0 10px}
+.composer-side label{display:block;margin-top:12px;font-size:12px;font-weight:700}
+.composer-side input,.composer-side select{display:block;width:100%;margin-top:5px;padding:9px;border:1.5px solid #cfd3e8;border-radius:7px;font:inherit;font-size:13px}
+.composer-photo-preview{display:block;width:100%;height:110px;margin-top:8px;object-fit:cover;border-radius:7px}
+.composer-photo-preview[hidden]{display:none}
+.composer-preview{margin-top:14px;padding:12px;border-radius:8px;background:#fff;border:1px solid #e3e4f7}
+.composer-preview-label{margin:0 0 6px;font-size:12px;font-weight:700;color:#6068ad}
+.composer-preview .review-questions{margin:0 0 8px;padding-left:18px;font-size:13px}
+.composer-side button{width:100%;margin-top:14px;padding:12px;border:0;border-radius:7px;background:#14163b;color:#fff;font-weight:700;cursor:pointer}
+.composer-side button:disabled{opacity:.45;cursor:not-allowed}
+.composer-subhead{margin:22px 0 10px}
+.composer-scheduled-row{display:grid;grid-template-columns:110px 90px minmax(0,1fr);gap:10px;padding:8px 0;border-top:1px solid #e3e4f7;font-size:13px}
+@media(max-width:820px){.composer-grid{grid-template-columns:1fr}}

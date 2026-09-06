@@ -28,6 +28,7 @@ MIRROR_FILES = (
     "js/library.js",
     "js/app.js",
     "js/i18n.js",
+    "js/daily-photos.js",
     "puzzles_embedded.js",
     "netto_translations_en.js",
     "netto_frontend_puzzles.js",

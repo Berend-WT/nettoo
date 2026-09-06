@@ -8,6 +8,7 @@
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="netto_translations_en.js?v=34"></script>
   <script src="js/i18n.js?v=34"></script>
+  <script src="js/daily-photos.js?v=1"></script>
 </head>
 <body>
   <main class="admin-shell">
@@ -52,6 +53,50 @@
         <article class="metric"><span>User plays</span><strong id="playCount">—</strong></article>
         <article class="metric"><span>Nieuwe reviews</span><strong id="reviewCount">—</strong></article>
         <article class="metric"><span>Login events</span><strong id="loginCount">—</strong></article>
+      </section>
+
+      <section class="panel" id="composerPanel">
+        <h2>Volgende daily samenstellen</h2>
+        <p class="muted-dark" id="composerIntro">Laden…</p>
+
+        <div class="composer-grid">
+          <div>
+            <div class="composer-tabs" id="composerTabs">
+              <button type="button" class="composer-tab is-active" data-source="library">Ongebruikte puzzels</button>
+              <button type="button" class="composer-tab" data-source="submissions">Inzendingen van spelers</button>
+            </div>
+            <div id="composerList" class="composer-list"><p class="muted-dark">Laden…</p></div>
+          </div>
+
+          <aside class="composer-side">
+            <h3>Inplannen</h3>
+            <label for="composerDate">Datum</label>
+            <input type="date" id="composerDate">
+
+            <label for="composerPhoto">Foto</label>
+            <select id="composerPhoto"><option value="">Geen foto</option></select>
+            <img id="composerPhotoPreview" class="composer-photo-preview" alt="" hidden>
+
+            <label for="composerAlt">Alt-tekst</label>
+            <input type="text" id="composerAlt" placeholder="Wat zie je op de foto?">
+
+            <label for="composerCredit">Bronvermelding</label>
+            <input type="text" id="composerCredit" placeholder="Foto: maker, licentie">
+
+            <label for="composerSource">Bron-URL</label>
+            <input type="url" id="composerSource" placeholder="https://commons.wikimedia.org/wiki/File:…">
+
+            <div class="composer-preview" id="composerPreview">
+              <p class="muted-dark">Kies eerst een puzzel.</p>
+            </div>
+
+            <button type="button" id="composerSchedule" disabled>Plan deze daily in</button>
+            <p class="message" id="composerMessage" role="alert"></p>
+          </aside>
+        </div>
+
+        <h3 class="composer-subhead">Al ingepland</h3>
+        <div id="composerScheduled" class="composer-scheduled"><p class="muted-dark">Laden…</p></div>
       </section>
 
       <section class="panel" id="reviewPanel">
@@ -172,6 +217,207 @@
     loadSubmissions();
   });
 
+  // ===== Volgende daily samenstellen =====
+  // Bron kan een ongebruikte library-puzzel zijn of een geaccepteerde
+  // inzending. Beide worden naar dezelfde vorm gebracht, zodat de rest van het
+  // scherm niet hoeft te weten waar het vandaan kwam.
+  let composerSource = 'library';
+  let composerPick = null;
+  let composerUsedLibraryIds = new Set();
+  let composerTakenDates = new Set();
+
+  const OPERATORS = { '×': (a, b) => a * b, '÷': (a, b) => a / b, '+': (a, b) => a + b, '−': (a, b) => a - b };
+
+  function calcCheck(pick) {
+    const fn = OPERATORS[pick.operator];
+    if (!fn || [pick.a1, pick.a2, pick.a3].some(v => v === null || v === undefined)) {
+      return { ok: false, expected: null, unknown: true };
+    }
+    const expected = fn(Number(pick.a1), Number(pick.a2));
+    return { ok: Math.abs(expected - Number(pick.a3)) < 1e-9, expected, unknown: false };
+  }
+
+  function normalizeLibrary(row) {
+    return {
+      key: 'library:' + row.id, origin: 'library',
+      label: `Puzzel #${row.puzzle_number ?? '?'} · ${row.difficulty || 'onbekend'}`,
+      operator: row.operator || '×',
+      q1: row.q1_label, a1: row.q1_answer,
+      q2: row.q2_label, a2: row.q2_answer,
+      q3: row.q3_label, a3: row.q3_answer,
+      source_library_id: String(row.id), source_submission_id: null,
+    };
+  }
+
+  function normalizeSubmission(row) {
+    return {
+      key: 'submission:' + row.id, origin: 'submission',
+      label: `Inzending #${row.id} · ${row.username || 'anoniem'}`,
+      operator: row.operator || '×',
+      q1: row.q1, a1: row.a1, q2: row.q2, a2: row.a2, q3: row.q3, a3: row.a3,
+      source_library_id: null, source_submission_id: row.id,
+    };
+  }
+
+  function nextFreeDate() {
+    const date = new Date();
+    for (let i = 0; i < 400; i++) {
+      const iso = date.toISOString().slice(0, 10);
+      if (!composerTakenDates.has(iso)) return iso;
+      date.setDate(date.getDate() + 1);
+    }
+    return new Date().toISOString().slice(0, 10);
+  }
+
+  function renderComposerPreview() {
+    const box = $('composerPreview');
+    if (!composerPick) { box.innerHTML = '<p class="muted-dark">Kies eerst een puzzel.</p>'; $('composerSchedule').disabled = true; return; }
+    const check = calcCheck(composerPick);
+    const sum = `${fmt(composerPick.a1)} ${composerPick.operator} ${fmt(composerPick.a2)} = ${fmt(composerPick.a3)}`;
+    const verdict = check.unknown
+      ? '<span class="review-calc none">antwoorden onvolledig</span>'
+      : `<span class="review-calc ${check.ok ? 'ok' : 'bad'}">${esc(sum)}${check.ok ? ' ✓' : ` ✗ (moet ${fmt(check.expected)} zijn)`}</span>`;
+    box.innerHTML = `<p class="composer-preview-label">${esc(composerPick.label)}</p>
+      <ol class="review-questions">
+        <li>${esc(composerPick.q1)} — <b>${esc(fmt(composerPick.a1))}</b></li>
+        <li>${esc(composerPick.q2)} — <b>${esc(fmt(composerPick.a2))}</b></li>
+        <li>${esc(composerPick.q3)} — <b>${esc(fmt(composerPick.a3))}</b></li>
+      </ol>${verdict}`;
+    // Een puzzel waarvan de som niet klopt, mag er niet in.
+    $('composerSchedule').disabled = !check.ok;
+  }
+
+  function renderComposerList(rows, emptyText) {
+    const list = $('composerList');
+    if (!rows.length) { list.innerHTML = `<p class="muted-dark">${esc(emptyText)}</p>`; return; }
+    list.innerHTML = rows.map(pick => {
+      const check = calcCheck(pick);
+      const active = composerPick && composerPick.key === pick.key;
+      return `<button type="button" class="composer-card${active ? ' is-active' : ''}" data-key="${esc(pick.key)}">
+        <span class="composer-card-head">${esc(pick.label)}${check.ok ? '' : ' <em>som klopt niet</em>'}</span>
+        <span class="composer-card-q">${esc(pick.q1)}</span>
+        <span class="composer-card-sum">${esc(fmt(pick.a1))} ${esc(pick.operator)} ${esc(fmt(pick.a2))} = ${esc(fmt(pick.a3))}</span>
+      </button>`;
+    }).join('');
+  }
+
+  async function loadComposerSource() {
+    const list = $('composerList');
+    list.innerHTML = '<p class="muted-dark">Laden…</p>';
+    try {
+      if (composerSource === 'library') {
+        const { data, error } = await client.from('library_puzzles')
+          .select('id, puzzle_number, difficulty, operator, q1_label, q1_answer, q2_label, q2_answer, q3_label, q3_answer')
+          .order('puzzle_number').limit(400);
+        if (error) throw error;
+        const unused = (data || []).filter(row => !composerUsedLibraryIds.has(String(row.id)));
+        composerRows = unused.map(normalizeLibrary);
+        renderComposerList(composerRows, 'Alle library-puzzels zijn al als daily gebruikt.');
+      } else {
+        const { data, error } = await client.from('question_submissions')
+          .select('*').eq('status', 'geaccepteerd').order('created_at', { ascending: false }).limit(200);
+        if (error) throw error;
+        const puzzles = (data || []).filter(row => row.type === 'puzzel');
+        const losseVragen = (data || []).length - puzzles.length;
+        composerRows = puzzles.map(normalizeSubmission);
+        renderComposerList(composerRows, 'Nog geen geaccepteerde puzzel-inzendingen.');
+        if (losseVragen) {
+          $('composerList').insertAdjacentHTML('beforeend',
+            `<p class="muted-dark composer-hint">${losseVragen} geaccepteerde losse ${losseVragen === 1 ? 'vraag' : 'vragen'} niet getoond: een daily heeft drie vragen nodig die samen een kloppende som vormen.</p>`);
+        }
+      }
+    } catch (err) {
+      list.innerHTML = `<p class="muted-dark">Kon niet laden: ${esc(err.message)}</p>`;
+    }
+  }
+
+  let composerRows = [];
+
+  async function loadComposer() {
+    if (!client) { $('composerIntro').textContent = 'Supabase-key ontbreekt in admin.html.'; return; }
+    try {
+      const { data, error } = await client.from('puzzles')
+        .select('id, scheduled_date, status, source_library_id, question_1')
+        .order('scheduled_date', { ascending: false }).limit(400);
+      if (error) throw error;
+      composerUsedLibraryIds = new Set((data || []).map(r => r.source_library_id).filter(Boolean).map(String));
+      composerTakenDates = new Set((data || []).map(r => r.scheduled_date).filter(Boolean));
+      $('composerIntro').textContent = `${(data || []).length} dailies in de database. Eerstvolgende vrije datum: ${nextFreeDate()}.`;
+      $('composerDate').value = nextFreeDate();
+      renderScheduled(data || []);
+      await loadComposerSource();
+    } catch (err) {
+      $('composerIntro').innerHTML = `Kon de puzzels-tabel niet lezen: ${esc(err.message)}. Draai eerst <code>supabase/fix_daily_admin_schema.sql</code>.`;
+      $('composerList').innerHTML = '';
+      $('composerScheduled').innerHTML = '';
+    }
+  }
+
+  function renderScheduled(rows) {
+    const upcoming = rows.filter(r => r.scheduled_date).slice(0, 12);
+    $('composerScheduled').innerHTML = upcoming.length
+      ? upcoming.map(r => `<div class="composer-scheduled-row"><b>${esc(r.scheduled_date)}</b><span>${esc(r.status || '')}</span><span>${esc(String(r.question_1 || '').slice(0, 70))}</span></div>`).join('')
+      : '<p class="muted-dark">Nog niets ingepland.</p>';
+  }
+
+  function fillPhotoOptions() {
+    const select = $('composerPhoto');
+    const photos = window.NETTO_DAILY_PHOTOS || [];
+    const dir = window.NETTO_DAILY_PHOTO_DIR || 'fotos/assets/';
+    select.innerHTML = '<option value="">Geen foto</option>' +
+      photos.map(name => `<option value="${esc(dir + name)}">${esc(name.replace(/^media-\d+-|-jpg\.jpg$|\.jpg$/g, '').replace(/-/g, ' '))}</option>`).join('');
+  }
+
+  async function scheduleDaily() {
+    if (!composerPick) return;
+    const date = $('composerDate').value;
+    if (!date) { setMessage('composerMessage', 'Kies een datum.', true); return; }
+    if (composerTakenDates.has(date)) { setMessage('composerMessage', `Er staat al een daily op ${date}.`, true); return; }
+    if (!confirm(`"${composerPick.label}" inplannen op ${date}?`)) return;
+
+    const payload = {
+      question_1: composerPick.q1, question_2: composerPick.q2, question_3: composerPick.q3,
+      true_answer_1: composerPick.a1, true_answer_2: composerPick.a2, true_answer_3: composerPick.a3,
+      operator: composerPick.operator, scheduled_date: date, status: 'scheduled',
+      image_path: $('composerPhoto').value || null,
+      image_alt: $('composerAlt').value || null,
+      image_credit: $('composerCredit').value || null,
+      image_source_url: $('composerSource').value || null,
+      source_library_id: composerPick.source_library_id,
+      source_submission_id: composerPick.source_submission_id,
+    };
+    const { error } = await client.from('puzzles').insert(payload);
+    if (error) { setMessage('composerMessage', 'Fout: ' + error.message, true); return; }
+    setMessage('composerMessage', `Ingepland op ${date}.`);
+    composerPick = null;
+    renderComposerPreview();
+    await loadComposer();
+  }
+
+  function initComposer() {
+    fillPhotoOptions();
+    $('composerTabs').addEventListener('click', event => {
+      const btn = event.target.closest('.composer-tab');
+      if (!btn) return;
+      composerSource = btn.dataset.source;
+      document.querySelectorAll('.composer-tab').forEach(b => b.classList.toggle('is-active', b === btn));
+      loadComposerSource();
+    });
+    $('composerList').addEventListener('click', event => {
+      const card = event.target.closest('.composer-card');
+      if (!card) return;
+      composerPick = composerRows.find(p => p.key === card.dataset.key) || null;
+      document.querySelectorAll('.composer-card').forEach(c => c.classList.toggle('is-active', c === card));
+      renderComposerPreview();
+    });
+    $('composerPhoto').addEventListener('change', event => {
+      const preview = $('composerPhotoPreview');
+      preview.hidden = !event.target.value;
+      if (event.target.value) preview.src = event.target.value;
+    });
+    $('composerSchedule').addEventListener('click', scheduleDaily);
+  }
+
   async function loadDashboard(user) {
     await requireAdmin(user);
     showDashboard(); $('identity').textContent = user.email || user.id;
@@ -181,6 +427,8 @@
     const unique = error ? null : new Set((playerRows || []).map(row => row.user_id)).size;
     [$('dailyCount'),$('libraryCount'),$('userCount'),$('playCount'),$('reviewCount'),$('loginCount')].forEach((el,i) => el.textContent = [daily,library,users,plays,reviews,logins][i] ?? '—');
     loadSubmissions();
+    initComposer();
+    loadComposer();
   }
 
   $('loginForm').addEventListener('submit', async event => {
