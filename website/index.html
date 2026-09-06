@@ -28,7 +28,7 @@
 <script src="netto_translations_en.js?v=34"></script>
 <script src="js/i18n.js?v=47"></script>
 <link rel="stylesheet" href="css/styles.css?v=44">
-<link rel="stylesheet" href="css/refinement.css?v=61">
+<link rel="stylesheet" href="css/refinement.css?v=62">
 
 </head>
 <body>
@@ -872,23 +872,23 @@
     </div>
   </div>
 
-  <!-- ============ MODAL: LEADERBOARD ============ -->
-  <div class="modal-overlay" id="modalLeaderboard" onclick="closeModalOnBg(event, 'modalLeaderboard')">
-    <div class="modal">
-      <button class="modal-close" onclick="closeLeaderboardModal()">✕</button>
-      <h2 class="modal-title">Leaderboard</h2>
-      <div class="modal-subtitle">Wie zat er vandaag het dichtst op de waarheid?</div>
+  <!-- ============ LEADERBOARD ============ -->
+  <main class="library-screen" id="leaderboardScreen">
+    <div class="library-page-inner">
+      <div class="library-page-top"><button class="library-home" type="button" onclick="goHome()" aria-label="Netto — naar de landingpagina">Netto</button><span class="library-page-kicker">NETTO · LEADERBOARD</span></div>
+      <h1 class="library-page-title">Leaderboard</h1>
+      <p class="library-page-subtitle" id="leaderboardSubtitle">Wie zat er vandaag het dichtst op de waarheid?</p>
 
-      <div class="tab-buttons">
-        <button class="tab-btn active" id="tabTodayBtn" onclick="switchLbTab('today')">Vandaag (#032)</button>
-        <button class="tab-btn" id="tabStreaksBtn" onclick="switchLbTab('streaks')">Top Streaks</button>
+      <div class="library-filters lb-tabs">
+        <button class="active" id="tabTodayBtn" type="button" onclick="switchLbTab('today')">Vandaag</button>
+        <button id="tabStreaksBtn" type="button" onclick="switchLbTab('streaks')">Top streaks</button>
       </div>
 
-      <div class="leaderboard-list" id="leaderboardList">
-        <!-- Wordt dynamisch gevuld -->
-      </div>
+      <div class="leaderboard-list" id="leaderboardList"></div>
+
+      <p class="lb-voetnoot" id="leaderboardVoetnoot">Streaks worden berekend uit werkelijk gespeelde dagen.</p>
     </div>
-  </div>
+  </main>
 
   <!-- ============ MODAL: AUTH / ACCOUNT ============ -->
   <div class="modal-overlay" id="modalAuth" onclick="closeModalOnBg(event, 'modalAuth')">
@@ -962,11 +962,11 @@
 
 <!-- De volgorde is bewust: modules delen de bestaande classic-script scope. -->
 <script src="js/daily-photos.js?v=2"></script>
-<script src="js/core.js?v=68"></script>
+<script src="js/core.js?v=70"></script>
 <script src="js/puzzle-modes.js?v=44"></script>
 <script src="js/race.js?v=47"></script>
 <script src="js/submissions.js?v=39"></script>
-<script src="js/library.js?v=44"></script>
+<script src="js/library.js?v=45"></script>
 <script src="js/app.js?v=34"></script>
 
 </body>

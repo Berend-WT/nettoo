@@ -1927,6 +1927,22 @@
     setAuthBusy(true);
     try {
       if (authMode === 'register') {
+        // Vooraf kijken of de naam vrij is. profiles.username is uniek, en zonder
+        // deze controle liep de registratie stuk in de database-trigger — met een
+        // onbegrijpelijke foutmelding in plaats van "die naam is bezet". Faalt de
+        // controle zelf, dan gaat de registratie gewoon door; de trigger vangt een
+        // botsing alsnog op door er een cijfer achter te zetten.
+        try {
+          const { data: vrij, error: checkFout } =
+            await supabaseClient.rpc('username_beschikbaar', { p_naam: username });
+          if (!checkFout && vrij === false) {
+            showAuthError(statsCopy(
+              `De spelersnaam "${username}" is al bezet. Kies een andere.`,
+              `The player name "${username}" is taken. Please pick another.`));
+            setAuthBusy(false);
+            return;
+          }
+        } catch (_) { /* controle overslaan, trigger vangt het op */ }
         recordSignupAttempt();
         const { data, error } = await supabaseClient.auth.signUp({
           email, password,
@@ -2026,74 +2042,78 @@
   // =========================================================================
   // 7. LEADERBOARD RENDERING
   // =========================================================================
-  function renderLeaderboard() {
+  // Het leaderboard draaide op verzonnen namen terwijl het inlogscherm belooft
+  // dat je erop komt te staan. Nu echte spelers, opgehaald via twee
+  // security-definer functies: de policies laten een speler alleen zijn eigen
+  // rijen zien en dat blijft zo — die functies geven uitsluitend een naam en
+  // een score terug, geen e-mailadressen of andermans schattingen.
+  async function renderLeaderboard() {
     const list = document.getElementById('leaderboardList');
+    if (!list) return;
     list.innerHTML = '';
+    const melding = tekst => {
+      const div = document.createElement('div');
+      div.className = 'lb-leeg';
+      div.textContent = tekst;
+      list.innerHTML = '';
+      list.appendChild(div);
+    };
+    melding(statsCopy('Laden…', 'Loading…'));
 
-    const plays = getLocalPlays();
-    const myToday = plays[TODAY_STR];
-    const myStreak = getLocalStreak();
-
-    if (currentLbTab === 'today') {
-      // Mock data aangevuld met actuele speler
-      let todayScores = [
-        { rank: 1, name: "WiskundeKoning", factor: 1.03, streak: 12 },
-        { rank: 2, name: "StatistiekNL", factor: 1.07, streak: 8 },
-        { rank: 3, name: "Fermii_Fan", factor: 1.11, streak: 19 },
-        { rank: 4, name: "EftelingMaster", factor: 1.14, streak: 4 },
-        { rank: 5, name: "DataDaan", factor: 1.18, streak: 15 }
-      ];
-
-      if (myToday) {
-        const myName = currentUser ? (currentUser.username || currentUser.email) : "Jij (deze browser)";
-        todayScores.push({ rank: '•', name: `${myName} 👈`, factor: myToday.factor, streak: myStreak, isMe: true });
-        todayScores.sort((a, b) => a.factor - b.factor);
-      }
-
-      todayScores.forEach((row, i) => {
-        const div = document.createElement('div');
-        div.className = `lb-row ${row.isMe ? 'me' : ''}`;
-        div.innerHTML = `
-          <div class="lb-left">
-            <span class="lb-rank">#${i + 1}</span>
-            <div>
-              <div class="lb-name">${row.name}</div>
-              <div class="lb-streak">🔥 ${row.streak}d streak</div>
-            </div>
-          </div>
-          <span class="lb-score">${row.factor.toFixed(2)}×</span>
-        `;
-        list.appendChild(div);
-      });
-    } else {
-      // Top Streaks tab
-      let streaks = [
-        { rank: 1, name: "Fermii_Fan", streak: 42 },
-        { rank: 2, name: "WiskundeKoning", streak: 38 },
-        { rank: 3, name: "DataDaan", streak: 29 },
-        { rank: 4, name: "ProfessorX", streak: 21 },
-        { rank: 5, name: "AnoniemeSchatters", streak: 16 }
-      ];
-
-      if (currentUser || myStreak > 0) {
-        const myName = currentUser ? (currentUser.username || currentUser.email) : "Jij";
-        streaks.push({ rank: '•', name: `${myName} 👈`, streak: myStreak, isMe: true });
-        streaks.sort((a, b) => b.streak - a.streak);
-      }
-
-      streaks.forEach((row, i) => {
-        const div = document.createElement('div');
-        div.className = `lb-row ${row.isMe ? 'me' : ''}`;
-        div.innerHTML = `
-          <div class="lb-left">
-            <span class="lb-rank">#${i + 1}</span>
-            <div class="lb-name">${row.name}</div>
-          </div>
-          <span class="lb-score" style="color:#D97706;">🔥 ${row.streak} dagen</span>
-        `;
-        list.appendChild(div);
-      });
+    const eigenNaam = currentUser ? (currentUser.username || currentUser.email) : null;
+    let rijen = [];
+    try {
+      if (!supabaseClient) throw new Error('geen verbinding');
+      const { data, error } = currentLbTab === 'today'
+        ? await supabaseClient.rpc('leaderboard_dag', { p_datum: TODAY_STR })
+        : await supabaseClient.rpc('leaderboard_streaks', { p_datum: TODAY_STR });
+      if (error) throw error;
+      rijen = data || [];
+    } catch (err) {
+      console.warn('Leaderboard niet opgehaald:', err.message || err);
+      melding(statsCopy('Het leaderboard is even niet bereikbaar.',
+                        'The leaderboard is unavailable right now.'));
+      return;
     }
+
+    if (!rijen.length) {
+      melding(currentLbTab === 'today'
+        ? statsCopy('Nog niemand heeft de daily van vandaag gespeeld. Wees de eerste.',
+                    'Nobody has played today\u2019s daily yet. Be the first.')
+        : statsCopy('Nog geen streaks. Speel twee dagen op rij om te beginnen.',
+                    'No streaks yet. Play two days in a row to get started.'));
+      return;
+    }
+
+    list.innerHTML = '';
+    rijen.forEach((rij, index) => {
+      const ikZelf = eigenNaam && rij.naam === eigenNaam;
+      const div = document.createElement('div');
+      div.className = 'lb-row' + (ikZelf ? ' me' : '');
+
+      const links = document.createElement('div');
+      links.className = 'lb-left';
+      const rang = document.createElement('span');
+      rang.className = 'lb-rank';
+      rang.textContent = '#' + (index + 1);
+      const naam = document.createElement('div');
+      naam.className = 'lb-name';
+      // textContent, geen innerHTML: spelersnamen komen van andere gebruikers.
+      naam.textContent = rij.naam + (ikZelf ? ' \u{1F448}' : '');
+      links.append(rang, naam);
+
+      const score = document.createElement('span');
+      score.className = 'lb-score';
+      if (currentLbTab === 'today') {
+        score.textContent = Number(rij.factor).toFixed(2) + '\u00d7';
+      } else {
+        score.classList.add('lb-score-streak');
+        score.textContent = statsCopy(rij.streak + ' dagen', rij.streak + ' days');
+      }
+
+      div.append(links, score);
+      list.appendChild(div);
+    });
   }
 
   function switchLbTab(tab) {
@@ -2228,6 +2248,7 @@
     document.getElementById('raceScreen').classList.toggle('active', name === 'race');
     document.getElementById('breinkrakersScreen').classList.toggle('active', name === 'breinkrakers');
     document.getElementById('settingsScreen').classList.toggle('active', name === 'settings');
+    document.getElementById('leaderboardScreen')?.classList.toggle('active', name === 'leaderboard');
     document.getElementById('submitScreen').classList.toggle('active', name === 'submit');
     document.getElementById('calculator').classList.remove('open');
     window.scrollTo(0, 0);

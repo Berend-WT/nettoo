@@ -221,14 +221,18 @@ function renderLibraryStats() {
     closeMenu();
   }
 
+  // Het leaderboard is een eigen pagina geworden in plaats van een pop-up; het
+  // hoort bij "Competitie" in de navigatie en heeft meer ruimte nodig dan een
+  // modal biedt. De oude naam blijft bestaan omdat er vanaf meerdere plekken
+  // naar verwezen wordt.
   function openLeaderboardModal() {
     closeMenu();
+    showScreen('leaderboard');
     renderLeaderboard();
-    document.getElementById('modalLeaderboard').classList.add('active');
   }
 
   function closeLeaderboardModal() {
-    document.getElementById('modalLeaderboard').classList.remove('active');
+    goHome();
   }
 
   function openAuthModal() {
