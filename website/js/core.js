@@ -1740,7 +1740,9 @@
           user_id: currentUser.id,
           puzzle_date: dateStr,
           g1, g2, g3, factor
-        }, { onConflict: 'user_id, puzzle_date' });
+          // Geen spatie na de komma: PostgREST leest dit als een lijst
+          // kolomnamen, dus " puzzle_date" zou een onbekende kolom zijn.
+        }, { onConflict: 'user_id,puzzle_date' });
 
         if (error) console.warn('Supabase sync error:', error);
       } catch (err) {
