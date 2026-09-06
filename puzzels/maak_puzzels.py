@@ -22,6 +22,7 @@ Optionele argumenten:
 from __future__ import annotations
 
 import argparse
+import itertools
 import math
 import re
 from collections import Counter, defaultdict
@@ -241,6 +242,12 @@ def find_candidates(
         value_tuple: tuple[Fraction, Fraction, Fraction],
     ) -> None:
         if len(set(ids)) != 3:
+            return
+
+        # Drie vragen uit dezelfde hoek maakt een puzzel eentonig; je wil drie
+        # keer een ander soort feit. Twee keer Geografie in één puzzel telt dus
+        # als ongeldig, net als een herhaalde vraag.
+        if len({questions[qid].category for qid in ids}) != 3:
             return
 
         candidate_ids = ids
@@ -493,11 +500,27 @@ def _relation_priority(
 def _allocate_relation(
     relation: tuple[Fraction, Fraction, Fraction],
     available: DefaultDict[Fraction, list[int]],
-) -> tuple[int, int, int]:
-    ids: list[int] = []
-    for value in relation:
-        ids.append(available[value].pop())
-    return ids[0], ids[1], ids[2]
+    questions: list[Question],
+) -> tuple[int, int, int] | None:
+    """Kies per waarde een vraag uit drie verschillende categorieën.
+
+    Twee vragen uit dezelfde hoek maakt een puzzel eentonig. Lukt het niet — bij
+    sommige antwoordwaarden bestaan er alleen vragen uit één categorie — dan
+    geeft dit None terug en slaat de aanroeper deze combinatie over. Liever een
+    puzzel minder dan een puzzel die twee keer hetzelfde onderwerp vraagt.
+    """
+    venster = 24
+    keuzes = [available[value][-venster:] for value in relation]
+    for combinatie in itertools.product(*keuzes):
+        if len(set(combinatie)) != 3:
+            continue
+        if len({questions[index].category for index in combinatie}) != 3:
+            continue
+        for value, gekozen in zip(relation, combinatie):
+            available[value].remove(gekozen)
+        return combinatie[0], combinatie[1], combinatie[2]
+
+    return None
 
 
 
@@ -567,8 +590,19 @@ def generate_balanced_phase_by_value(
             break
 
         first_relation, second_relation = chosen
-        first_ids = _allocate_relation(first_relation, available)
-        second_ids = _allocate_relation(second_relation, available)
+        first_ids = _allocate_relation(first_relation, available, questions)
+        if first_ids is None:
+            # Geen drie verschillende categorieën mogelijk bij deze waarden.
+            # Uit de lijst halen, anders blijft de lus hem opnieuw kiezen.
+            first_relations.remove(first_relation)
+            continue
+        second_ids = _allocate_relation(second_relation, available, questions)
+        if second_ids is None:
+            # De eerste is al toegewezen; teruggeven zodat er niets zoekraakt.
+            for value, gekozen in zip(first_relation, first_ids):
+                available[value].append(gekozen)
+            second_relations.remove(second_relation)
+            continue
         first_candidate = Candidate(first_operator, first_ids, (0.0,))
         second_candidate = Candidate(second_operator, second_ids, (0.0,))
         output_candidates.extend((first_candidate, second_candidate))
