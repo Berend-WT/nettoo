@@ -161,10 +161,12 @@
     const answerHtml = row.type !== 'puzzel' && (row.a1 === null || row.a1 === undefined)
       ? '<p class="review-warning">⚠ Antwoord ontbreekt — zoek het zelf uit voor acceptatie.</p>'
       : '';
+    // Id's zijn uuid's, dus niet in een inline onclick interpoleren; dat levert
+    // ongeldige JS op. Via data-attributen en één listener op de lijst.
     const actions = isNieuw
       ? `<div class="review-actions">
-           <button type="button" class="review-btn accept" onclick="reviewSubmission(${row.id},'geaccepteerd')">✓ Accepteren</button>
-           <button type="button" class="review-btn deny" onclick="reviewSubmission(${row.id},'geweigerd')">✕ Weigeren</button>
+           <button type="button" class="review-btn accept" data-id="${esc(row.id)}" data-status="geaccepteerd">✓ Accepteren</button>
+           <button type="button" class="review-btn deny" data-id="${esc(row.id)}" data-status="geweigerd">✕ Weigeren</button>
          </div>`
       : `<div class="review-actions"><span class="review-status ${row.status === 'geaccepteerd' ? 'acc' : 'den'}">${row.status}</span></div>`;
     return `<article class="review-card">
@@ -202,12 +204,17 @@
   async function reviewSubmission(id, status) {
     if (!client) return;
     const verb = status === 'geaccepteerd' ? 'accepteren' : 'weigeren';
-    if (!confirm(`Inzending #${id} ${verb}? De speler krijgt hier automatisch een melding van.`)) return;
+    // Id's zijn uuid's; alleen het begin tonen houdt de melding leesbaar.
+    const kort = String(id).slice(0, 8);
+    if (!confirm(`Inzending ${kort}… ${verb}? De speler krijgt hier automatisch een melding van.`)) return;
     const { error } = await client.rpc('admin_review_submission', { p_id: id, p_status: status });
-    setMessage('dashboardMessage', error ? 'Fout: ' + error.message : `Inzending #${id} ${status}. Speler is op de hoogte gebracht.`, !!error);
+    setMessage('dashboardMessage', error ? 'Fout: ' + error.message : `Inzending ${kort}… ${status}. Speler is op de hoogte gebracht.`, !!error);
     if (!error) await loadSubmissions();
   }
-  window.reviewSubmission = reviewSubmission;
+  $('reviewList').addEventListener('click', event => {
+    const btn = event.target.closest('.review-btn[data-id]');
+    if (btn) reviewSubmission(btn.dataset.id, btn.dataset.status);
+  });
 
   $('reviewFilter').addEventListener('click', event => {
     const btn = event.target.closest('.review-filter-btn');

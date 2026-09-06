@@ -64,7 +64,10 @@ alter table public.puzzles add column if not exists question_3 text;
 -- Bijhouden waar een daily vandaan komt, zodat het adminscherm kan filteren op
 -- "nog niet als daily gebruikt" en kan tonen of iets van een speler kwam.
 alter table public.puzzles add column if not exists source_library_id text;
-alter table public.puzzles add column if not exists source_submission_id bigint
+-- LET OP: question_submissions.id is uuid, niet bigint. schema.sql declareert
+-- bigserial, maar gebruikt "create table if not exists"; de tabel bestond al met
+-- een uuid, dus die CREATE werd overgeslagen. De uuid is dus de werkelijkheid.
+alter table public.puzzles add column if not exists source_submission_id uuid
   references public.question_submissions(id) on delete set null;
 
 -- Twee dailies op dezelfde datum inplannen moet niet kunnen. scheduled_date is
@@ -76,6 +79,70 @@ create unique index if not exists puzzles_scheduled_date_uniq
 -- Het adminscherm filtert veel op status en datum.
 create index if not exists puzzles_status_date_idx
   on public.puzzles (status, scheduled_date);
+
+-- ============================================================
+-- 2b. admin_review_submission werkte sowieso niet
+-- ============================================================
+--
+-- Dezelfde oorzaak als hierboven: de functie is gedeclareerd met p_id bigint,
+-- terwijl question_submissions.id een uuid is. "where id = p_id" vergelijkt dan
+-- uuid met bigint en faalt. Accepteren of weigeren van een inzending kón dus
+-- nooit werken, los van de statuswaarden.
+--
+-- Signatuur wijzigen kan niet met create or replace, dus eerst de oude weg.
+
+drop function if exists public.admin_review_submission(bigint, text, text);
+
+create or replace function public.admin_review_submission(
+  p_id uuid,
+  p_status text,
+  p_message text default null
+)
+returns void language plpgsql security definer set search_path = public as $$
+declare
+  v_user_id uuid;
+  v_type    text;
+  v_q1      text;
+  v_kort    text;
+begin
+  if not public.is_admin() then
+    raise exception 'Geen admin-rechten';
+  end if;
+  if p_status not in ('geaccepteerd', 'geweigerd') then
+    raise exception 'Ongeldige status';
+  end if;
+
+  select user_id, type, q1 into v_user_id, v_type, v_q1
+    from public.question_submissions where id = p_id;
+  if not found then
+    raise exception 'Inzending niet gevonden';
+  end if;
+
+  update public.question_submissions
+     set status = p_status, reviewed_at = now()
+   where id = p_id;
+
+  -- Anonieme inzendingen hebben geen user_id; dan valt er niets te melden.
+  if v_user_id is null then
+    return;
+  end if;
+
+  v_kort := left(coalesce(v_q1, '?'), 70);
+  insert into public.user_notifications (user_id, type, message)
+  values (
+    v_user_id,
+    case when p_status = 'geaccepteerd' then 'submission_accepted' else 'submission_denied' end,
+    case
+      when p_status = 'geaccepteerd' then
+        'Je ' || (case when v_type = 'puzzel' then 'puzzel' else 'vraag' end)
+          || ' "' || v_kort || '" is geaccepteerd! We gebruiken hem misschien in een toekomstige daily of puzzel. 🎉'
+      else
+        'Je ' || (case when v_type = 'puzzel' then 'puzzel' else 'vraag' end)
+          || ' "' || v_kort || '" is deze keer niet geaccepteerd. Bedankt voor je inzending — blijf insturen!'
+    end
+  );
+end;
+$$;
 
 -- ============================================================
 -- 3. puzzles leesbaar maken — maar alleen wat gepubliceerd is
