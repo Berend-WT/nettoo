@@ -349,7 +349,22 @@
       if (error) throw error;
       composerUsedLibraryIds = new Set((data || []).map(r => r.source_library_id).filter(Boolean).map(String));
       composerTakenDates = new Set((data || []).map(r => r.scheduled_date).filter(Boolean));
-      $('composerIntro').textContent = `${(data || []).length} dailies in de database. Eerstvolgende vrije datum: ${nextFreeDate()}.`;
+      // Waarschuwen als de planning bijna op is. Loopt het archief leeg, dan
+      // toont het spel de laatste daily alsof het die van vandaag is, en worden
+      // scores niet opgeslagen omdat de datum niet klopt. Dat gebeurde op
+      // 6 september en bleef onopgemerkt tot het leaderboard leeg bleef.
+      const datums = (data || []).map(r => r.scheduled_date).filter(Boolean).sort();
+      const laatste = datums[datums.length - 1];
+      const dagenOver = laatste
+        ? Math.round((Date.parse(laatste) - Date.now()) / 86400000)
+        : -1;
+      const waarschuwing = dagenOver < 3
+        ? ` ⚠ Nog maar ${Math.max(0, dagenOver)} dag(en) ingepland — plan er tijdig bij, anders vallen scores stil.`
+        : '';
+      $('composerIntro').textContent =
+        `${(data || []).length} dailies in de database, ingepland tot ${laatste || '—'}. `
+        + `Eerstvolgende vrije datum: ${nextFreeDate()}.${waarschuwing}`;
+      $('composerIntro').classList.toggle('composer-waarschuwing', dagenOver < 3);
       $('composerDate').value = nextFreeDate();
       renderScheduled(data || []);
       await loadComposerSource();
