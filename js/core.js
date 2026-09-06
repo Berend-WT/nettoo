@@ -78,7 +78,14 @@
   }
   initSupabaseClient();
   if (!supabaseClient && window.supabase) initSupabaseClient();
-  window.addEventListener('load', initSupabaseClient);
+  // De supabase-library laadt met defer, dus bij het uitvoeren van dit bestand
+  // bestaat window.supabase nog niet en blijft supabaseClient null. Alles wat de
+  // database nodig heeft moet daarom wachten tot 'load'; anders stapt het stil
+  // uit en lijkt er niets aan de hand.
+  window.addEventListener('load', () => {
+    initSupabaseClient();
+    if (supabaseClient) syncDailiesFromSupabase();
+  });
 
   // Sessie-sync: log uit op apparaat A = ook uitgelogd op apparaat B,
   // en herstel de ingelogde gebruiker bij paginalading.
@@ -339,8 +346,13 @@
     return merged.concat(dateless);
   }
 
+  let dailySyncGedaan = false;
+
   async function syncDailiesFromSupabase() {
-    if (!supabaseClient) return;
+    // Wordt zowel vanuit initApp als vanuit de load-listener aangeroepen; alleen
+    // die tweede heeft doorgaans een client. Eén keer ophalen is genoeg.
+    if (!supabaseClient || dailySyncGedaan) return;
+    dailySyncGedaan = true;
     try {
       const { data, error } = await supabaseClient
         .from('puzzles')
@@ -1330,7 +1342,7 @@
   const DAILY_PHOTO_DIR = window.NETTO_DAILY_PHOTO_DIR || 'fotos/assets/';
 
   function pickDailyPhoto(key) {
-    if (!DAILY_PHOTOS.length) return '';
+    if (!DAILY_PHOTOS.length) return null;
     let hash = 0;
     for (let i = 0; i < key.length; i++) hash = (hash * 31 + key.charCodeAt(i)) >>> 0;
     return DAILY_PHOTOS[hash % DAILY_PHOTOS.length];
@@ -1368,7 +1380,10 @@
 
     // Een door de redactie toegewezen foto wint van de sfeerfoto-rotatie.
     const assigned = PUZZLE_DATA?.image_path;
-    const src = assigned || (DAILY_PHOTO_DIR + pickDailyPhoto(getActivePuzzleKey()));
+    const rotatie = assigned ? null : pickDailyPhoto(getActivePuzzleKey());
+    if (!assigned && !rotatie) { photo.hidden = true; return; }
+
+    const src = assigned || (DAILY_PHOTO_DIR + rotatie.file);
     if (image.getAttribute('src') !== src) {
       image.src = src;
       dialogImage.src = src;
@@ -1378,7 +1393,11 @@
     const alt = assigned ? (PUZZLE_DATA.image_alt || '') : '';
     image.alt = alt;
     dialogImage.alt = alt;
-    renderDailyPhotoCredit(assigned ? PUZZLE_DATA : null);
+    // Ook de rotatiefoto's krijgen bronvermelding: het zijn Commons-bestanden
+    // onder CC BY of CC BY-SA, waar naamsvermelding een licentievoorwaarde is.
+    renderDailyPhotoCredit(assigned
+      ? PUZZLE_DATA
+      : { image_credit: rotatie.credit, image_source_url: rotatie.source });
     photo.hidden = false;
     // Alleen ruimte reserveren in de vraag als er ook echt een foto staat.
     document.getElementById('dailyPhotoQuestion')?.classList.add('has-photo');
