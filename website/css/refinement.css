@@ -1,4 +1,48 @@
 /* Netto refinement layer — shared editorial game system */
+.daily-photo[hidden] { display: none; }
+/* Smalle schermen: gewoon in de flow, rechts uitgelijnd boven de eerste vraag.
+   Naast de kaart is daar geen ruimte, en buiten de kaart hangen zou horizontaal
+   scrollen veroorzaken. */
+.daily-photo { display: block; width: 132px; margin: 0 0 18px auto; padding: 6px 6px 0; background: #fff; border: 1px solid #E3E4F7; border-radius: 6px; box-shadow: 0 6px 16px rgba(20,22,59,.12); transform: rotate(2deg); cursor: zoom-in; transition: transform .15s; }
+.daily-photo:hover { transform: rotate(0); }
+.daily-photo img { display: block; width: 100%; height: 104px; object-fit: cover; border-radius: 2px; }
+.daily-photo span { display: block; padding: 9px 2px; color: #4C519C; font: 500 9px 'JetBrains Mono',monospace; text-transform: uppercase; letter-spacing: .04em; }
+
+/* Brede schermen: polaroid op de kaartrand geplakt — grotendeels op de kaart,
+   met een stukje dat over de rand op de achtergrond hangt. */
+@media (min-width: 1000px) {
+  #screen-puzzle .card { overflow: visible; }
+  #screen-puzzle .daily-photo {
+    position: absolute;
+    top: 20px;
+    right: -34px;
+    z-index: 2;
+    width: 152px;
+    margin: 0;
+    transform: rotate(3deg);
+    box-shadow: 0 16px 34px rgba(5, 7, 35, .30);
+  }
+  #screen-puzzle .daily-photo:hover { transform: rotate(0) scale(1.03); }
+  #screen-puzzle .daily-photo img { height: 108px; }
+  /* Ruimte vrijhouden in de eerste vraag, anders loopt tekst/invoer onder de foto. */
+  #dailyPhotoQuestion.has-photo { padding-right: 128px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  #screen-puzzle .daily-photo:hover { transform: rotate(3deg); }
+}
+.daily-photo-dialog { margin: auto; width: min(880px,92vw); max-height: 90dvh; padding: 10px; border: 0; border-radius: 12px; background: var(--surface); color: var(--ink); overflow: auto; }
+.daily-photo-dialog::backdrop { background: rgba(8,10,38,.82); }
+.daily-photo-dialog > img { display: block; width: 100%; height: auto; max-height: 74dvh; object-fit: contain; border-radius: 5px; }
+.daily-photo-dialog p { padding: 12px 6px 4px; color: var(--text-muted); font: 12px/1.5 'Space Grotesk',sans-serif; }
+.photo-close { position: absolute; right: 18px; top: 18px; width: 40px; height: 40px; border: 1px solid #E3E4F7; border-radius: 50%; background: #fff; color: #14163B; font-size: 26px; cursor: pointer; }
+@media(max-width:560px) {
+  #dailyPhotoQuestion.has-photo .q-label { padding-right: 118px; }
+  #dailyPhotoQuestion.has-photo .daily-photo { width: 104px; }
+  .daily-photo img { height: 82px; }
+  .daily-photo span { font-size: 8px; padding: 7px 0; }
+}
+@media(prefers-reduced-motion:reduce) { .daily-photo { transition: none; transform: none; } }
 .daily-home-button { display: flex; align-items: center; justify-content: center; gap: 9px; width: 100%; min-height: 44px; margin-top: 18px; padding: 10px 14px; border: 1px solid var(--surface-border); border-radius: 8px; background: transparent; color: var(--ink); font: 600 14px 'Space Grotesk',sans-serif; cursor: pointer; }
 .daily-home-button:hover { background: var(--surface-2); }
 @media (min-width: 900px) {

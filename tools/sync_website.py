@@ -36,6 +36,24 @@ MIRROR_FILES = (
     "netto_breinkrakers.js",
 )
 
+# Mappen waarvan de volledige inhoud mee moet. De daily gebruikt alle foto's uit
+# fotos/assets, dus een handmatige bestandslijst raakt hier gegarandeerd achter.
+MIRROR_DIRS = (
+    "fotos/assets",
+)
+
+
+def mirrored_files() -> tuple[str, ...]:
+    files = list(MIRROR_FILES)
+    for relative_dir in MIRROR_DIRS:
+        source_dir = ROOT / relative_dir
+        if not source_dir.is_dir():
+            raise FileNotFoundError(f"Canonical directory is missing: {source_dir}")
+        for path in sorted(source_dir.iterdir()):
+            if path.is_file():
+                files.append(f"{relative_dir}/{path.name}")
+    return tuple(files)
+
 
 def digest(path: Path) -> str:
     return hashlib.sha256(path.read_bytes()).hexdigest()
@@ -43,7 +61,7 @@ def digest(path: Path) -> str:
 
 def differing_files() -> list[str]:
     different: list[str] = []
-    for relative in MIRROR_FILES:
+    for relative in mirrored_files():
         source = ROOT / relative
         target = WEBSITE / relative
         if not source.is_file():
