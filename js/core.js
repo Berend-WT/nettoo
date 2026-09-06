@@ -476,7 +476,7 @@
     'Muziek': 'music',
     'Natuurkunde': 'atom',
     'Nederlands': 'flag',
-    'Politiek & recht': 'law',
+    'Politiek en recht': 'law',
     'Records en vergelijkingen': 'chart',
     'Scheikunde': 'chemistry',
     'Spellen en speelgoed': 'game',
@@ -486,8 +486,11 @@
     'Technologie': 'technology',
     'Topografie': 'map',
     'Vervoer': 'transport',
-    'Wetenschap': 'atom',
-    'Wiskunde': 'math'
+    'Wiskunde': 'math',
+    'Economie & geld': 'chart',
+    'Merken en producten': 'industry',
+    'Mode en lifestyle': 'art',
+    'Reizen en toerisme': 'map'
   });
 
   const DAILY_CATEGORY_ICON_DRAWINGS = Object.freeze({
@@ -526,9 +529,34 @@
     return `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${drawing}</svg>`;
   }
 
+  // Een daily uit de database heeft geen categorieën: die kolom bestaat niet in
+  // de puzzles-tabel. De iconen bleven daardoor op hun placeholder staan zodra
+  // de daily uit Supabase kwam. Ze zijn wel af te leiden uit de vraagtekst,
+  // want dezelfde vragen staan met categorie en al in de puzzeldata.
+  const VRAAG_CATEGORIE = (() => {
+    const kaart = new Map();
+    for (const naam of ['daily', 'library', 'reserve']) {
+      for (const p of REBUILT_DATA[naam] || []) {
+        const cats = Array.isArray(p.categories) ? p.categories : [];
+        ['q1', 'q2', 'q3'].forEach((slot, i) => {
+          const vraag = (p[`${slot}_label`] || '').trim();
+          if (vraag && cats[i] && !kaart.has(vraag)) kaart.set(vraag, cats[i]);
+        });
+      }
+    }
+    return kaart;
+  })();
+
+  function categorieënVoor(puzzle) {
+    if (Array.isArray(puzzle.categories) && puzzle.categories.length) return puzzle.categories;
+    return ['q1', 'q2', 'q3']
+      .map(slot => VRAAG_CATEGORIE.get((puzzle[`${slot}_label`] || '').trim()))
+      .filter(Boolean);
+  }
+
   function renderHomeDailyPreview(puzzle = DAILY_PUZZLES[0] || PUZZLE_DATA) {
     if (!puzzle) return;
-    const categories = Array.isArray(puzzle.categories) ? puzzle.categories : [];
+    const categories = categorieënVoor(puzzle);
     const operator = puzzle.operator || '×';
     const translatedCategories = categories.map(category => window.NettoI18n?.t(category) || category);
     const meta = document.getElementById('heroDateMeta');

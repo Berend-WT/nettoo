@@ -1372,3 +1372,5 @@ textarea:focus-visible,
   font: 14px/1.5 'Space Grotesk', sans-serif; text-align: center;
 }
 .lb-voetnoot { margin-top: 16px; color: #AAB0DF; font-size: 12px; }
+.results-leaderboard-hint { margin: 8px 0 0; color: var(--text-muted); font-size: 12px; text-align: center; }
+.btn-stats-open, .btn-leaderboard-open { display: inline-flex; align-items: center; gap: 8px; }
