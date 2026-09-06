@@ -35,6 +35,9 @@
 .daily-photo-dialog::backdrop { background: rgba(8,10,38,.82); }
 .daily-photo-dialog > img { display: block; width: 100%; height: auto; max-height: 74dvh; object-fit: contain; border-radius: 5px; }
 .daily-photo-dialog p { padding: 12px 6px 4px; color: var(--text-muted); font: 12px/1.5 'Space Grotesk',sans-serif; }
+.daily-photo-credit { padding-bottom: 0 !important; font-size: 11px !important; }
+.daily-photo-credit[hidden] { display: none; }
+.daily-photo-credit a { color: inherit; }
 .photo-close { position: absolute; right: 18px; top: 18px; width: 40px; height: 40px; border: 1px solid #E3E4F7; border-radius: 50%; background: #fff; color: #14163B; font-size: 26px; cursor: pointer; }
 @media(max-width:560px) {
   #dailyPhotoQuestion.has-photo .q-label { padding-right: 118px; }

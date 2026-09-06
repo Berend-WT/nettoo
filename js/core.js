@@ -281,8 +281,98 @@
 
   let activePuzzleIndex = 0;
   const REBUILT_DATA = window.NETTO_REBUILT_PUZZLES || { library: [], daily: [], reserve: [] };
-  const DAILY_PUZZLES = (REBUILT_DATA.daily || []).map(normalizeLibraryPuzzle);
+  // De statische set blijft de basis: het spel moet werken zonder database.
+  const STATIC_DAILIES = (REBUILT_DATA.daily || []).map(normalizeLibraryPuzzle);
+  let DAILY_PUZZLES = STATIC_DAILIES;
   let PUZZLE_DATA = DAILY_PUZZLES[activePuzzleIndex] || PUZZLE_ARCHIVE[0];
+
+  // ===== Ingeplande dailies uit Supabase =====
+  // Het adminscherm plant dailies in de puzzles-tabel. Die worden hier over de
+  // statische set heen gelegd, maar pas nadat de pagina al draait: een trage of
+  // onbereikbare database mag het laden nooit blokkeren. Mislukt de sync, dan
+  // blijft simpelweg de statische set staan.
+
+  // De statische set loopt aaneengesloten door (nr. 35 = 2026-09-04), dus nieuwe
+  // dailies tellen daarop door. Zo blijven nummers stabiel en verschuift de
+  // geschiedenis niet als er iets bijkomt.
+  const DAILY_NUMBER_REF = STATIC_DAILIES.find(p => p.date && p.number) || null;
+
+  function dailyNumberForDate(dateStr) {
+    if (!DAILY_NUMBER_REF || !dateStr) return null;
+    const days = Math.round((Date.parse(dateStr) - Date.parse(DAILY_NUMBER_REF.date)) / 86400000);
+    return Number.isFinite(days) ? DAILY_NUMBER_REF.number + days : null;
+  }
+
+  function mapDbDaily(row) {
+    return normalizeLibraryPuzzle({
+      id: row.id,
+      operator: row.operator || '×',
+      q1_label: row.question_1,
+      q1_answer: row.true_answer_1,
+      q2_label: row.question_2,
+      q2_answer: row.true_answer_2,
+      q3_label: row.question_3,
+      q3_answer: row.true_answer_3,
+      date: row.scheduled_date,
+      image_path: row.image_path,
+      image_alt: row.image_alt,
+      image_caption: row.image_caption,
+      image_credit: row.image_credit,
+      image_source_url: row.image_source_url,
+    });
+  }
+
+  function mergeDailies(dbDailies) {
+    const byDate = new Map();
+    const dateless = [];
+    for (const puzzle of STATIC_DAILIES) {
+      if (puzzle.date) byDate.set(puzzle.date, puzzle); else dateless.push(puzzle);
+    }
+    // Database wint van de statische set op dezelfde datum.
+    for (const puzzle of dbDailies) if (puzzle.date) byDate.set(puzzle.date, puzzle);
+    const merged = [...byDate.values()].map(puzzle => {
+      if (puzzle.number) return puzzle;
+      const number = dailyNumberForDate(puzzle.date);
+      return { ...puzzle, number, name: puzzle.name || (number ? `Daily #${number}` : 'Daily') };
+    });
+    merged.sort((a, b) => String(b.date || '').localeCompare(String(a.date || '')));
+    return merged.concat(dateless);
+  }
+
+  async function syncDailiesFromSupabase() {
+    if (!supabaseClient) return;
+    try {
+      const { data, error } = await supabaseClient
+        .from('puzzles')
+        .select('id, question_1, question_2, question_3, operator, true_answer_1, true_answer_2, true_answer_3, scheduled_date, image_path, image_alt, image_caption, image_credit, image_source_url')
+        .eq('status', 'scheduled')
+        .lte('scheduled_date', TODAY_STR)
+        .order('scheduled_date', { ascending: false });
+      // Ontbreekt question_3 nog (migratie niet gedraaid), dan faalt de select
+      // en houden we gewoon de statische set aan. Wel loggen: anders is een
+      // kapotte query niet te onderscheiden van "nog niets ingepland".
+      if (error) {
+        console.warn('Daily-sync mislukt, statische set blijft actief:', error.message || error);
+        return;
+      }
+      if (!Array.isArray(data) || !data.length) return;
+
+      const previousId = DAILY_PUZZLES[0]?.id;
+      DAILY_PUZZLES = mergeDailies(data.map(mapDbDaily));
+
+      // Alleen de actieve puzzel omwisselen als de speler er niet in zit;
+      // midden in een ingevulde puzzel de vragen vervangen is onacceptabel.
+      const playing = document.getElementById('screen-puzzle')?.classList.contains('active');
+      if (!playing && !dailyArchivePuzzleView && activePuzzleIndex === 0
+          && DAILY_PUZZLES[0] && DAILY_PUZZLES[0].id !== previousId) {
+        PUZZLE_DATA = DAILY_PUZZLES[0];
+        if (typeof loadActivePuzzle === 'function') loadActivePuzzle();
+      }
+      renderHomeDailyPreview();
+    } catch (err) {
+      console.warn('Daily-sync overgeslagen, statische set blijft actief:', err);
+    }
+  }
 
   // Sarcastische citaten als iemand letters invoert
   const SARCASTIC_QUOTES = [
@@ -412,6 +502,8 @@
         document.getElementById('puzzleEyebrow').textContent = `Netto · ${puzzleNr(PUZZLE_DATA.number)}`;
       }
       renderHomeDailyPreview();
+      // Bewust niet awaiten: de statische set staat er al, dit is een upgrade.
+      syncDailiesFromSupabase();
 
       // Koppel knoppen expliciet via event listeners
       const btnStart = document.getElementById('btnStartPuzzle');
@@ -1268,17 +1360,49 @@
     return DAILY_PHOTOS[hash % DAILY_PHOTOS.length];
   }
 
+  // Bronvermelding tonen. Bij CC BY en CC BY-SA is dat een licentievoorwaarde,
+  // geen nettigheid, dus dit hoort bij elke toegewezen foto te staan.
+  function renderDailyPhotoCredit(puzzle) {
+    const credit = document.getElementById('dailyPhotoCredit');
+    if (!credit) return;
+    const text = puzzle?.image_credit || '';
+    credit.textContent = '';
+    if (!text) { credit.hidden = true; return; }
+    credit.hidden = false;
+    credit.appendChild(document.createTextNode(text));
+    // Tekstknopen en createElement in plaats van innerHTML: de bronvermelding
+    // komt uit de database en hoeft dan nergens ontsnapt te worden.
+    const source = puzzle.image_source_url;
+    if (source) {
+      credit.appendChild(document.createTextNode(' · '));
+      const link = document.createElement('a');
+      link.href = source;
+      link.target = '_blank';
+      link.rel = 'noopener noreferrer';
+      link.textContent = statsCopy('bron', 'source');
+      credit.appendChild(link);
+    }
+  }
+
   function renderDailyPhoto() {
     const photo = document.getElementById('dailyPhotoButton');
     const image = document.getElementById('dailyPhotoImage');
     const dialogImage = document.getElementById('dailyPhotoDialogImage');
     if (!photo || !image || !dialogImage) return;
 
-    const src = 'fotos/assets/' + pickDailyPhoto(getActivePuzzleKey());
+    // Een door de redactie toegewezen foto wint van de sfeerfoto-rotatie.
+    const assigned = PUZZLE_DATA?.image_path;
+    const src = assigned || ('fotos/assets/' + pickDailyPhoto(getActivePuzzleKey()));
     if (image.getAttribute('src') !== src) {
       image.src = src;
       dialogImage.src = src;
     }
+    // Toegewezen foto's hebben een echte alt-tekst; de rotatiefoto's zijn puur
+    // decoratief en houden een lege alt, zodat schermlezers ze overslaan.
+    const alt = assigned ? (PUZZLE_DATA.image_alt || '') : '';
+    image.alt = alt;
+    dialogImage.alt = alt;
+    renderDailyPhotoCredit(assigned ? PUZZLE_DATA : null);
     photo.hidden = false;
     // Alleen ruimte reserveren in de vraag als er ook echt een foto staat.
     document.getElementById('dailyPhotoQuestion')?.classList.add('has-photo');

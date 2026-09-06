@@ -78,6 +78,36 @@ create index if not exists puzzles_status_date_idx
   on public.puzzles (status, scheduled_date);
 
 -- ============================================================
+-- 3. puzzles leesbaar maken — maar alleen wat gepubliceerd is
+-- ============================================================
+--
+-- Er stond wel een RLS-policy op puzzles, maar geen table-grant. Zonder grant
+-- doet een policy niets: de frontend kreeg letterlijk
+-- "permission denied for table puzzles". Vandaar dat de daily nu nog uit een
+-- statisch JS-bestand komt.
+--
+-- Let op de valkuil: de bestaande policy was "using (true)", dus zodra je de
+-- grant geeft, kan iedereen ook dailies lezen die op een TOEKOMSTIGE datum
+-- staan ingepland — inclusief de antwoorden. Dat is slechter dan nu, want het
+-- statische bestand bevat alleen gepubliceerde dailies. Daarom filtert de
+-- policy hieronder zelf op datum, zodat de database het weigert en niet alleen
+-- de client erop filtert.
+
+grant select on public.puzzles to anon, authenticated;
+
+drop policy if exists "Iedereen mag daily puzzels bekijken" on public.puzzles;
+drop policy if exists puzzles_select_published on public.puzzles;
+
+create policy puzzles_select_published
+  on public.puzzles for select
+  to anon, authenticated
+  using (status = 'scheduled' and scheduled_date <= current_date);
+
+-- De admin-policy ("Admins mogen daily puzzels beheren", ALL met is_admin())
+-- blijft staan; admins zien daardoor nog steeds concepten en toekomstige
+-- dailies, spelers niet.
+
+-- ============================================================
 -- Controle achteraf
 -- ============================================================
 -- Verwacht: nieuw/geaccepteerd/geweigerd, en question_3 aanwezig.
@@ -91,3 +121,7 @@ create index if not exists puzzles_status_date_idx
 --    and column_name in ('question_3','source_library_id','source_submission_id');
 --
 -- select status, count(*) from public.question_submissions group by status;
+--
+-- Verwacht: één select-policy die op status en datum filtert.
+-- select policyname, cmd, qual from pg_policies
+--  where schemaname = 'public' and tablename = 'puzzles';
