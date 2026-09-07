@@ -192,6 +192,8 @@
     '— live duel via een open game of room-code; wie de meeste goed heeft wint.': '— play a live duel through an open game or room code; most correct answers wins.',
     'Vraagsets wisselen': 'Switch question sets',
     '— pas je race aan met regio- of thema-sets in': '— customise your race with regional or themed sets in',
+    'De daily van vandaag staat nog niet klaar. Dit is die van': "Today's daily isn't ready yet. This one is from",
+    '— je score telt niet mee.': '— your score will not count.',
     '— een ketting van 4 vragen in één formule.': '— a chain of 4 questions in one formula.',
     'laden…': 'loading…',
     '← Vorige': '← Previous',

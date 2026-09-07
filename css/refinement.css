@@ -1374,3 +1374,15 @@ textarea:focus-visible,
 .lb-voetnoot { margin-top: 16px; color: #AAB0DF; font-size: 12px; }
 .results-leaderboard-hint { margin: 8px 0 0; color: var(--text-muted); font-size: 12px; text-align: center; }
 .btn-stats-open, .btn-leaderboard-open { display: inline-flex; align-items: center; gap: 8px; }
+
+/* Waarschuwing wanneer er voor vandaag nog geen daily is ingepland en de site
+   terugvalt op de nieuwste puzzel die er wél is. Zonder deze melding kreeg de
+   speler de puzzel van gisteren voorgeschoteld alsof het die van vandaag was,
+   terwijl een score in dat geval niet wordt opgeslagen. */
+.daily-verouderd {
+  position: relative; z-index: 1;
+  margin: 18px 0 0; padding: 9px 13px;
+  border: 1px solid rgba(255, 190, 92, .45); border-radius: 9px;
+  background: rgba(255, 190, 92, .12); color: #FFD79A;
+  font: 13px/1.45 'Space Grotesk', sans-serif; max-width: 480px;
+}

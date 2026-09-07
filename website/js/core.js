@@ -552,13 +552,61 @@
       .filter(Boolean);
   }
 
+  function datumInWoorden(isoDatum) {
+    if (!isoDatum) return '';
+    // Middag-UTC zodat de dag niet verspringt door de tijdzone van de speler.
+    const d = new Date(`${isoDatum}T12:00:00Z`);
+    return Number.isNaN(d.getTime())
+      ? isoDatum
+      : d.toLocaleDateString(
+          window.NettoI18n?.language === 'en' ? 'en-GB' : 'nl-NL',
+          { day: 'numeric', month: 'long' }
+        );
+  }
+
+  function toonVerouderdeDailyMelding(datumVanPuzzel) {
+    const kaart = document.querySelector('.home-daily-card');
+    if (!kaart) return;
+    let melding = document.getElementById('dailyVerouderdMelding');
+    if (!datumVanPuzzel) {
+      if (melding) melding.remove();
+      return;
+    }
+    if (!melding) {
+      melding = document.createElement('p');
+      melding.id = 'dailyVerouderdMelding';
+      melding.className = 'daily-verouderd';
+      melding.setAttribute('role', 'status');
+      kaart.appendChild(melding);
+    }
+    const kop = 'De daily van vandaag staat nog niet klaar. Dit is die van';
+    const staart = '— je score telt niet mee.';
+    melding.textContent = `${window.NettoI18n?.t(kop) || kop} `
+      + `${datumInWoorden(datumVanPuzzel)} ${window.NettoI18n?.t(staart) || staart}`;
+    console.warn(
+      `[Netto] Geen daily ingepland voor ${TODAY_STR}. Nieuwste beschikbare puzzel is ${datumVanPuzzel}. `
+      + 'Scores worden niet opgeslagen tot er een daily voor vandaag staat.'
+    );
+  }
+
   function renderHomeDailyPreview(puzzle = DAILY_PUZZLES[0] || PUZZLE_DATA) {
     if (!puzzle) return;
     const categories = categorieënVoor(puzzle);
     const operator = puzzle.operator || '×';
     const translatedCategories = categories.map(category => window.NettoI18n?.t(category) || category);
+    // Staat er voor vandaag niets ingepland, dan valt de site terug op de
+    // nieuwste puzzel die er wél is. Dat gebeurde op 7 september ongemerkt: de
+    // speler kreeg die van de 6e voorgeschoteld alsof het de daily van vandaag
+    // was, terwijl een score alleen wordt bewaard als de gespeelde puzzel exact
+    // die van vandaag is. Spelen leverde dus niets op en het leaderboard bleef
+    // leeg. Liever een eerlijke datum dan een stille leugen.
+    const isVandaag = !puzzle.date || puzzle.date === TODAY_STR;
     const meta = document.getElementById('heroDateMeta');
-    if (meta) meta.textContent = puzzle.number ? `Daily #${puzzle.number}` : 'Daily';
+    if (meta) {
+      const nummer = puzzle.number ? `Daily #${puzzle.number}` : 'Daily';
+      meta.textContent = isVandaag ? nummer : `${nummer} · ${datumInWoorden(puzzle.date)}`;
+    }
+    toonVerouderdeDailyMelding(isVandaag ? null : puzzle.date);
     const operatorElement = document.getElementById('homeDailyOperator');
     if (operatorElement) operatorElement.textContent = operator;
     const equation = document.getElementById('homeDailyEquation');
