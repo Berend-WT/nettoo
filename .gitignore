@@ -39,3 +39,9 @@ puzzels/niet unieke puzzels.xlsx
 fotos/assets/daily/
 fotos/daily_fotovoorstellen.json
 fotos/daily_fotos_beoordeling.xlsx
+fotos/daily_fotos_invullijst.xlsx
+fotos/daily_vragen_review_input.json
+
+# Backups die de scripts zelf wegschrijven; de bank staat al in git
+vragen/_backup_*.xlsx
+puzzels/_backup_*.xlsx

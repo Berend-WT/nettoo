@@ -26,7 +26,7 @@ import sys
 from datetime import date, timedelta
 
 WORTEL = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-PUZZELS = os.path.join(WORTEL, 'netto_frontend_puzzles.js')
+PUZZELS = os.path.join(WORTEL, 'data/netto_frontend_puzzles.js')
 DOEL = os.path.join(WORTEL, 'supabase', 'plan_dailies_vooruit.sql')
 
 # De source_library_id's die al als daily in de database staan. Bijwerken met:

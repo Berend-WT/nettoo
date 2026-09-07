@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Genereert de SQL die de bestaande dailies naar de puzzles-tabel schrijft.
 
-De 35 dailies leven nu alleen in netto_frontend_puzzles.js. Zolang ze niet in de
+De 35 dailies leven nu alleen in data/netto_frontend_puzzles.js. Zolang ze niet in de
 database staan, kan er geen foto, bronvermelding of adminbewerking aan hangen —
 al die velden zitten immers op de puzzelrij.
 
@@ -14,7 +14,7 @@ import json
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
-SOURCE = ROOT / "netto_frontend_puzzles.js"
+SOURCE = ROOT / "data/netto_frontend_puzzles.js"
 OUTPUT = ROOT / "supabase" / "backfill_dailies.sql"
 
 HEADER = """-- Netto — bestaande dailies naar de puzzles-tabel
@@ -22,7 +22,7 @@ HEADER = """-- Netto — bestaande dailies naar de puzzles-tabel
 -- GEGENEREERD door fotos/maak_daily_backfill_sql.py; niet met de hand bijwerken.
 --
 -- WAAROM
--- De dailies stonden alleen in netto_frontend_puzzles.js. De frontend leest nu
+-- De dailies stonden alleen in data/netto_frontend_puzzles.js. De frontend leest nu
 -- ingeplande dailies uit Supabase (met dat bestand als vangnet), maar de tabel
 -- was leeg. Zonder rij in puzzles is er niets om een foto, bronvermelding of
 -- adminbewerking aan te hangen.

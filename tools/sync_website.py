@@ -29,12 +29,11 @@ MIRROR_FILES = (
     "js/app.js",
     "js/i18n.js",
     "js/daily-photos.js",
-    "puzzles_embedded.js",
-    "netto_translations_en.js",
-    "netto_frontend_puzzles.js",
-    "netto_race_sets.js",
-    "netto_race_pool.js",
-    "netto_breinkrakers.js",
+    "data/netto_translations_en.js",
+    "data/netto_frontend_puzzles.js",
+    "data/netto_race_sets.js",
+    "data/netto_race_pool.js",
+    "data/netto_breinkrakers.js",
 )
 
 # Mappen waarvan de volledige inhoud mee moet. De daily gebruikt alle foto's uit

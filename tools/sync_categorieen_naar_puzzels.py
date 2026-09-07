@@ -23,12 +23,9 @@ import pandas as pd
 
 WORTEL = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 BANK = os.path.join(WORTEL, 'vragen', '1000+ vragen netjes gecategoriseerd.xlsx')
-# puzzles_embedded.js staat hier bewust NIET bij. Dat bestand zet
-# window.NETTO_LIBRARY_PUZZLES, maar niets in de codebase leest die variabele;
-# het draagt bovendien nog de oude taxonomie van negen categorieën ("Film, TV &
-# Boeken", "Kosmos & Natuurkunde"). Het is 358 KB dode last die wel bij elk
-# paginabezoek wordt opgehaald. Opruimen is een aparte beslissing.
-BESTANDEN = ['netto_frontend_puzzles.js', 'netto_race_sets.js']
+# Alleen deze twee dragen een categories-veld. netto_race_pool.js en
+# netto_breinkrakers.js hebben er geen, dus daar valt niets bij te werken.
+BESTANDEN = ['data/netto_frontend_puzzles.js', 'data/netto_race_sets.js']
 
 
 def lees_js(pad):

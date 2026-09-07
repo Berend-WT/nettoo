@@ -8,7 +8,7 @@ binnen één puzzel altijd verschillend en de formule klopt exact.
 
 Output:
   1. breinkrakers.xlsx        — 100.000 puzzels (tabblad Breinkrakers + Overzicht)
-  2. netto_breinkrakers.js    — 200 uitgekozen speelpuzzels voor de frontend
+  2. data/netto_breinkrakers.js    — 200 uitgekozen speelpuzzels voor de frontend
 
 Theoretisch bestaan er ~475 miljoen combinaties; dit script schrijft een
 kwaliteitsselectie met een moeilijkheidsramp (kleine h1 → grote h1).
@@ -28,7 +28,7 @@ import maak_puzzels as m
 
 INPUT = Path("vragen/1000+ vragen netjes gecategoriseerd.xlsx")
 OUTPUT_XLSX = Path("puzzels/breinkrakers.xlsx")
-OUTPUT_JS = Path("netto_breinkrakers.js")  # frontend-asset, blijft in de projectroot
+OUTPUT_JS = Path("data/netto_breinkrakers.js")  # frontend-asset, blijft in de projectroot
 TARGET_ROWS = 100_000
 FRONTEND_TARGET = 200
 FRONTEND_REUSE_CAP = 4

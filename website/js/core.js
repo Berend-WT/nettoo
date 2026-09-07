@@ -84,7 +84,14 @@
   // uit en lijkt er niets aan de hand.
   window.addEventListener('load', () => {
     initSupabaseClient();
-    if (supabaseClient) syncDailiesFromSupabase();
+    if (supabaseClient) {
+      syncDailiesFromSupabase();
+    } else {
+      // Geen verbinding: de statische set is het eindantwoord, dus vanaf nu
+      // mag er wel geoordeeld worden over een ontbrekende daily.
+      dailySyncAfgerond = true;
+      renderHomeDailyPreview();
+    }
     bewaakDagwissel();
   });
 
@@ -370,6 +377,9 @@
   }
 
   let dailySyncGedaan = false;
+  // Apart van dailySyncGedaan: die vlag gaat aan bij de start van de sync om
+  // dubbel ophalen te voorkomen. Deze gaat pas aan als het antwoord binnen is.
+  let dailySyncAfgerond = false;
 
   // ===== Vrijgave oppikken zonder verversen =====
   // Wie de pagina om 11:55 opent en om 12:05 nog openheeft, hoort de nieuwe
@@ -382,6 +392,7 @@
       if (nieuweSleutel === TODAY_STR) return;
       TODAY_STR = nieuweSleutel;
       dailySyncGedaan = false;
+      dailySyncAfgerond = false;
       syncDailiesFromSupabase();
     };
     setInterval(opnieuwControleren, 60000);
@@ -409,9 +420,12 @@
       // kapotte query niet te onderscheiden van "nog niets ingepland".
       if (error) {
         console.warn('Daily-sync mislukt, statische set blijft actief:', error.message || error);
+        dailySyncAfgerond = true;
+        renderHomeDailyPreview();
         return;
       }
-      if (!Array.isArray(data) || !data.length) return;
+      dailySyncAfgerond = true;
+      if (!Array.isArray(data) || !data.length) { renderHomeDailyPreview(); return; }
 
       const previousId = DAILY_PUZZLES[0]?.id;
       DAILY_PUZZLES = mergeDailies(data.map(mapDbDaily));
@@ -427,6 +441,8 @@
       renderHomeDailyPreview();
     } catch (err) {
       console.warn('Daily-sync overgeslagen, statische set blijft actief:', err);
+      dailySyncAfgerond = true;
+      renderHomeDailyPreview();
     }
   }
 
@@ -565,6 +581,10 @@
   }
 
   function toonVerouderdeDailyMelding(datumVanPuzzel) {
+    // De statische set loopt tot 4 september, dus vóór de sync lijkt élke dag
+    // een gat. Pas oordelen als de database is geraadpleegd — of als er geen
+    // verbinding is, want dan is de statische set het eindantwoord.
+    if (!dailySyncAfgerond) return;
     const kaart = document.querySelector('.home-daily-card');
     if (!kaart) return;
     let melding = document.getElementById('dailyVerouderdMelding');

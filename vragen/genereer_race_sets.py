@@ -4,7 +4,7 @@
 
 Gebruikt de relaties-logica uit maak_puzzels_race.py maar alleen voor de race-pool:
 elke set krijgt 50/50 ×/÷ en +/−, met oplopende difficulty. Per set worden een
-Excel-bestand (puzzels/) en frontend-pooldata (netto_race_sets.js) gemaakt.
+Excel-bestand (puzzels/) en frontend-pooldata (data/netto_race_sets.js) gemaakt.
 """
 from __future__ import annotations
 
@@ -35,7 +35,7 @@ from maak_puzzels_race import (  # noqa: E402
 
 SETS_DIR = Path(__file__).parent / 'sets'
 OUT_PUZZLES_DIR = PUZZLES_DIR / 'race_sets'
-FRONTEND_OUT = Path(__file__).parent.parent / 'netto_race_sets.js'
+FRONTEND_OUT = Path(__file__).parent.parent / 'data/netto_race_sets.js'
 
 OPERATOR_PAIRS = [('×', '÷'), ('+', '−')]
 TARGET_PER_OPERATOR = 50

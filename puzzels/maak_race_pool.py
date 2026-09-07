@@ -3,7 +3,7 @@
 """Bouw de race-pool voor de frontend uit 'puzzels/niet unieke puzzels.xlsx'.
 
 Leest een grote steekproef uit de 5 deelbladen (samen ~4,2 mln puzzels) en
-schrijft netto_race_pool.js met window.NETTO_RACE_POOL: een gemengde pool
+schrijft data/netto_race_pool.js met window.NETTO_RACE_POOL: een gemengde pool
 (alle bewerkingen en moeilijkheden) waar de client per run willekeurig uit
 trekt zonder herhaling binnen één run.
 
@@ -23,7 +23,7 @@ from html import unescape
 from pathlib import Path
 
 POOL_FILE = Path("puzzels/niet unieke puzzels.xlsx")
-OUTPUT_JS = Path("netto_race_pool.js")  # frontend-asset, blijft in de projectroot
+OUTPUT_JS = Path("data/netto_race_pool.js")  # frontend-asset, blijft in de projectroot
 SAMPLE_PER_SHEET = 1200  # 5 bladen → 6000 puzzels in de pool
 SEED = 20260902
 

@@ -57,13 +57,13 @@ STOPWORDS = {
 
 
 def load_dailies() -> list[dict]:
-    src = (ROOT / "netto_frontend_puzzles.js").read_text(encoding="utf-8")
+    src = (ROOT / "data/netto_frontend_puzzles.js").read_text(encoding="utf-8")
     data = json.loads(src[src.index("=") + 1:].rstrip().rstrip(";"))
     return sorted(data["daily"], key=lambda d: d.get("date") or "")
 
 
 def load_translations() -> dict[str, str]:
-    src = (ROOT / "netto_translations_en.js").read_text(encoding="utf-8")
+    src = (ROOT / "data/netto_translations_en.js").read_text(encoding="utf-8")
     return json.loads(src[src.index("=") + 1:].rstrip().rstrip(";"))
 
 

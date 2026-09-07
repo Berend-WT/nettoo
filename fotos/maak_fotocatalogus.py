@@ -38,7 +38,7 @@ from PIL import Image as PILImage, UnidentifiedImageError
 
 
 ROOT = Path(__file__).resolve().parents[1]
-INPUT = ROOT / "netto_frontend_puzzles.js"
+INPUT = ROOT / "data/netto_frontend_puzzles.js"
 OUT_DIR = ROOT / "fotos"
 ASSET_DIR = OUT_DIR / "assets"
 OUTPUT = OUT_DIR / "question_media_pilot.xlsx"
@@ -449,7 +449,7 @@ def write_workbook(questions: list[dict[str, Any]], mappings: list[dict[str, Any
     overview.title = "Overview"
     overview.append(["Netto question media pilot", None])
     overview.append(["Generated at (UTC)", datetime.now(timezone.utc).isoformat(timespec="seconds")])
-    overview.append(["Source puzzle set", "netto_frontend_puzzles.js · library · first 25 puzzles"])
+    overview.append(["Source puzzle set", "data/netto_frontend_puzzles.js · library · first 25 puzzles"])
     overview.append(["Stable question IDs", len(questions)])
     overview.append(["Pilot puzzles", 25])
     overview.append(["Question mappings", len(mappings)])

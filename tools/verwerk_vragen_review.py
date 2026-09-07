@@ -36,7 +36,7 @@ import maak_fotocatalogus as catalogus  # noqa: E402
 
 ROOT = Path(__file__).resolve().parents[1]
 BANK = ROOT / "vragen" / "1000+ vragen netjes gecategoriseerd.xlsx"
-PUZZELS = ROOT / "netto_frontend_puzzles.js"
+PUZZELS = ROOT / "data/netto_frontend_puzzles.js"
 ASSET_DIR = ROOT / "fotos" / "assets" / "vragen"
 SQL_OUT = ROOT / "supabase" / "foto_toewijzingen.sql"
 

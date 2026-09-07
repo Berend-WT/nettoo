@@ -15,17 +15,26 @@ Een quiz-puzzelgame waar je vragen uit een vragenbank (1.000+ vragen) combineert
 ## Structuur
 
 ```
-├── index.html                  ← de website
-├── admin.html                  ← admin-paneel
-├── css/ · js/                  ← frontend
-├── netto_frontend_puzzles.js   ← puzzeldata voor de site (library + race + daily)
-├── netto_breinkrakers.js       ← breinkrakers-puzzeldata
-├── puzzles_embedded.js         ← dagpuzzels
-├── tools/sync_website.py       ← synchroniseert en controleert de website-kopie
-├── vragen/                     ← vragenbank (xlsx) + duplicaten-review
-├── puzzels/                    ← puzzelbanken (xlsx) + generatoren (maak_*.py)
-└── website/                    ← gegenereerde, zelfstandige kopie voor lokale tests
+├── index.html      ← de website
+├── admin.html      ← admin-paneel
+├── css/ · js/      ← frontend (handgeschreven)
+├── data/           ← gegenereerde puzzeldata die de browser inlaadt
+│                     netto_frontend_puzzles.js  library + race + daily
+│                     netto_race_sets.js         regio- en themasets
+│                     netto_race_pool.js         6.000 puzzels voor de race
+│                     netto_breinkrakers.js      breinkrakers
+│                     netto_translations_en.js   Engelse vertalingen
+├── vragen/         ← vragenbank (xlsx) + reviewbladen
+├── puzzels/        ← puzzelgeneratoren (maak_*.py) + hun xlsx-uitvoer
+├── fotos/          ← Commons-foto's voor de daily + de scripts eromheen
+├── supabase/       ← SQL-migraties, met de hand te draaien in de SQL Editor
+├── tools/          ← losse hulpscripts (sync_website.py, plan_dailies.py, …)
+├── docs/           ← briefings en samenwerkingsnotities
+└── website/        ← gegenereerde, zelfstandige kopie; nooit met de hand wijzigen
 ```
+
+Alles in `data/` en `website/` wordt gegenereerd. Werk in de project-root en draai
+daarna `python tools/sync_website.py`.
 
 ## Frontendmodules
 

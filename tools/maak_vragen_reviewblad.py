@@ -21,8 +21,8 @@ from openpyxl.utils import get_column_letter
 
 ROOT = Path(__file__).resolve().parents[1]
 BANK = ROOT / "vragen" / "1000+ vragen netjes gecategoriseerd.xlsx"
-PUZZELS = ROOT / "netto_frontend_puzzles.js"
-VERTALINGEN = ROOT / "netto_translations_en.js"
+PUZZELS = ROOT / "data/netto_frontend_puzzles.js"
+VERTALINGEN = ROOT / "data/netto_translations_en.js"
 OUTPUT = ROOT / "vragen" / "vragen_review_compleet.xlsx"
 
 FONT = "Arial"

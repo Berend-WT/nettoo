@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Bouwt het invulwerkblad waarmee een redacteur foto's bij de dailies zoekt.
 
-De vragen komen uit netto_frontend_puzzles.js (de bron die de frontend ook
+De vragen komen uit data/netto_frontend_puzzles.js (de bron die de frontend ook
 gebruikt), zodat het werkblad niet uit de pas kan lopen met wat spelers zien.
 """
 from __future__ import annotations
@@ -14,7 +14,7 @@ from openpyxl.styles import Alignment, Border, Font, PatternFill, Side
 from openpyxl.utils import get_column_letter
 
 ROOT = Path(__file__).resolve().parents[1]
-SOURCE = ROOT / "netto_frontend_puzzles.js"
+SOURCE = ROOT / "data/netto_frontend_puzzles.js"
 OUTPUT = Path(__file__).resolve().parent / "daily_fotos_invullijst.xlsx"
 
 FONT = "Arial"
