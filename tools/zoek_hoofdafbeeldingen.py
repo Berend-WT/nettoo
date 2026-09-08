@@ -51,6 +51,21 @@ VOORTGANG = os.path.join(FOTOS, 'hoofdafbeeldingen.json')
 
 AGENT = 'Netto-hoofdafbeelding/1.0 (educatief quizspel; contact via repo)'
 
+# Sommige vragen hebben een uitstekende bron die geen Wikipedia-artikel is —
+# FAO voor landbouwcijfers, Guinness voor records, Smithsonian voor vulkanen.
+# Daar valt geen infobox-afbeelding uit te halen, terwijl het onderwerp zich
+# prima laat fotograferen. Voor die gevallen wijst deze lijst een artikel aan
+# dat alleen voor het beeld wordt gebruikt; de bron van het antwoord verandert
+# niet.
+BEELDARTIKEL = {
+    'Hoeveel ton bananen worden wereldwijd jaarlijks geproduceerd?':
+        'https://en.wikipedia.org/wiki/Banana',
+    'Hoeveel mensen namen deel aan de grootste massale yogales?':
+        'https://en.wikipedia.org/wiki/Yoga',
+    'Hoeveel actieve vulkanen zijn er op aarde naar schatting?':
+        'https://en.wikipedia.org/wiki/Volcano',
+}
+
 
 def context():
     return ssl.create_default_context(cafile=certifi.where()) if certifi \
@@ -153,7 +168,8 @@ def main():
 
     for n, r in enumerate(open_nog, start=1):
         nr = int(r['Nr'])
-        foto = hoofdafbeelding(r['Bron (geverifieerd)'])
+        foto = hoofdafbeelding(BEELDARTIKEL.get(str(r['Vraag NL']),
+                                                r['Bron (geverifieerd)']))
         gedaan[str(nr)] = {'kandidaten': [foto] if foto else [],
                            'herkomst': 'hoofdafbeelding' if foto else 'niets'}
         if n % 20 == 0 or n == len(open_nog):
