@@ -609,6 +609,53 @@
     );
   }
 
+
+  // Reveal once per daily/category; language and auth rerenders keep it still.
+  const dailyCategoryReels = new WeakMap();
+  function renderDailyCategoryReel(icon, category, index, dailyKey) {
+    const key = dailyKey + ':' + category;
+    if (icon.dataset.reelKey === key) return;
+    icon.dataset.reelKey = key;
+    dailyCategoryReels.get(icon)?.();
+    const finalIcon = dailyCategoryIcon(category);
+    const motion = window.matchMedia('(prefers-reduced-motion: reduce)');
+    if (motion.matches || !icon.getClientRects().length || !icon.animate) {
+      icon.innerHTML = finalIcon;
+      return;
+    }
+    const choices = Object.keys(DAILY_CATEGORY_ICON_KEYS);
+    const steps = 9 + index * 3;
+    const sequence = Array.from({ length: steps }, (_, step) =>
+      choices[(step * 7 + index * 5) % choices.length]);
+    sequence.push(category);
+    const track = document.createElement('i');
+    track.className = 'home-category-reel';
+    track.setAttribute('aria-hidden', 'true');
+    track.innerHTML = sequence.map(item =>
+      '<i class="home-category-reel-cell">' + dailyCategoryIcon(item) + '</i>'
+    ).join('');
+    icon.replaceChildren(track);
+    const animation = track.animate([
+      { transform: 'translateY(0)' },
+      { transform: 'translateY(-' + steps * 100 + '%)' }
+    ], {
+      duration: 1300 + index * 260,
+      delay: index * 80,
+      easing: 'cubic-bezier(.16,.72,.16,1)',
+      fill: 'both'
+    });
+    const finish = () => {
+      animation.onfinish = null;
+      animation.cancel();
+      motion.removeEventListener('change', finish);
+      icon.innerHTML = finalIcon;
+      dailyCategoryReels.delete(icon);
+    };
+    dailyCategoryReels.set(icon, finish);
+    animation.onfinish = finish;
+    motion.addEventListener('change', finish);
+  }
+
   function renderHomeDailyPreview(puzzle = DAILY_PUZZLES[0] || PUZZLE_DATA) {
     if (!puzzle) return;
     const categories = categorieënVoor(puzzle);
@@ -636,7 +683,7 @@
     categories.slice(0, 3).forEach((category, index) => {
       const icon = document.getElementById(`homeDailyCategory${index + 1}`);
       if (!icon) return;
-      icon.innerHTML = dailyCategoryIcon(category);
+      renderDailyCategoryReel(icon, category, index, String(puzzle.date || puzzle.id || puzzle.number || 'daily'));
       icon.title = translatedCategories[index] || category;
       icon.setAttribute('aria-label', translatedCategories[index] || category);
     });

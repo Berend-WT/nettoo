@@ -228,6 +228,9 @@
   .home-daily-card .hero-sub { margin:22px 0 0; max-width:480px; text-align:left; color:#C7CCE8; font-size:16px; line-height:1.55; }
   .home-equation { display:flex; align-items:center; gap:10px; margin:30px 0 28px; position:relative; z-index:1; }
   .home-equation span { width:48px; height:48px; display:grid; place-items:center; border:1px solid rgba(255,255,255,.2); border-radius:10px; color:#fff; background:rgba(255,255,255,.06); font:700 20px 'JetBrains Mono',monospace; }
+  .home-equation .home-category-icon { position:relative; overflow:hidden; }
+  .home-category-reel { position:absolute; inset:0; display:block; height:100%; will-change:transform; }
+  .home-category-reel-cell { display:grid; place-items:center; height:100%; font-style:normal; }
   .home-equation .home-category-icon svg { width:23px; height:23px; }
   .home-equation span.result { border-color:rgba(255,216,74,.58); color:var(--accent); background:rgba(255,216,74,.1); }
   .home-equation b { color:#8E94BE; font:500 17px 'JetBrains Mono',monospace; }
