@@ -42,6 +42,7 @@ WORTEL = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 REVIEW = os.path.join(WORTEL, 'vragen', 'vragen_review_compleet.xlsx')
 FOTOS = os.path.join(WORTEL, 'fotos')
 VOORTGANG = os.path.join(FOTOS, 'kandidaten.json')
+HOOFD = os.path.join(FOTOS, 'hoofdafbeeldingen.json')
 MINIATUREN = os.path.join(FOTOS, 'assets', 'kandidaten')
 DOEL = os.path.join(WORTEL, 'vragen', 'fotokeuze.xlsx')
 ONEDRIVE = os.path.join(os.path.expanduser('~'), 'OneDrive - Driestar-Wartburg')
@@ -126,6 +127,22 @@ def main():
     os.makedirs(MINIATUREN, exist_ok=True)
     with open(VOORTGANG, encoding='utf-8') as f:
         kandidaten = json.load(f)
+
+    # De hoofdafbeelding uit de infobox gaat voorop: dat is de foto die je van
+    # een onderwerp verwacht. De kandidaten uit de vorige ronde blijven staan
+    # als tweede en derde, want die zijn al opgehaald en vullen de gaten waar
+    # geen infobox-afbeelding is. Dubbelen eruit.
+    if os.path.exists(HOOFD):
+        with open(HOOFD, encoding='utf-8') as f:
+            hoofd = json.load(f)
+        for nr, blok in hoofd.items():
+            beste = (blok.get('kandidaten') or [None])[0]
+            if not beste:
+                continue
+            oud = kandidaten.get(nr, {}).get('kandidaten') or []
+            rest = [k for k in oud if k.get('titel') != beste.get('titel')]
+            kandidaten[nr] = {'herkomst': 'hoofdafbeelding',
+                              'kandidaten': [beste] + rest[:2]}
 
     d = pd.read_excel(REVIEW, sheet_name='Vragen')
     # Ook de vragen zonder kandidaat komen erin: juist daar moet je zelf zoeken,
