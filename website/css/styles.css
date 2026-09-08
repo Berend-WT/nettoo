@@ -822,16 +822,33 @@
   .race-duration-options button:hover { border-color:#B6BCF0; }
   .race-duration-options button.active { border-color:var(--bg-main); background:#EEF2FF; }
   .race-duration-options button.active span { color:var(--bg-main); }
-  /* Speling-balk: vijf smalle knoppen naast elkaar, net als de tempokeuze.
-     De vakjes zijn krapper omdat er vijf in passen in plaats van drie. */
-  .race-tolerance-options { display:flex; gap:4px; }
-  .race-tolerance-options button { flex:1; border:2px solid var(--border-color); background:var(--surface); border-radius:10px; padding:8px 2px; cursor:pointer; text-align:center; transition:border-color .15s ease,background .15s ease; }
-  .race-tolerance-options button b { display:block; font:700 12px 'Space Grotesk',sans-serif; color:var(--bg-dark); }
-  .race-tolerance-options button span { display:block; color:#9CA3AF; font:600 9px 'JetBrains Mono',monospace; text-transform:uppercase; letter-spacing:.04em; margin-top:2px; }
-  .race-tolerance-options button:hover { border-color:#B6BCF0; }
-  .race-tolerance-options button.active { border-color:var(--bg-main); background:#EEF2FF; }
-  .race-tolerance-options button.active span { color:var(--bg-main); }
-  .race-tolerance-note { display:block; margin-top:7px; font:400 11.5px 'Space Grotesk',sans-serif; color:#6B7280; }
+  /* De vijf rasterlabels volgen de duimposities, ook op smalle schermen. */
+  .race-tolerance-options { width:100%; min-width:0; color:var(--ink); }
+  .race-tolerance-options input[type="range"] {
+    appearance:none; -webkit-appearance:none; display:block;
+    width:calc(80% + 22px); margin:0 calc(10% - 11px); height:44px;
+    padding:0; border:0; background:transparent; cursor:pointer; accent-color:var(--accent);
+  }
+  .race-tolerance-options input::-webkit-slider-runnable-track {
+    height:6px; border-radius:99px;
+    background:linear-gradient(to right, var(--accent) var(--speling-voortgang, 0%), var(--surface-border) var(--speling-voortgang, 0%));
+  }
+  .race-tolerance-options input::-webkit-slider-thumb {
+    appearance:none; -webkit-appearance:none; width:22px; height:22px; margin-top:-8px;
+    border-radius:50%; background:var(--accent); border:2px solid var(--ink);
+  }
+  .race-tolerance-options input::-moz-range-track { height:6px; border-radius:99px; background:var(--surface-border); }
+  .race-tolerance-options input::-moz-range-progress { height:6px; border-radius:99px; background:var(--accent); }
+  .race-tolerance-options input::-moz-range-thumb { width:18px; height:18px; border-radius:50%; background:var(--accent); border:2px solid var(--ink); }
+  .race-tolerance-options input:focus-visible { outline:2px solid var(--ink); outline-offset:3px; border-radius:6px; }
+  .race-tolerance-labels { display:grid; grid-template-columns:repeat(5,minmax(0,1fr)); gap:0; text-align:center; }
+  .race-tolerance-labels span { color:var(--eenheid-inkt); padding:2px 0 6px; border-bottom:2px solid transparent; }
+  .race-tolerance-labels b { display:block; font:600 11px 'JetBrains Mono',monospace; }
+  .race-tolerance-labels small { display:block; font:500 10px 'Space Grotesk',sans-serif; margin-top:4px; }
+  .race-tolerance-options .race-tolerance-labels b,
+  .race-tolerance-options .race-tolerance-labels small { color:inherit; }
+  .race-tolerance-labels .active { color:var(--ink); border-color:var(--accent); }
+  .race-config-card .race-tolerance-note { display:block; min-height:2.8em; margin-top:9px; font:400 12px/1.4 'Space Grotesk',sans-serif; color:var(--eenheid-inkt); }
   .race-online-layout { display:grid; grid-template-columns:1fr 1fr; gap:14px; align-items:start; }
   .race-online-controls { display:grid; gap:12px; }
   .race-online-create { width:100%; margin-top:10px; }
@@ -1192,18 +1209,18 @@
     --familie-sand: #413D2A; --familie-slate: #303B4B;
     --eenheid-inkt: #C4CAD8;
   }
-  #dailyQuestionView .vraag-met-categorie {
+  :is(#dailyQuestionView, #libraryQuestionList, #premiumQuestionList) .vraag-met-categorie {
     background: var(--vraag-tint, var(--surface-2));
     background: color-mix(in srgb, var(--vraag-tint, var(--surface-2)) var(--vraag-menging, 84%), var(--surface));
     border: 1px solid var(--surface-border); border-radius: 12px;
     padding: 16px; color: var(--ink);
   }
-  #dailyQuestionView .vraag-met-categorie .q-label { display:block; color:var(--ink); }
-  #dailyQuestionView .vraag-met-categorie input {
+  :is(#dailyQuestionView, #libraryQuestionList, #premiumQuestionList) .vraag-met-categorie .q-label { display:block; color:var(--ink); }
+  :is(#dailyQuestionView, #libraryQuestionList, #premiumQuestionList) .vraag-met-categorie input {
     background: var(--surface); color:var(--ink); min-width:0;
   }
-  #dailyQuestionView .vraag-met-categorie input:disabled { opacity:.8; }
-  #dailyQuestionView input.met-eenheid { padding-right:min(48%, var(--eenheid-ruimte)); }
+  :is(#dailyQuestionView, #libraryQuestionList, #premiumQuestionList) .vraag-met-categorie input:disabled { opacity:.8; }
+  :is(#dailyQuestionView, #libraryQuestionList, #premiumQuestionList) input.met-eenheid { padding-right:min(48%, var(--eenheid-ruimte)); }
   .invoer-eenheid {
     position:absolute; right:14px; max-width:44%; pointer-events:none;
     color:var(--eenheid-inkt); font:500 12px/1.2 'JetBrains Mono',monospace;

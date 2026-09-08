@@ -29,6 +29,7 @@
     ruim: { label: '1,50×', name: 'Ruim', uitleg: 'Anderhalf keer ernaast mag' },
     grof: { label: '2,00×', name: 'Grof', uitleg: 'Factor twee, orde van grootte' }
   };
+  const RACE_TOLERANTIE_VOLGORDE = ['perfect', 'scherp', 'netjes', 'ruim', 'grof'];
   const RACE_TOLERANTIE_STANDAARD = 'perfect';
   const RACE_LEVEL_ORDER = { 'easy': 0, 'intermediate': 1, 'hard': 2, 'extremely-hard': 3 };
   const RACE_LEVEL_LABEL = { 'easy': 'Easy', 'intermediate': 'Intermediate', 'hard': 'Hard', 'extremely-hard': 'Extremely Hard' };
@@ -270,10 +271,16 @@
       `race${mode[0].toUpperCase() + mode.slice(1)}Tolerances`);
     if (!container) return;
     const config = getRaceModeConfig(mode);
-    container.querySelectorAll('[data-tolerance]').forEach(button => {
-      const actief = button.dataset.tolerance === config.toleranceKey;
-      button.classList.toggle('active', actief);
-      button.setAttribute('aria-pressed', actief ? 'true' : 'false');
+    const schuif = container.querySelector('input[type="range"]');
+    const index = RACE_TOLERANTIE_VOLGORDE.indexOf(config.toleranceKey);
+    const meta = raceTolerantieMeta(config.toleranceKey);
+    if (schuif) {
+      schuif.value = String(index);
+      schuif.setAttribute('aria-valuetext', meta.label + ' ' + meta.name);
+      schuif.style.setProperty('--speling-voortgang', (index * 25) + '%');
+    }
+    container.querySelectorAll('[data-tolerance]').forEach(label => {
+      label.classList.toggle('active', label.dataset.tolerance === config.toleranceKey);
     });
     const uitleg = document.getElementById(
       `race${mode[0].toUpperCase() + mode.slice(1)}ToleranceNote`);

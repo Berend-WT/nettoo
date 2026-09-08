@@ -739,6 +739,7 @@
       document.addEventListener('keydown', closeStatsModalOnEscape);
 
       initInputs();
+      initVraagDetails();
       loadUserProfile();
       applyTheme();
       updateCalculatorToggleLabel();
@@ -1623,6 +1624,10 @@
         if (treffer) return (treffer[1] ? treffer[1] + ' ' : '') + label;
       }
     }
+    // Bij een telling is het zelfstandig naamwoord geen eenheid, maar de
+    // schaal bepaalt wel wat de speler moet invullen.
+    const telSchaal = tekst.match(/\bhoeveel\s+(duizend|miljoen|miljard)\b/u);
+    if (telSchaal) return '× ' + { duizend: '1.000', miljoen: '1.000.000', miljard: '1.000.000.000' }[telSchaal[1]];
     if (/\bwelk percentage\b/u.test(tekst)) return '%';
     return null;
   }
@@ -1659,31 +1664,67 @@
   }
 
   function werkDailyVraagDetailsBij(ingeleverd = false) {
+    const kaarten = [1, 2, 3].map(i => document.getElementById('g' + i)?.closest('.q-block'));
+    werkVraagDetailsBij(PUZZLE_DATA, kaarten, ingeleverd);
+  }
+
+  function werkVraagDetailsBij(puzzel, kaarten, ingeleverd) {
     // Ontbreekt één databasecategorie, schuif de andere dan niet een plek op.
-    const categorieen = [1, 2, 3].map(i => PUZZLE_DATA.categories?.[i - 1]
-      || VRAAG_CATEGORIE.get((PUZZLE_DATA['q' + i + '_label'] || '').trim()));
-    for (let i = 1; i <= 3; i++) {
-      const invoer = document.getElementById('g' + i);
-      const label = document.getElementById('g' + i + 'Eenheid');
-      const kaart = invoer?.closest('.q-block');
-      if (!kaart || !label) continue;
-      const vraag = PUZZLE_DATA['q' + i + '_label'];
-      const eenheid = eenheidUit(vraag);
-      label.textContent = eenheid || '';
-      label.hidden = !eenheid;
-      invoer.classList.toggle('met-eenheid', !!eenheid);
-      invoer.style.setProperty('--eenheid-ruimte', (eenheid ? eenheid.length * 8 + 26 : 16) + 'px');
-      if (eenheid) invoer.setAttribute('aria-describedby', label.id);
-      else invoer.removeAttribute('aria-describedby');
+    kaarten.forEach((kaart, index) => {
+      if (!kaart) return;
+      const vraag = puzzel['q' + (index + 1) + '_label'];
+      const categorie = puzzel.categories?.[index] || VRAAG_CATEGORIE.get((vraag || '').trim());
+      const invoer = kaart.querySelector('input');
+      if (invoer) {
+        let label = kaart.querySelector('.invoer-eenheid');
+        if (!label) {
+          label = document.createElement('span');
+          label.id = invoer.id + 'Eenheid';
+          label.className = 'invoer-eenheid';
+          label.setAttribute('data-i18n-skip', '');
+          invoer.parentElement.appendChild(label);
+        }
+        const eenheid = eenheidUit(vraag);
+        label.textContent = eenheid || '';
+        label.hidden = !eenheid;
+        invoer.classList.toggle('met-eenheid', !!eenheid);
+        invoer.style.setProperty('--eenheid-ruimte', (eenheid ? eenheid.length * 8 + 26 : 16) + 'px');
+        if (eenheid) invoer.setAttribute('aria-describedby', label.id);
+        else invoer.removeAttribute('aria-describedby');
+        const vraaglabel = kaart.querySelector('.q-label');
+        if (vraaglabel) {
+          if (!vraaglabel.id) vraaglabel.id = invoer.id + 'Vraag';
+          invoer.setAttribute('aria-labelledby', vraaglabel.id);
+        }
+      }
       kaart.classList.add('vraag-met-categorie');
-      kaart.style.setProperty('--vraag-tint', 'var(' + categorieKleurVariabele(categorieen[i - 1]) + ')');
+      kaart.style.setProperty('--vraag-tint', 'var(' + categorieKleurVariabele(categorie) + ')');
       // Klein verschil per stap houdt ook gedeelde kleurfamilies herkenbaar.
-      kaart.style.setProperty('--vraag-menging', (84 - (i - 1) * 12) + '%');
+      kaart.style.setProperty('--vraag-menging', (84 - index * 12) + '%');
       kaart.querySelector('.vraag-bron')?.remove();
       if (ingeleverd) {
         const bron = maakBronpaneel(vraag);
         if (bron) kaart.appendChild(bron);
       }
+    });
+  }
+
+  const vraagDetailLijsten = new WeakSet();
+  function initVraagDetails() {
+    for (const prefix of ['library', 'premium']) {
+      const lijst = document.getElementById(prefix + 'QuestionList');
+      if (!lijst || vraagDetailLijsten.has(lijst)) continue;
+      vraagDetailLijsten.add(lijst);
+      const bijwerken = () => {
+        const puzzel = prefix === 'library' ? libraryActivePuzzle : premiumActivePuzzle;
+        if (!puzzel) return;
+        const kaarten = [...lijst.querySelectorAll(':scope > .q-block, :scope > .library-question')];
+        if (kaarten.length === 3) werkVraagDetailsBij(puzzel, kaarten, !lijst.querySelector('input'));
+      };
+      // Alleen vervanging van de kaarten volgen, niet onze eigen labels of
+      // vertaalde tekst daarbinnen. Zo ontstaat geen herhaalde mutatielus.
+      new MutationObserver(bijwerken).observe(lijst, { childList: true });
+      bijwerken();
     }
   }
 
