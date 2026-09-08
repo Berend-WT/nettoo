@@ -410,7 +410,12 @@ def main():
     pad = os.path.join(DATA, 'netto_frontend_puzzles.js')
     ruw = open(pad, encoding='utf-8').read()
     bestaand = json.loads(ruw[ruw.index('=', ruw.index('window.')) + 1:].strip().rstrip(';'))
-    datums = [d.get('date') for d in bestaand.get('daily', []) if d.get('date')]
+    # Oplopend op datum nummeren. De frontend leest het nummer niet uit dit
+    # bestand maar rekent het uit als dagverschil met de eerste dagpuzzel die
+    # een datum en nummer heeft. Nummer 1 op de nieuwste datum leverde daardoor
+    # #0 en #-1 op voor de dagen ervoor. De lijst staat aflopend op datum, dus
+    # hij moet eerst omgekeerd worden.
+    datums = sorted(d['date'] for d in bestaand.get('daily', []) if d.get('date'))
 
     dagpuzzels = []
     for i, (datum, p) in enumerate(zip(datums, puzzels), start=1):
@@ -418,6 +423,8 @@ def main():
         dp['date'] = datum
         dp['source_library_id'] = None
         dagpuzzels.append(dp)
+    # Terug in de volgorde die de frontend verwacht: nieuwste eerst.
+    dagpuzzels.reverse()
     bestaand['daily'] = dagpuzzels
     bestaand['library'] = [als_puzzel(p, i, 'library')
                            for i, p in enumerate(puzzels[len(dagpuzzels):], start=1)]
