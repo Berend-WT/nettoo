@@ -1652,12 +1652,38 @@
         if (treffer) return (treffer[1] ? treffer[1] + ' ' : '') + label;
       }
     }
-    // Bij een telling is het zelfstandig naamwoord geen eenheid, maar de
-    // schaal bepaalt wel wat de speler moet invullen.
-    const telSchaal = tekst.match(/\bhoeveel\s+(duizend|miljoen|miljard)\b/u);
-    if (telSchaal) return '× ' + { duizend: '1.000', miljoen: '1.000.000', miljard: '1.000.000.000' }[telSchaal[1]];
     if (/\bwelk percentage\b/u.test(tekst)) return '%';
-    return null;
+    if (/^in welk jaar\b/u.test(tekst)) return 'jaar';
+    return telEenheid(tekst);
+  }
+
+  // Woorden die tussen "hoeveel" en het getelde zelfstandig naamwoord kunnen
+  // staan. Zonder deze lijst wordt "hoeveel verschillende talen" tot
+  // "verschillende" in plaats van "talen".
+  const TEL_OVERSLAAN = new Set(['verschillende', 'officiele', 'offici\u00eble', 'individuele',
+    'erkende', 'bekende', 'gepubliceerde', 'complete', 'standaard', 'totale', 'unieke',
+    'actieve', 'echte', 'grote', 'kleine', 'afzonderlijke', 'belangrijkste', 'centrale',
+    'natuurlijke', 'zware', 'gewone', 'huidige', 'oorspronkelijke']);
+  // Woorden die nooit een eenheid zijn; dan valt er niets zinnigs te tonen.
+  const TEL_GEEN = new Set(['van', 'de', 'het', 'een', 'er', 'is', 'zijn', 'in', 'op', 'procent']);
+  const TEL_SCHAAL = { duizend: '\u00d7 1.000', miljoen: '\u00d7 1.000.000', miljard: '\u00d7 1.000.000.000' };
+
+  // Bij een telvraag is het getelde zelfstandig naamwoord de eenheid: "Hoeveel
+  // liften heeft de Burj Khalifa" vraagt om liften. Dat dekt driekwart van de
+  // bank, waar de lijst met meeteenheden alleen de meetbare vragen ving.
+  function telEenheid(tekst) {
+    const m = tekst.match(/\bhoeveel\s+(.+)/u);
+    if (!m) return null;
+    const woorden = m[1].match(/[\p{L}']+/gu) || [];
+    let i = 0;
+    let voorvoegsel = '';
+    if (woorden[0] && TEL_SCHAAL[woorden[0]]) { voorvoegsel = TEL_SCHAAL[woorden[0]] + ' '; i = 1; }
+    while (i < woorden.length && TEL_OVERSLAAN.has(woorden[i])) i += 1;
+    const woord = woorden[i];
+    if (!woord || TEL_GEEN.has(woord)) return voorvoegsel.trim() || null;
+    // Een heel lang woord verdringt het invoerveld; dan liever alleen de schaal.
+    if (woord.length > 14) return voorvoegsel.trim() || null;
+    return voorvoegsel + woord;
   }
 
   function categorieKleurVariabele(categorie) {
