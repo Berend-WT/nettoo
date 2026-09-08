@@ -115,7 +115,7 @@ def waardedrietallen(waarden):
     return uit
 
 
-def bouw(vragen, doel_aantal, seed):
+def bouw(vragen, doel_aantal, seed, quota=10**9):
     rng = random.Random(seed)
     per_waarde = defaultdict(list)
     for i, q in enumerate(vragen):
@@ -124,7 +124,11 @@ def bouw(vragen, doel_aantal, seed):
 
     drietallen = waardedrietallen(waarden)
     scores = sorted(score_van(op, (a, b, c)) for op, a, b, c in drietallen)
-    ondergrens = scores[len(scores) // 10]
+    # De makkelijkste drie procent valt af. Dat is gemeten: bij tien procent
+    # kost de ondergrens bijna honderd puzzels, bij drie procent nog maar
+    # veertig, terwijl het echte afval — 2 + 3 = 5 — er wel buiten blijft. De
+    # makkelijkste som die zo binnenkomt is 2 x 15 = 30, en dat is nog een som.
+    ondergrens = scores[int(len(scores) * 0.03)]
     grenzen = [scores[int(len(scores) * f)] for f in (0.325, 0.55, 0.775)]
 
     def niveau_van(s):
@@ -158,26 +162,34 @@ def bouw(vragen, doel_aantal, seed):
                                       beschikbaar[t[2]]))
 
     def kies(waarde, verboden_cats, gebruikt):
-        """Pak de schaarste vraag met deze waarde die nog vrij is.
+        """Pak een vrije vraag met deze waarde en een nog ongebruikte categorie.
 
-        Schaars eerst: een waarde die nog maar door een vraag gedekt wordt,
-        raakt op zodra die vraag elders belandt. Binnen de waarde wint een
-        vraag met een nog niet gebruikte categorie.
+        De categorie-eis is hard: drie vragen uit dezelfde puzzel horen uit drie
+        verschillende categorieen te komen. Bij het uitproberen bleek dat maar
+        zes puzzels te kosten, tegenover eenenveertig puzzels die anders een
+        dubbele categorie kregen. Die ruil is de moeite waard, dus valt een
+        drietal af zodra een van de drie waarden geen verse categorie meer heeft.
         """
-        opties = [i for i in per_waarde[waarde] if i in vrij and i not in gebruikt]
-        if not opties:
-            return None
-        vers = [i for i in opties if vragen[i]['categorie'] not in verboden_cats]
-        return (vers or opties)[0], bool(vers)
+        opties = [i for i in per_waarde[waarde]
+                  if i in vrij and i not in gebruikt
+                  and vragen[i]['categorie'] not in verboden_cats]
+        return opties[0] if opties else None
 
     puzzels = []
-    losgelaten = 0
     volgorde = [(op, n) for n in NIVEAUS for op in OPERATORS]
     leeg = set()
+    per_niveau = Counter()
     while len(puzzels) < doel_aantal and len(leeg) < len(volgorde):
         for cel in volgorde:
             if len(puzzels) >= doel_aantal:
                 break
+            # Een vol niveau telt als leeg. Zonder dat blijft de buitenste lus
+            # doordraaien zolang er ergens nog een vakje open is, en wordt een
+            # vol vakje elke ronde opnieuw doorzocht. Bij een plafond van 85 zit
+            # easy al vroeg vol en liep het script daar eindeloos langs; de
+            # eerste poging draaide daardoor twintig minuten zonder resultaat.
+            if per_niveau[cel[1]] >= quota:
+                leeg.add(cel)
             if cel in leeg:
                 continue
             gevonden = None
@@ -187,36 +199,33 @@ def bouw(vragen, doel_aantal, seed):
                 if min(beschikbaar[a], beschikbaar[b], beschikbaar[c]) < 1:
                     lijst.pop(idx)
                     continue
-                gebruikt, cats, keuze, alle_vers = set(), set(), [], True
+                gebruikt, cats, keuze = set(), set(), []
                 for w in (a, b, c):
-                    r = kies(w, cats, gebruikt)
-                    if r is None:
+                    i = kies(w, cats, gebruikt)
+                    if i is None:
                         keuze = None
                         break
-                    i, vers = r
-                    alle_vers = alle_vers and vers
                     gebruikt.add(i)
                     cats.add(vragen[i]['categorie'])
                     keuze.append(i)
                 if keuze is None:
                     lijst.pop(idx)
                     continue
-                gevonden = (keuze, a, b, c, s, alle_vers)
+                gevonden = (keuze, a, b, c, s)
                 lijst.pop(idx)
                 break
             if gevonden is None:
                 leeg.add(cel)
                 continue
-            keuze, a, b, c, s, alle_vers = gevonden
-            if not alle_vers:
-                losgelaten += 1
+            keuze, a, b, c, s = gevonden
+            per_niveau[cel[1]] += 1
             for i in keuze:
                 vrij.discard(i)
                 beschikbaar[vragen[i]['antwoord']] -= 1
             puzzels.append({'op': cel[0], 'niveau': cel[1], 'score': s,
                             'vragen': [vragen[i] for i in keuze],
                             'waarden': (a, b, c)})
-    return puzzels, losgelaten, grenzen, ondergrens
+    return puzzels, grenzen, ondergrens
 
 
 def als_puzzel(p, nr, prefix):
@@ -239,6 +248,8 @@ def main():
     ap.add_argument('--doel', choices=['puzzels', 'race'], default='puzzels')
     ap.add_argument('--aantal', type=int, default=469)
     ap.add_argument('--seed', type=int, default=None)
+    ap.add_argument('--quota', type=int, default=85,
+                    help='hoogstens zoveel puzzels per moeilijkheidsniveau')
     ap.add_argument('--schrijf', action='store_true')
     args = ap.parse_args()
 
@@ -247,13 +258,21 @@ def main():
     print(f'vragen bruikbaar als puzzelvraag: {len(vragen)}')
     print(f'plafond bij drie per puzzel: {len(vragen) // 3}\n')
 
-    puzzels, losgelaten, grenzen, ondergrens = bouw(vragen, args.aantal, seed)
+    # Zonder plafond loopt easy door als de moeilijke vakjes al leeg zijn, en
+    # wordt dat niveau bijna drie keer zo groot als extremely-hard. Een vast
+    # plafond per niveau houdt de vier bij elkaar. Het is bewust een instelling
+    # en geen tweede rekenronde: dat laatste verdubbelde de looptijd tot boven
+    # het kwartier, en dat is te duur voor een getal dat je ook kunt kiezen.
+    puzzels, grenzen, ondergrens = bouw(vragen, args.aantal, seed, args.quota)
+    print(f'plafond per niveau: {args.quota}')
     print(f'gebouwd: {len(puzzels)} puzzels')
     print(f'vragen gebruikt: {len(puzzels) * 3} van {len(vragen)}')
     print(f'ondergrens score {ondergrens} | niveaugrenzen {grenzen}\n')
     print('per bewerking :', dict(Counter(p['op'] for p in puzzels)))
     print('per niveau    :', dict(Counter(p['niveau'] for p in puzzels)))
-    print(f'puzzels met een dubbele categorie: {losgelaten}')
+    dubbel = sum(1 for p in puzzels
+                 if len({q['categorie'] for q in p['vragen']}) < 3)
+    print(f'puzzels met een dubbele categorie: {dubbel}')
 
     alle = [q['nr'] for p in puzzels for q in p['vragen']]
     assert len(alle) == len(set(alle)), 'een vraag komt twee keer voor'
