@@ -511,6 +511,23 @@ textarea:focus-visible,
 /* Daily play */
 #screen-puzzle { align-items: flex-start; padding-top: 116px; }
 #screen-puzzle .inner { max-width: 680px; }
+/* De puzzel paste niet op een gewoon bureaubladscherm: hij vroeg 825 pixels
+   hoogte terwijl een venster van 900 er na tabbladen en adresbalk zo'n 780
+   overhoudt. Daarom moest je naar tachtig procent zoomen om hem in een keer te
+   zien.
+
+   De foto kostte niets — die hangt op brede schermen al als polaroid absoluut
+   op de kaartrand. De ruimte zat in de aanloop: 211 pixels kop boven de kaart,
+   en royale tussenruimte bij de verbindingstekens. Op een laag venster levert
+   die aanloop in; op een hoog scherm verandert er niets. */
+@media (min-width: 1000px) and (max-height: 940px) {
+  #screen-puzzle .eyebrow { margin-bottom: 4px; }
+  #screen-puzzle .headline { margin-bottom: 12px; font-size: clamp(24px, 2.6vw, 30px); }
+  #screen-puzzle .connector { margin: 6px 0; }
+  #screen-puzzle .card { padding-top: 20px; padding-bottom: 20px; }
+  #screen-puzzle .q-block { padding-top: 12px; padding-bottom: 12px; }
+}
+}
 #screen-puzzle .headline { margin-bottom: 24px; }
 #screen-puzzle .card { padding: 34px; }
 .q-label { color: #373C72; font-size: 15px; line-height: 1.45; }
