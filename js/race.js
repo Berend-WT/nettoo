@@ -35,14 +35,11 @@
     return `${minutes}:00`;
   }
 
-  function buildRaceQueue(seed, setKeyOverride) {
+  function buildRaceQueue(seed) {
     // Elke run gebruikt een willekeurige, gededupliceerde volgorde. In een
-    // duel komen seed en set van de host, zodat beide spelers gelijk lopen.
-    const selected = setKeyOverride || getRaceSetKey();
+    // duel komt de seed van de host, zodat beide spelers gelijk lopen.
     let source;
-    if (selected && selected !== 'standaard' && window.NETTO_RACE_SETS && Array.isArray(window.NETTO_RACE_SETS[selected]) && window.NETTO_RACE_SETS[selected].length > 0) {
-      source = window.NETTO_RACE_SETS[selected];
-    } else if (window.NETTO_RACE_POOL && window.NETTO_RACE_POOL.length > 0) {
+    if (window.NETTO_RACE_POOL && window.NETTO_RACE_POOL.length > 0) {
       source = window.NETTO_RACE_POOL;
     } else {
       source = REBUILT_DATA.race || [];
@@ -72,33 +69,11 @@
     };
   }
 
-  // ===== RACE-VRAAGSETS (Settings) =====
-  const RACE_SET_KEY = 'netto_race_set';
-  const RACE_SET_META = [
-    { key: 'standaard', label: 'Wereld', emoji: '🌍', desc: 'Standaardset zonder echt Nederlandse vragen' },
-    { key: 'nederland', label: 'Nederland', emoji: '🇳🇱', desc: 'NL-specifieke vragen: steden, koningshuis, sport' },
-    { key: 'usa', label: 'USA', emoji: '🇺🇸', desc: 'Staten, presidenten, sport, merken en monumenten' },
-    { key: 'europa', label: 'Europa', emoji: '🇪🇺', desc: 'EU, hoofdsteden, geschiedenis en Europese sport' },
-    { key: 'azie', label: 'Azië', emoji: '🌏', desc: 'Landen, religies, techniek en Aziatische cultuur' },
-    { key: 'afrika', label: 'Afrika', emoji: '🌍', desc: 'Landen, dieren, Egypte en natuur' },
-    { key: 'oceanie', label: 'Oceanië', emoji: '🦘', desc: 'Australië, Nieuw-Zeeland en de eilandstaten' },
-    { key: 'latijns_amerika', label: 'Latijns-Amerika', emoji: '🌴', desc: 'Amazone, Andes, sport en cultuur' },
-    { key: 'ruimte_wetenschap', label: 'Ruimte & Wetenschap', emoji: '🚀', desc: 'Sterrenkunde, natuurkunde en technologie' },
-    { key: 'dierenrijk', label: 'Dierenrijk', emoji: '🦁', desc: 'Alle dier- en natuurvragen' },
-    { key: 'sport', label: 'Sport', emoji: '⚽', desc: 'Voetbal, Olympische Spelen en records' },
-    { key: 'popcultuur', label: 'Popcultuur', emoji: '🎬', desc: 'Films, series, muziek en games' },
-  ];
-
-  function getRaceSetKey() {
-    return localStorage.getItem(RACE_SET_KEY) || 'standaard';
-  }
-
   function getRaceModeConfig(mode) {
     let saved = {};
     try { saved = JSON.parse(localStorage.getItem(RACE_MODE_CONFIG_KEY) || '{}'); } catch (_) {}
     const config = saved[mode] || {};
     return {
-      setKey: config.setKey || getRaceSetKey(),
       durationKey: RACE_DURATIONS[config.durationKey] ? config.durationKey : 'snel'
     };
   }
@@ -108,10 +83,6 @@
     try { saved = JSON.parse(localStorage.getItem(RACE_MODE_CONFIG_KEY) || '{}'); } catch (_) {}
     saved[mode] = { ...getRaceModeConfig(mode), ...patch };
     localStorage.setItem(RACE_MODE_CONFIG_KEY, JSON.stringify(saved));
-  }
-
-  function raceSetMeta(key) {
-    return RACE_SET_META.find(meta => meta.key === key) || RACE_SET_META[0];
   }
 
   function raceDurationMeta(key) {
@@ -180,9 +151,8 @@
       return;
     }
     list.innerHTML = games.map(game => {
-      const set = raceSetMeta(game.setKey);
       const duration = raceDurationMeta(game.durationKey);
-      return `<button class="race-open-game" type="button" onclick="joinOpenRaceGame('${escapeHtml(game.roomCode)}','${escapeHtml(game.setKey)}','${escapeHtml(game.durationKey)}')"><span class="race-open-game-player">${escapeHtml(game.name || 'Speler')}</span><span class="race-open-game-details"><b>${set.emoji} ${escapeHtml(set.label)}</b><span>${duration.emoji} ${escapeHtml(duration.label)}</span></span><span class="race-open-game-join">Join →</span></button>`;
+      return `<button class="race-open-game" type="button" onclick="joinOpenRaceGame('${escapeHtml(game.roomCode)}','${escapeHtml(game.durationKey)}')"><span class="race-open-game-player">${escapeHtml(game.name || 'Speler')}</span><span class="race-open-game-details"><b>${duration.emoji} ${escapeHtml(duration.label)}</b></span><span class="race-open-game-join">Join →</span></button>`;
     }).join('');
   }
 
@@ -195,7 +165,6 @@
         status,
         roomCode: session.code,
         name: raceDisplayName(),
-        setKey: session.setKey || getRaceModeConfig('online').setKey,
         durationKey: session.durationKey || getRaceModeConfig('online').durationKey,
         createdAt: session.createdAt || Date.now(),
         client_id: RACE_CLIENT_ID
@@ -242,43 +211,12 @@
   function renderRaceRoomSettings() {
     const el = document.getElementById('raceRoomSettings');
     if (!el || !raceDuelSession) return;
-    const set = raceSetMeta(raceDuelSession.setKey);
     const duration = raceDurationMeta(raceDuelSession.durationKey);
-    el.textContent = `${set.emoji} ${set.label} · ${duration.emoji} ${duration.label}`;
-  }
-
-  function raceSetPuzzleCount(key) {
-    if (key === 'standaard' || !window.NETTO_RACE_SETS || !Array.isArray(window.NETTO_RACE_SETS[key])) {
-      return (REBUILT_DATA.race || []).length;
-    }
-    return window.NETTO_RACE_SETS[key].length;
-  }
-
-  function renderSettingsSets() {
-    const container = document.getElementById('settingsSets');
-    if (!container) return;
-    const active = getRaceSetKey();
-    container.innerHTML = RACE_SET_META.map((meta) => {
-      const count = raceSetPuzzleCount(meta.key);
-      const empty = count === 0;
-      return `
-        <button class="settings-set ${meta.key === active ? 'active' : ''}" type="button" data-set="${meta.key}" onclick="selectRaceSet('${meta.key}')" ${empty ? 'disabled' : ''}>
-          <span class="settings-set-emoji">${meta.emoji}</span>
-          <span class="settings-set-text"><b>${meta.label}</b><span>${meta.desc}</span></span>
-          <span class="settings-set-count">${empty ? 'binnenkort' : count + ' puzzels'}</span>
-        </button>`;
-    }).join('');
-  }
-
-  function selectRaceSet(key) {
-    localStorage.setItem(RACE_SET_KEY, key);
-    renderSettingsSets();
-    showSarcasticToast(`Race-set gewijzigd: ${RACE_SET_META.find(m => m.key === key)?.label || key}`, true);
+    el.textContent = `${duration.emoji} ${duration.label}`;
   }
 
   function openSettings() {
     closeMenu();
-    renderSettingsSets();
     updateAutoCalcToggle();
     applyTheme();
     showScreen('settings');
@@ -292,16 +230,6 @@
 
 
 
-  function renderRaceSetOptions(mode) {
-    const select = document.getElementById(`race${mode[0].toUpperCase() + mode.slice(1)}Set`);
-    if (!select) return;
-    const config = getRaceModeConfig(mode);
-    select.innerHTML = RACE_SET_META.map(meta => {
-      const count = raceSetPuzzleCount(meta.key);
-      return `<option value="${meta.key}" ${meta.key === config.setKey ? 'selected' : ''} ${count === 0 ? 'disabled' : ''}>${meta.emoji} ${meta.label}${count ? ` · ${count}` : ' · binnenkort'}</option>`;
-    }).join('');
-  }
-
   function renderRaceDurationOptions(mode) {
     const container = document.getElementById(`race${mode[0].toUpperCase() + mode.slice(1)}Durations`);
     if (!container) return;
@@ -313,10 +241,7 @@
   }
 
   function renderRaceModeControls() {
-    ['solo', 'online'].forEach(mode => {
-      renderRaceSetOptions(mode);
-      renderRaceDurationOptions(mode);
-    });
+    ['solo', 'online'].forEach(renderRaceDurationOptions);
   }
 
   function switchRaceMode(mode) {
@@ -334,13 +259,6 @@
       ensureRaceLobby();
       refreshOpenGames();
     }
-  }
-
-  function selectRaceModeSet(mode, key) {
-    if (!RACE_SET_META.some(meta => meta.key === key)) return;
-    saveRaceModeConfig(mode, { setKey: key });
-    if (mode === 'solo') localStorage.setItem(RACE_SET_KEY, key);
-    renderRaceModeControls();
   }
 
   function selectRaceDuration(mode, durationKey) {
@@ -427,17 +345,15 @@
   function startRaceCore(isDuel, options = {}) {
     stopRaceTimer();
     const session = raceDuelSession;
-    const setKey = options.setKey || (session && session.setKey) || getRaceSetKey();
     const durationKey = options.durationKey || (session && session.durationKey) || 'snel';
     const totalSeconds = RACE_DURATIONS[durationKey] || RACE_TOTAL_SECONDS;
     if (isDuel && session && session.role === 'host') {
       session.seed = (Date.now() ^ (Math.random() * 0xffffffff)) >>> 0;
-      session.setKey = setKey;
       session.durationKey = durationKey;
       unpublishOpenRaceEntry();
-      broadcastRaceEvent(session.code, 'start', { startedAt: Date.now(), seed: session.seed, setKey, durationKey });
+      broadcastRaceEvent(session.code, 'start', { startedAt: Date.now(), seed: session.seed, durationKey });
     }
-    raceQueue = buildRaceQueue(isDuel && session ? session.seed : undefined, setKey);
+    raceQueue = buildRaceQueue(isDuel && session ? session.seed : undefined);
     if (!raceQueue.length) { showNoticeToast('Er zijn nog geen race-puzzels geladen.'); return; }
     raceState = { index: 0, results: [], correct: 0, streak: 0, longestStreak: 0, remaining: totalSeconds, totalSeconds, durationKey, timerId: null, progress: 0, endsAt: null };
     const inDuel = Boolean(isDuel && raceDuelSession);
@@ -653,7 +569,6 @@
     leaveRaceRoom();
     connectRaceRoom(generateRaceRoomCode(), 'host', {
       visibility,
-      setKey: selected.setKey,
       durationKey: selected.durationKey
     });
   }
@@ -670,25 +585,22 @@
     connectRaceRoom(raw, 'guest', { visibility: 'closed' });
   }
 
-  function joinOpenRaceGame(code, setKey, durationKey) {
+  function joinOpenRaceGame(code, durationKey) {
     if (!requireRaceLogin()) return;
     leaveRaceRoom();
     connectRaceRoom(String(code).toUpperCase(), 'guest', {
       visibility: 'open',
-      setKey,
       durationKey
     });
   }
 
   function connectRaceRoom(code, role, config = {}) {
     if (!supabaseClient) { showSarcasticToast('Geen verbinding met Supabase.'); return; }
-    const setKey = RACE_SET_META.some(meta => meta.key === config.setKey) ? config.setKey : null;
     const durationKey = RACE_DURATIONS[config.durationKey] ? config.durationKey : null;
     raceDuelSession = {
       code: String(code).toUpperCase(),
       role,
       visibility: config.visibility === 'open' ? 'open' : 'closed',
-      setKey,
       durationKey,
       createdAt: Number(config.createdAt) || Date.now(),
       channel: null,
@@ -723,7 +635,6 @@
             name: raceDisplayName(),
             role,
             visibility: raceDuelSession.visibility,
-            setKey: raceDuelSession.setKey,
             durationKey: raceDuelSession.durationKey,
             createdAt: raceDuelSession.createdAt
           });
@@ -747,7 +658,6 @@
       raceDuelSession.opponentName = opponentMeta.name || 'Tegenstander';
       // Gast neemt de instellingen van de host over — iedereen speelt dezelfde set en tijd.
       if (raceDuelSession.role === 'guest') {
-        if (RACE_SET_META.some(m => m.key === opponentMeta.setKey)) raceDuelSession.setKey = opponentMeta.setKey;
         if (RACE_DURATIONS[opponentMeta.durationKey]) raceDuelSession.durationKey = opponentMeta.durationKey;
         renderRaceRoomSettings();
       }
@@ -768,8 +678,8 @@
     if (!raceDuelSession) return;
     if (event === 'start') {
       if (raceDuelSession && Number.isFinite(Number(payload.seed))) raceDuelSession.seed = Number(payload.seed) >>> 0;
-      // Neem de set/tijd van de host over uit het start-signaal.
-      if (raceDuelSession && RACE_SET_META.some(m => m.key === payload.setKey)) raceDuelSession.setKey = payload.setKey;
+      // Neem de tijd van de host over uit het start-signaal. Een oudere client
+      // stuurt hier mogelijk nog een setKey mee; die wordt genegeerd.
       if (raceDuelSession && RACE_DURATIONS[payload.durationKey]) raceDuelSession.durationKey = payload.durationKey;
       if (!raceState) startRaceCore(true);
     } else if (event === 'result') {

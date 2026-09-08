@@ -331,7 +331,6 @@ function renderLibraryStats() {
   window.openHowItWorks = openHowItWorks;
   window.closeSettings = closeSettings;
   window.switchRaceMode = switchRaceMode;
-  window.selectRaceModeSet = selectRaceModeSet;
   window.selectRaceDuration = selectRaceDuration;
   window.selectOnlineVisibility = selectOnlineVisibility;
   window.toggleOnlineVisibility = toggleOnlineVisibility;
@@ -339,7 +338,6 @@ function renderLibraryStats() {
   window.createClosedRaceGame = createClosedRaceGame;
   window.refreshOpenGames = refreshOpenGames;
   window.joinOpenRaceGame = joinOpenRaceGame;
-  window.selectRaceSet = selectRaceSet;
   window.toggleAutoCalc = toggleAutoCalc;
   window.toggleTheme = toggleTheme;
   window.applyTheme = applyTheme;

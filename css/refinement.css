@@ -658,15 +658,6 @@ textarea:focus-visible,
 .language-selector { border-radius: 9px; }
 .language-selector button { border-radius: 6px; }
 
-.settings-set {
-  min-height: 74px;
-  border-width: 1px;
-  border-radius: 10px;
-  background: #F7F8FC;
-}
-
-.settings-set.active { box-shadow: inset 0 -2px 0 var(--bg-dark); }
-
 .submit-mode-tabs {
   width: fit-content;
   min-width: 240px;
@@ -730,7 +721,6 @@ textarea:focus-visible,
 [data-theme="dark"] .race-config-card,
 [data-theme="dark"] .race-open-games,
 [data-theme="dark"] .race-duel-room,
-[data-theme="dark"] .settings-set,
 [data-theme="dark"] .submit-mode-tabs,
 [data-theme="dark"] .tab-buttons { background: var(--surface-2); }
 
