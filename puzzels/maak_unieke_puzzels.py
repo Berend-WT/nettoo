@@ -83,23 +83,28 @@ def kleurfamilies():
     return uit
 
 
-def vragen_met_foto():
-    """Nummers van vragen waar een bruikbare foto bij gevonden is.
+def fotos_per_vraag():
+    """Foto per vraagnummer: adres, bestandspagina, licentie en maker.
 
     Drie foto's in een puzzel is zonde: dan hangen ze bij elkaar terwijl een
     andere puzzel er geen heeft. Twee is het plafond, en bij het vullen krijgt
     een puzzel zonder foto voorrang. Zo raken de 385 foto's over zo veel
     mogelijk puzzels verspreid in plaats van opgehoopt.
     """
-    uit = set()
-    for naam in ('hoofdafbeeldingen.json', 'kandidaten.json'):
+    uit = {}
+    # De hoofdafbeelding wint; de oudere ronde vult alleen de gaten. Zelfde
+    # volgorde als tools/maak_fotobestand.py, zodat de puzzel dezelfde foto
+    # toont als het losse fotobestand.
+    for naam in ('kandidaten.json', 'hoofdafbeeldingen.json'):
         pad = os.path.join(FOTOS, naam)
         if not os.path.exists(pad):
             continue
         with open(pad, encoding='utf-8') as f:
             for nr, blok in json.load(f).items():
-                if blok.get('kandidaten'):
-                    uit.add(int(nr))
+                beste = (blok.get('kandidaten') or [None])[0]
+                if beste:
+                    uit[int(nr)] = {'url': beste['miniatuur'], 'pagina': beste['pagina'],
+                                    'licentie': beste['licentie'], 'maker': beste['maker']}
     return uit
 
 
@@ -176,9 +181,10 @@ def bouw(vragen, doel_aantal, seed, quota=10**9):
         # van categorie naar familie. Dat is meteen strenger: verschillende
         # families betekent altijd ook verschillende categorieen.
         q['familie'] = families.get(categoriesleutel(q['categorie']), q['categorie'])
-    met_foto = vragen_met_foto()
+    met_foto = fotos_per_vraag()
     for q in vragen:
-        q['foto'] = q['nr'] in met_foto
+        q['fotogegevens'] = met_foto.get(q['nr'])
+        q['foto'] = q['fotogegevens'] is not None
     per_waarde = defaultdict(list)
     for i, q in enumerate(vragen):
         per_waarde[q['antwoord']].append(i)
@@ -295,9 +301,16 @@ def bouw(vragen, doel_aantal, seed, quota=10**9):
             for i in keuze:
                 vrij.discard(i)
                 beschikbaar[vragen[i]['antwoord']] -= 1
+            gekozen_vragen = [vragen[i] for i in keuze]
+            # Heeft de puzzel twee fotovragen, dan wordt er een geloot. Met de
+            # rng van deze run, zodat dezelfde seed dezelfde foto oplevert.
+            kandidaten = [(n, q['fotogegevens'])
+                          for n, q in enumerate(gekozen_vragen, start=1)
+                          if q['fotogegevens']]
+            plek, bron = rng.choice(kandidaten) if kandidaten else (None, None)
             puzzels.append({'op': cel[0], 'niveau': cel[1], 'score': s,
-                            'vragen': [vragen[i] for i in keuze],
-                            'waarden': (a, b, c)})
+                            'vragen': gekozen_vragen, 'waarden': (a, b, c),
+                            'foto': dict(bron, vraag=plek) if bron else None})
     return puzzels, grenzen, ondergrens
 
 
@@ -313,6 +326,7 @@ def als_puzzel(p, nr, prefix):
         'calculation': f"{a} {p['op']} {b} = {c}",
         'categories': [q1['categorie'], q2['categorie'], q3['categorie']],
         'difficulty': p['niveau'], 'difficulty_score': p['score'],
+        **({'photo': p['foto']} if p.get('foto') else {}),
     }
 
 
@@ -377,6 +391,22 @@ def main():
     bestaand['library'] = [als_puzzel(p, i, 'library')
                            for i, p in enumerate(puzzels, start=1)]
     bestaand['race'] = []
+
+    # De dagpuzzels worden niet opnieuw gebouwd, maar ze verdienen wel een foto.
+    # Ze worden opgezocht op vraagtekst; bij meer dan een fotovraag wordt er
+    # geloot, met dezelfde rng-seed zodat het reproduceerbaar blijft.
+    loot = random.Random(seed)
+    op_tekst = {q['tekst']: q['fotogegevens'] for q in vragen if q['fotogegevens']}
+    met_foto = 0
+    for dp in bestaand.get('daily', []):
+        keuzes = [(i, op_tekst[dp[f'q{i}_label']]) for i in (1, 2, 3)
+                  if dp.get(f'q{i}_label') in op_tekst]
+        dp.pop('photo', None)
+        if keuzes:
+            plek, bron = loot.choice(keuzes)
+            dp['photo'] = dict(bron, vraag=plek)
+            met_foto += 1
+    print(f'dagpuzzels met een foto: {met_foto} van {len(bestaand.get("daily", []))}')
     schrijf_bestand('netto_frontend_puzzles.js', 'NETTO_REBUILT_PUZZLES',
                     bestaand, args.doel)
     print(f"dagpuzzels ongemoeid gelaten: {len(bestaand.get('daily', []))}")
