@@ -20,12 +20,13 @@
 <link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Caveat:wght@600;700&family=JetBrains+Mono:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
 <!-- Supabase Client CDN (defer om te voorkomen dat de pagina blokkeert) -->
 <script defer src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="data/netto_fotos.js?v=1"></script>
 <script src="data/netto_bronnen.js?v=1"></script>
-<script src="data/netto_frontend_puzzles.js?v=42"></script>
-<script src="data/netto_race_pool.js?v=30"></script>
+<script src="data/netto_frontend_puzzles.js?v=43"></script>
+<script src="data/netto_race_pool.js?v=31"></script>
 <script src="data/netto_breinkrakers.js?v=27"></script>
 <script src="data/netto_translations_en.js?v=36"></script>
-<script src="js/i18n.js?v=49"></script>
+<script src="js/i18n.js?v=50"></script>
 <link rel="stylesheet" href="css/styles.css?v=50">
 <link rel="stylesheet" href="css/refinement.css?v=69">
 
@@ -154,10 +155,10 @@
             <span class="home-quick-detail">Ga verder waar je gebleven was</span>
             <span class="home-quick-arrow" aria-hidden="true">↗</span>
           </button>
-          <button class="home-quick-card home-quick-library" type="button" onclick="openPremiumLibrary()">
-            <span class="home-section-label">Library</span>
-            <strong>Vind je volgende uitdaging</strong>
-            <span class="home-quick-detail">Zoek op categorie, operator en niveau</span>
+          <button class="home-quick-card home-quick-library" type="button" onclick="openPuzzleRace(); switchRaceMode('online')">
+            <span class="home-section-label">Puzzel Race</span>
+            <strong>Speel online tegen anderen</strong>
+            <span class="home-quick-detail">Daag vrienden uit of doe mee met een open game.</span>
             <span class="home-quick-arrow" aria-hidden="true">↗</span>
           </button>
         </aside>

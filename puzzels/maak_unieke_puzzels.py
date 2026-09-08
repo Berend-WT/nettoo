@@ -56,6 +56,8 @@ DATA = os.path.join(WORTEL, 'data')
 SPIEGEL = os.path.join(WORTEL, 'website', 'data')
 
 STIJL = os.path.join(WORTEL, 'css', 'styles.css')
+FOTOS = os.path.join(WORTEL, 'fotos')
+MAX_FOTOS_PER_PUZZEL = 2
 
 OPERATORS = ('+', '−', '×', '÷')
 OPERATOR_GEWICHT = {'+': 0.0, '−': 8.0, '×': 14.0, '÷': 18.0}
@@ -78,6 +80,26 @@ def kleurfamilies():
             m = re.match(r"\s*--categorie-([a-z0-9-]+):\s*var\(--familie-([a-z]+)\)", regel)
             if m:
                 uit[m.group(1)] = m.group(2)
+    return uit
+
+
+def vragen_met_foto():
+    """Nummers van vragen waar een bruikbare foto bij gevonden is.
+
+    Drie foto's in een puzzel is zonde: dan hangen ze bij elkaar terwijl een
+    andere puzzel er geen heeft. Twee is het plafond, en bij het vullen krijgt
+    een puzzel zonder foto voorrang. Zo raken de 385 foto's over zo veel
+    mogelijk puzzels verspreid in plaats van opgehoopt.
+    """
+    uit = set()
+    for naam in ('hoofdafbeeldingen.json', 'kandidaten.json'):
+        pad = os.path.join(FOTOS, naam)
+        if not os.path.exists(pad):
+            continue
+        with open(pad, encoding='utf-8') as f:
+            for nr, blok in json.load(f).items():
+                if blok.get('kandidaten'):
+                    uit.add(int(nr))
     return uit
 
 
@@ -154,6 +176,9 @@ def bouw(vragen, doel_aantal, seed, quota=10**9):
         # van categorie naar familie. Dat is meteen strenger: verschillende
         # families betekent altijd ook verschillende categorieen.
         q['familie'] = families.get(categoriesleutel(q['categorie']), q['categorie'])
+    met_foto = vragen_met_foto()
+    for q in vragen:
+        q['foto'] = q['nr'] in met_foto
     per_waarde = defaultdict(list)
     for i, q in enumerate(vragen):
         per_waarde[q['antwoord']].append(i)
@@ -198,8 +223,12 @@ def bouw(vragen, doel_aantal, seed, quota=10**9):
         lijst.sort(key=lambda t: -min(beschikbaar[t[0]], beschikbaar[t[1]],
                                       beschikbaar[t[2]]))
 
-    def kies(waarde, verboden_cats, gebruikt):
+    def kies(waarde, verboden_cats, gebruikt, fotos_al):
         """Pak een vrije vraag met deze waarde en een nog ongebruikte kleur.
+
+        Bij gelijke geschiktheid wint de vraag die de fotoverdeling het beste
+        dient: zolang de puzzel er nog geen heeft telt een foto als pluspunt, en
+        bij twee foto's vallen de fotovragen af.
 
         De categorie-eis is hard: drie vragen uit dezelfde puzzel horen uit drie
         verschillende categorieen te komen. Bij het uitproberen bleek dat maar
@@ -210,6 +239,12 @@ def bouw(vragen, doel_aantal, seed, quota=10**9):
         opties = [i for i in per_waarde[waarde]
                   if i in vrij and i not in gebruikt
                   and vragen[i]['familie'] not in verboden_cats]
+        if fotos_al >= MAX_FOTOS_PER_PUZZEL:
+            # Hard: liever een puzzel minder dan drie foto's op een hoop. De
+            # uitwijk "neem dan toch maar een fotovraag" liet er dertien door.
+            opties = [i for i in opties if not vragen[i]['foto']]
+        elif fotos_al == 0:
+            opties.sort(key=lambda i: not vragen[i]['foto'])
         return opties[0] if opties else None
 
     puzzels = []
@@ -236,14 +271,15 @@ def bouw(vragen, doel_aantal, seed, quota=10**9):
                 if min(beschikbaar[a], beschikbaar[b], beschikbaar[c]) < 1:
                     lijst.pop(idx)
                     continue
-                gebruikt, cats, keuze = set(), set(), []
+                gebruikt, cats, keuze, fotos = set(), set(), [], 0
                 for w in (a, b, c):
-                    i = kies(w, cats, gebruikt)
+                    i = kies(w, cats, gebruikt, fotos)
                     if i is None:
                         keuze = None
                         break
                     gebruikt.add(i)
                     cats.add(vragen[i]['familie'])
+                    fotos += 1 if vragen[i]['foto'] else 0
                     keuze.append(i)
                 if keuze is None:
                     lijst.pop(idx)
@@ -313,6 +349,11 @@ def main():
                        if len({q['familie'] for q in p['vragen']}) < 3)
     print(f'puzzels met een dubbele categorie: {dubbel_cat}')
     print(f'puzzels met een dubbele kleur    : {dubbel_kleur}')
+    fv = Counter(sum(1 for q in p['vragen'] if q['foto']) for p in puzzels)
+    met = len(puzzels) - fv[0]
+    print(f'puzzels met minstens een foto    : {met} van {len(puzzels)} '
+          f'({met / max(1, len(puzzels)):.0%})')
+    print(f'fotos per puzzel                 : {dict(sorted(fv.items()))}')
 
     alle = [q['nr'] for p in puzzels for q in p['vragen']]
     assert len(alle) == len(set(alle)), 'een vraag komt twee keer voor'
