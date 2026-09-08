@@ -1593,7 +1593,102 @@
     document.getElementById('dailyPhotoDisclaimer').textContent = statsCopy('Ontwerpvoorbeeld — deze foto is geen hint.', 'Design preview — this photo is not a clue.');
   }
 
+  // Alleen een herkenbare gevraagde eenheid tonen, nooit een contextgetal
+  // zoals "bezoekers per jaar" als tijdseenheid behandelen.
+  const VRAAG_EENHEDEN = [
+    ['vierkante kilometers?|km[²2]', 'km²'], ['vierkante meters?|m[²2]', 'm²'],
+    ['vierkante centimeters?|cm[²2]', 'cm²'], ['kubieke meters?|m[³3]', 'm³'],
+    ['kubieke centimeters?|cm[³3]', 'cm³'], ['kilometers? per uur|km/[uh]', 'km/u'],
+    ['kilometers? per seconde|km/s', 'km/s'], ['meters? per seconde|m/s', 'm/s'],
+    ['graden? celsius|°c', '°C'], ['graden? fahrenheit|°f', '°F'],
+    ['millimeters?|mm', 'mm'], ['centimeters?|cm', 'cm'], ['decimeters?|dm', 'dm'],
+    ['kilometers?|km', 'km'], ['meters?|m', 'm'],
+    ['milligram(?:men)?|mg', 'mg'], ['kilogram(?:men)?|kg', 'kg'],
+    ['gram(?:men)?|g', 'g'], ['ton(?:nen)?', 'ton'], ['milliliters?|ml', 'ml'],
+    ['centiliters?|cl', 'cl'], ['liters?|l', 'liter'], ['hectares?|ha', 'ha'],
+    ['procent(?:en)?', '%'], ['graden?', 'graden'], ['seconden?', 'sec'],
+    ['minu(?:ut|ten)', 'min'], ['u(?:ur|ren)', 'uur'], ['da(?:g|gen)', 'dagen'],
+    ['we(?:ek|ken)', 'weken'], ['maanden?', 'maanden'], ['ja(?:ar|ren)', 'jaar'],
+    ['eeuw(?:en)?', 'eeuwen'], ['euro(?:s|’s|\'s)?', 'euro'],
+    ['dollars?', 'dollar']
+  ];
+
+  function eenheidUit(vraag) {
+    const tekst = String(vraag || '').toLocaleLowerCase('nl-NL').replace(/\s+/g, ' ');
+    const schaal = '(?:(duizend|miljoen|miljard) )?';
+    // Een expliciete "in ..."-eenheid gaat voor een losse vermelding.
+    for (const begin of ['\\bin\\s+', '\\bhoeveel\\s+']) {
+      for (const [patroon, label] of VRAAG_EENHEDEN) {
+        const treffer = tekst.match(new RegExp(begin + schaal + '(?:' + patroon + ')(?![\\p{L}\\p{N}/])', 'u'));
+        if (treffer) return (treffer[1] ? treffer[1] + ' ' : '') + label;
+      }
+    }
+    if (/\bwelk percentage\b/u.test(tekst)) return '%';
+    return null;
+  }
+
+  function categorieKleurVariabele(categorie) {
+    if (!Object.hasOwn(DAILY_CATEGORY_ICON_KEYS, categorie)) return '--surface-2';
+    return '--categorie-' + categorie.toLocaleLowerCase('nl-NL')
+      .replace(/&/g, 'en').replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+  }
+
+  function maakBronpaneel(vraag) {
+    const bronnen = window.NETTO_BRONNEN;
+    if (!bronnen || !Object.hasOwn(bronnen, vraag)) return null;
+    const vermelding = bronnen[vraag];
+    if (!vermelding?.bron || !vermelding?.uitleg) return null;
+    let url;
+    try { url = new URL(vermelding.bron); } catch { return null; }
+    if (!['https:', 'http:'].includes(url.protocol)) return null;
+    const paneel = document.createElement('details');
+    paneel.className = 'vraag-bron';
+    const kop = document.createElement('summary');
+    kop.textContent = 'Waar komt dit vandaan?';
+    const uitleg = document.createElement('p');
+    // Bewijszinnen zijn inhoud uit de bron, geen HTML of vertaalinstructies.
+    uitleg.setAttribute('data-i18n-skip', '');
+    uitleg.textContent = vermelding.uitleg;
+    const link = document.createElement('a');
+    link.href = url.href;
+    link.target = '_blank';
+    link.rel = 'noopener';
+    link.textContent = 'Bekijk de bron: ' + url.hostname.replace(/^www\./, '');
+    paneel.append(kop, uitleg, link);
+    return paneel;
+  }
+
+  function werkDailyVraagDetailsBij(ingeleverd = false) {
+    // Ontbreekt één databasecategorie, schuif de andere dan niet een plek op.
+    const categorieen = [1, 2, 3].map(i => PUZZLE_DATA.categories?.[i - 1]
+      || VRAAG_CATEGORIE.get((PUZZLE_DATA['q' + i + '_label'] || '').trim()));
+    for (let i = 1; i <= 3; i++) {
+      const invoer = document.getElementById('g' + i);
+      const label = document.getElementById('g' + i + 'Eenheid');
+      const kaart = invoer?.closest('.q-block');
+      if (!kaart || !label) continue;
+      const vraag = PUZZLE_DATA['q' + i + '_label'];
+      const eenheid = eenheidUit(vraag);
+      label.textContent = eenheid || '';
+      label.hidden = !eenheid;
+      invoer.classList.toggle('met-eenheid', !!eenheid);
+      invoer.style.setProperty('--eenheid-ruimte', (eenheid ? eenheid.length * 8 + 26 : 16) + 'px');
+      if (eenheid) invoer.setAttribute('aria-describedby', label.id);
+      else invoer.removeAttribute('aria-describedby');
+      kaart.classList.add('vraag-met-categorie');
+      kaart.style.setProperty('--vraag-tint', 'var(' + categorieKleurVariabele(categorieen[i - 1]) + ')');
+      // Klein verschil per stap houdt ook gedeelde kleurfamilies herkenbaar.
+      kaart.style.setProperty('--vraag-menging', (84 - (i - 1) * 12) + '%');
+      kaart.querySelector('.vraag-bron')?.remove();
+      if (ingeleverd) {
+        const bron = maakBronpaneel(vraag);
+        if (bron) kaart.appendChild(bron);
+      }
+    }
+  }
+
   function checkExistingPlay() {
+    werkDailyVraagDetailsBij();
     renderDailyPhoto();
     const plays = getLocalPlays();
     const pKey = getActivePuzzleKey();
@@ -1706,6 +1801,7 @@
   }
 
   function renderResultsUI(g1, g2, g3, avgFactor, animate = false) {
+    werkDailyVraagDetailsBij(true);
     const echt = PUZZEL_ECHT();
     const s1 = scoreVraag(g1, echt.a1);
     const s2 = scoreVraag(g2, echt.a2);
@@ -1860,6 +1956,10 @@
       <details class="hist-data"><summary>${copy('Bekijk voorbeeldpercentages','View sample percentages')}</summary><div>${bins.map((percent,i)=>`<span>${new Intl.NumberFormat(nettoNumberLocale(),{maximumSignificantDigits:3}).format(2**(-3+i/2))}–${new Intl.NumberFormat(nettoNumberLocale(),{maximumSignificantDigits:3}).format(2**(-3+(i+1)/2))}×: ${percent}%</span>`).join('')}</div></details>`;
     document.getElementById('selectedReviewQuestion').textContent = [PUZZLE_DATA.q1_label,PUZZLE_DATA.q2_label,PUZZLE_DATA.q3_label][index];
     [PUZZLE_DATA.q1_label,PUZZLE_DATA.q2_label,PUZZLE_DATA.q3_label].forEach((label,i) => { document.getElementById('overviewQuestion'+i).textContent = label; });
+    if (!overview) {
+      const bron = maakBronpaneel(PUZZLE_DATA['q' + (index + 1) + '_label']);
+      if (bron) container.querySelector('.review-comparison').insertAdjacentElement('afterend', bron);
+    }
     if (restoreFocus) container.querySelector(`[data-question="${selected}"]`)?.focus();
   }
   // =========================================================================
@@ -2328,6 +2428,7 @@
   }
 
   function resetDailyReviewView() {
+    werkDailyVraagDetailsBij();
     const equationError = document.getElementById('dailyEquationError');
     if (equationError) equationError.hidden = true;
     document.getElementById('screen-puzzle').classList.remove('is-review');

@@ -20,13 +20,14 @@
 <link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Caveat:wght@600;700&family=JetBrains+Mono:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
 <!-- Supabase Client CDN (defer om te voorkomen dat de pagina blokkeert) -->
 <script defer src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="data/netto_bronnen.js?v=1"></script>
 <script src="data/netto_frontend_puzzles.js?v=39"></script>
 <script src="data/netto_race_sets.js?v=29"></script>
 <script src="data/netto_race_pool.js?v=27"></script>
 <script src="data/netto_breinkrakers.js?v=27"></script>
 <script src="data/netto_translations_en.js?v=34"></script>
 <script src="js/i18n.js?v=49"></script>
-<link rel="stylesheet" href="css/styles.css?v=44">
+<link rel="stylesheet" href="css/styles.css?v=45">
 <link rel="stylesheet" href="css/refinement.css?v=64">
 
 </head>
@@ -243,9 +244,10 @@
         </button>
 
         <div class="q-block" id="dailyPhotoQuestion">
-          <div class="q-label" id="q1-label">1. Hoeveel inwoners heeft Nederland ongeveer?</div>
+          <label class="q-label" id="q1-label" for="g1">1. Hoeveel inwoners heeft Nederland ongeveer?</label>
           <div class="input-wrapper">
             <input type="text" id="g1" inputmode="numeric" placeholder="Jouw schatting">
+            <span class="invoer-eenheid" id="g1Eenheid" hidden data-i18n-skip></span>
           </div>
         </div>
 
@@ -256,9 +258,10 @@
         </div>
 
         <div class="q-block">
-          <div class="q-label" id="q2-label">2. Hoeveel bezoekers trekt de Efteling per jaar?</div>
+          <label class="q-label" id="q2-label" for="g2">2. Hoeveel bezoekers trekt de Efteling per jaar?</label>
           <div class="input-wrapper">
             <input type="text" id="g2" inputmode="numeric" placeholder="Jouw schatting">
+            <span class="invoer-eenheid" id="g2Eenheid" hidden data-i18n-skip></span>
           </div>
         </div>
 
@@ -269,9 +272,10 @@
         </div>
 
         <div class="q-block">
-          <div class="q-label" id="q3-label">3. Wat is dat vermenigvuldigd?</div>
+          <label class="q-label" id="q3-label" for="g3">3. Wat is dat vermenigvuldigd?</label>
           <div class="input-wrapper">
             <input type="text" id="g3" inputmode="numeric" placeholder="Jouw schatting">
+            <span class="invoer-eenheid" id="g3Eenheid" hidden data-i18n-skip></span>
           </div>
         </div>
 
@@ -966,7 +970,7 @@
 
 <!-- De volgorde is bewust: modules delen de bestaande classic-script scope. -->
 <script src="js/daily-photos.js?v=2"></script>
-<script src="js/core.js?v=76"></script>
+<script src="js/core.js?v=77"></script>
 <script src="js/puzzle-modes.js?v=44"></script>
 <script src="js/race.js?v=47"></script>
 <script src="js/submissions.js?v=39"></script>

@@ -1154,3 +1154,69 @@
     font-size: 12px;
     margin-top: 2px;
   }
+  /* Acht kleurfamilies, met een vaste variabele voor elk van de 29 categorieën. */
+  :root {
+    --familie-mint: #DBEEE2; --familie-cyan: #D9EDF1;
+    --familie-blue: #DDE7FA; --familie-violet: #E9DFF5;
+    --familie-pink: #F5DFEA; --familie-peach: #F7E2D5;
+    --familie-sand: #F2EBCD; --familie-slate: #E0E5EB;
+    --eenheid-inkt: #5C6273;
+    --categorie-biologie-en-gezondheid: var(--familie-mint);
+    --categorie-boeken-en-literatuur: var(--familie-sand);
+    --categorie-dagelijks-leven: var(--familie-sand);
+    --categorie-dieren: var(--familie-mint);
+    --categorie-eten-en-drinken: var(--familie-peach);
+    --categorie-films-en-series: var(--familie-violet);
+    --categorie-filosofie-psychologie-en-religie: var(--familie-violet);
+    --categorie-gebouwen-en-infrastructuur: var(--familie-slate);
+    --categorie-geografie: var(--familie-cyan);
+    --categorie-geschiedenis: var(--familie-sand);
+    --categorie-kunst-en-cultuur: var(--familie-pink);
+    --categorie-landbouw-en-industrie: var(--familie-slate);
+    --categorie-milieu-en-duurzaamheid: var(--familie-mint);
+    --categorie-muziek: var(--familie-pink);
+    --categorie-natuurkunde: var(--familie-blue);
+    --categorie-politiek-en-recht: var(--familie-slate);
+    --categorie-records-en-vergelijkingen: var(--familie-peach);
+    --categorie-scheikunde: var(--familie-cyan);
+    --categorie-spellen-en-speelgoed: var(--familie-violet);
+    --categorie-sport: var(--familie-peach);
+    --categorie-sterrenkunde-en-ruimte: var(--familie-blue);
+    --categorie-taal: var(--familie-violet);
+    --categorie-technologie: var(--familie-blue);
+    --categorie-vervoer: var(--familie-slate);
+    --categorie-wiskunde: var(--familie-blue);
+    --categorie-economie-en-geld: var(--familie-sand);
+    --categorie-merken-en-producten: var(--familie-peach);
+    --categorie-mode-en-lifestyle: var(--familie-pink);
+    --categorie-reizen-en-toerisme: var(--familie-cyan);
+  }
+  [data-theme="dark"] {
+    --familie-mint: #203F3A; --familie-cyan: #203D4B;
+    --familie-blue: #293B61; --familie-violet: #3C3055;
+    --familie-pink: #4A3047; --familie-peach: #49372E;
+    --familie-sand: #413D2A; --familie-slate: #303B4B;
+    --eenheid-inkt: #C4CAD8;
+  }
+  #dailyQuestionView .vraag-met-categorie {
+    background: var(--vraag-tint, var(--surface-2));
+    background: color-mix(in srgb, var(--vraag-tint, var(--surface-2)) var(--vraag-menging, 84%), var(--surface));
+    border: 1px solid var(--surface-border); border-radius: 12px;
+    padding: 16px; color: var(--ink);
+  }
+  #dailyQuestionView .vraag-met-categorie .q-label { display:block; color:var(--ink); }
+  #dailyQuestionView .vraag-met-categorie input {
+    background: var(--surface); color:var(--ink); min-width:0;
+  }
+  #dailyQuestionView .vraag-met-categorie input:disabled { opacity:.8; }
+  #dailyQuestionView input.met-eenheid { padding-right:min(48%, var(--eenheid-ruimte)); }
+  .invoer-eenheid {
+    position:absolute; right:14px; max-width:44%; pointer-events:none;
+    color:var(--eenheid-inkt); font:500 12px/1.2 'JetBrains Mono',monospace;
+  }
+  .invoer-eenheid[hidden] { display:none; }
+  .vraag-bron { margin-top:16px; padding-top:12px; border-top:1px solid var(--surface-border); color:var(--ink); font-size:13px; line-height:1.6; }
+  .vraag-bron summary { cursor:pointer; font-weight:600; min-height:32px; }
+  .vraag-bron p { margin:8px 0; overflow-wrap:anywhere; }
+  .vraag-bron a { display:inline-block; color:var(--ink); text-decoration:underline; text-underline-offset:3px; overflow-wrap:anywhere; }
+  .vraag-bron summary:focus-visible, .vraag-bron a:focus-visible { outline:2px solid currentColor; outline-offset:4px; border-radius:2px; }
