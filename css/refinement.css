@@ -32,8 +32,16 @@
 .foto-credit-kaart a { color: var(--ink); text-decoration: underline; text-underline-offset: 3px; }
 @media (min-width: 1000px) {
   /* Alleen hier is ruimte vrijhouden nodig: de foto hangt dan absoluut op de
-     kaartrand en duwt de kaart niet vanzelf hoger. */
-  .puzzelfoto-lijst .q-block:has(.puzzelfoto) { padding-right: 145px; overflow: visible; min-height: 150px; }
+     kaartrand en duwt de kaart niet vanzelf hoger.
+
+     De id's moeten in de selector staan. styles.css zet padding op
+     ":is(#dailyQuestionView, #libraryQuestionList, ...) .vraag-met-categorie",
+     en een id verslaat elk aantal klassen — ook al laadt dit bestand later. Met
+     alleen klassen bleef de padding op 16px staan en liep de vraagtekst onder
+     de foto door. */
+  :is(#dailyQuestionView, #libraryQuestionList, #premiumQuestionList, #raceQuestionList)
+    .q-block:has(.puzzelfoto) { padding-right: 152px; overflow: visible; min-height: 150px; }
+  .puzzelfoto-lijst .q-block:has(.puzzelfoto) { overflow: visible; }
   .puzzelfoto-lijst .puzzelfoto { position: absolute; float: none; top: 8px; right: -34px; z-index: 2; width: 152px; margin: 0; }
   .puzzelfoto .daily-photo { transform: rotate(3deg); box-shadow: 0 16px 34px rgba(5, 7, 35, .30); }
   .puzzelfoto .daily-photo:hover { transform: rotate(0) scale(1.03); }
