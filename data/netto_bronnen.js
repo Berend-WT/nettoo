@@ -37,8 +37,8 @@ window.NETTO_BRONNEN = {
     "uitleg": "De Euromast is met de Space Tower uit 1970 in totaal 185 meter hoog."
   },
   "Hoe hoog was de hoogste duik vanaf een klif in meters?": {
-    "bron": "https://www.guinnessworldrecords.com/world-records/highest-dive",
-    "uitleg": "Klifduikrecords worden met enige regelmaat verbroken."
+    "bron": "https://www.guinnessworldrecords.com/world-records/407825-highest-cliff-jump",
+    "uitleg": "Laso Schaller sprong op 4 augustus 2015 van 58,5 meter, afgerond 59. Het record staat sindsdien onveranderd."
   },
   "Hoe hoog was de hoogste hond ooit in centimeters?": {
     "bron": "https://www.guinnessworldrecords.com/world-records/tallest-dog-ever",
@@ -142,7 +142,7 @@ window.NETTO_BRONNEN = {
   },
   "Hoe zwaar was de grootste kaas ooit gemaakt in kilogram?": {
     "bron": "https://www.guinnessworldrecords.com/world-records/largest-cheese",
-    "uitleg": "De grootste kaas woog 26.090 kg (Wisconsin, 1988)."
+    "uitleg": "De grootste kaas woog 26.090 kilo (Wisconsin, 1988)."
   },
   "Hoe zwaar was de grootste portie friet ooit in kilogram?": {
     "bron": "https://www.guinnessworldrecords.com/world-records/largest-serving-of-chips",
@@ -202,11 +202,11 @@ window.NETTO_BRONNEN = {
   },
   "Hoeveel Champions League-titels won AC Milan tot 2024?": {
     "bron": "https://nl.wikipedia.org/wiki/AC_Milan",
-    "uitleg": "De edities die AC Milan heeft gewonnen zijn dik gedrukt:\n\nChampions League (21x)\n1992/93, 1993/94, 1994/95, 1996/97, 1999/00, 2000/01, 2002/03, 2003/04, 2004/05, 2005/06, 2006/07, 2007/08, 2009/10, 2010/11, 2011/12, 2012/13, 2013/14, 2021/22, 2022/23, 2023/24, 2024/25\nEuropacup I (11x)\n1955/56, 1957"
+    "uitleg": "AC Milan won de Europacup I en Champions League zeven keer."
   },
   "Hoeveel Champions League-titels won Real Madrid tot 2024?": {
     "bron": "https://nl.wikipedia.org/wiki/Real_Madrid_CF",
-    "uitleg": "Hieronder staan de competities en in welke seizoenen de club deelnam, dikgedrukt staan de edities die zijn gewonnen door Real Madrid:\n\nChampions League (31x)\n1995/96, 1997/98, 1998/99, 1999/00, 2000/01, 2001/02, 2002/03, 2003/04, 2004/05, 2005/06, 2006/07, 2007/08, 2008/09, 2009/10, 2010/11, 2011/12"
+    "uitleg": "Real Madrid won de Champions League vijftien keer."
   },
   "Hoeveel Copa América titels won Argentinië tot 2024?": {
     "bron": "https://en.wikipedia.org/wiki/Copa_Am%C3%A9rica",
@@ -754,7 +754,7 @@ window.NETTO_BRONNEN = {
   },
   "Hoeveel centrale Bijbelse scènes staan op het plafond van de Sixtijnse Kapel?": {
     "bron": "https://nl.wikipedia.org/wiki/Sixtijnse_Kapel",
-    "uitleg": "In de middelste rechthoek op het plafond zijn de volgende schilderijen, van de entree tot de achterwand, op onderstaande afbeelding van rechts naar links:\n\nde scheiding van donker en licht, 1:4-5\nde schepping van de zon en de maan, 1:14:18, de schepping van de planten, 1:11-12\nde scheiding van water"
+    "uitleg": "Het middenveld van het plafond toont negen scenes uit Genesis."
   },
   "Hoeveel chemische elementen telt het huidige periodiek systeem?": {
     "bron": "https://nl.wikipedia.org/wiki/Periodiek_systeem",
@@ -821,8 +821,8 @@ window.NETTO_BRONNEN = {
     "uitleg": "Bestaande bron opgehaald; het antwoord staat op de pagina."
   },
   "Hoeveel dagen duurt de Nederlands Film Festival in Utrecht?": {
-    "bron": "https://nl.wikipedia.org/wiki/Utrecht_%28stad%29",
-    "uitleg": "Markten\n\nEr zijn diverse markten in Utrecht zoals:\n\nBreedstraat op zaterdagmorgen van 8:00 - 13:00 uur (de 'lapjesmarkt')\nJacobskerkhof op zaterdag van 9:00 - 16:00 uur\nJanskerkhof op zaterdag van 7:00 - 17:00 uur (de bloemenmarkt)\nPlantage op woensdagmorgen van 9:00 - 13:00 uur\nOudegracht/Bakkerbru"
+    "bron": "https://nl.wikipedia.org/wiki/Nederlands_Film_Festival",
+    "uitleg": "Het festival duurt tien dagen. De oude bron was het artikel over de stad Utrecht."
   },
   "Hoeveel dagen duurt de Ramadan maximaal?": {
     "bron": "https://nl.wikipedia.org/wiki/Ramadan",
@@ -965,8 +965,8 @@ window.NETTO_BRONNEN = {
     "uitleg": "De dollar wordt onderverdeeld in 100 cent."
   },
   "Hoeveel domeinen noemt UNESCO voor immaterieel cultureel erfgoed?": {
-    "bron": "https://en.wikipedia.org/wiki/UNESCO",
-    "uitleg": "The 12 Directors-General of UNESCO have come from seven regions within the organization: West Europe (5), Central America (1), North America (2), West Africa (1), East Asia (1), East Europe (1), Middle East (1)."
+    "bron": "https://ich.unesco.org/en/intangible-heritage-domains-00052",
+    "uitleg": "UNESCO onderscheidt vijf domeinen van immaterieel erfgoed. De oude bron was het algemene artikel over UNESCO."
   },
   "Hoeveel dorpen krijgt iedere speler bij de start van Catan?": {
     "bron": "https://nl.wikipedia.org/wiki/Catan",
@@ -1055,10 +1055,6 @@ window.NETTO_BRONNEN = {
   "Hoeveel eilanden telt de Filipijnen officieel (volgens NAMRIA)?": {
     "bron": "https://nl.wikipedia.org/wiki/Filipijnen",
     "uitleg": "De archipel bestaat uit 7641 eilanden, waarvan de grootste twee Luzon en Mindanao zijn."
-  },
-  "Hoeveel eilanden telt de Nederlandse Antillen in de huidige status van landen?": {
-    "bron": "https://nl.wikipedia.org/wiki/Nederlandse_Antillen",
-    "uitleg": "De leeftijdsopbouw was:\n\n0-14 jaar 23,9%\n15-65 jaar 67,3%\n66 jaar en ouder 8,7%\nDe levensverwachting was:\n\nTotale bevolking 76,03 jaar\nMannen 73,76 jaar\nVrouwen 78,41 jaar\nDe Nederlandse Antillen had een bevolkingsgroei van 0,79%."
   },
   "Hoeveel eilanden telt het Great Barrier Reef?": {
     "bron": "https://en.wikipedia.org/wiki/Great_Barrier_Reef",
@@ -1217,8 +1213,8 @@ window.NETTO_BRONNEN = {
     "uitleg": "3 dat België drie gewesten omvat: het Vlaams Gewest (waarin vooral Nederlandstaligen wonen, met in bepaalde gemeenten faciliteiten voor Franstaligen), het Waals Gewest (waarin vooral Franstaligen en de Duitstalige gemeenschap wonen, in bepaalde gemeenten faciliteiten voor de Nederlandstaligen) en he"
   },
   "Hoeveel gouden medailles won Australië op de Olympische Zomerspelen 2024?": {
-    "bron": "https://nl.wikipedia.org/wiki/Olympische_Zomerspelen",
-    "uitleg": "Sebastian Coe en Steve Ovett, Britse middenafstandslopers die elkaar bestreden in Moskou 1980\nNadia Comăneci, 9 medailles waaronder 5 goud in het turnen 1976-1980, behaalde een perfecte score van 10 punten\nAleksandr Ditjatin, won op alle 8 turnonderdelen een medaille in 1980\nEdward Eagan, goudenmeda"
+    "bron": "https://nl.wikipedia.org/wiki/Olympische_Zomerspelen_2024",
+    "uitleg": "Australie won achttien gouden medailles in Parijs. De oude bron was het algemene artikel over de Zomerspelen."
   },
   "Hoeveel graden Celsius is de gemiddelde zomertemperatuur in Nederland?": {
     "bron": "https://www.knmi.nl/nederland-nu/klimatologie",
@@ -1235,10 +1231,6 @@ window.NETTO_BRONNEN = {
   "Hoeveel graden Celsius is het smeltpunt van tin ongeveer?": {
     "bron": "https://en.wikipedia.org/wiki/Tin",
     "uitleg": "Tin smelt bij 231,9 graden Celsius."
-  },
-  "Hoeveel graden Celsius is het vriespunt van water bij normale luchtdruk?": {
-    "bron": "https://nl.wikipedia.org/wiki/Celsius",
-    "uitleg": "De celsiusschaal is gedefinieerd met de volgende twee ijkpunten:\n\n0 °C (0 graden Celsius) is de temperatuur waarbij water bevriest bij een luchtdruk van 1 atmosfeer."
   },
   "Hoeveel graden Celsius kan een bliksemschicht bereiken?": {
     "bron": "https://en.wikipedia.org/wiki/Lightning",
@@ -1310,7 +1302,7 @@ window.NETTO_BRONNEN = {
   },
   "Hoeveel halve tonen bevat een octaaf?": {
     "bron": "https://nl.wikipedia.org/wiki/Octaaf_%28muziek%29",
-    "uitleg": "Doordat de kwinten een verhouding 3:2 kennen en het octaaf een verhouding 2:1, volgt\n\n  \n    \n      \n        \n          \n            (\n            \n              \n                \n                  3\n                  2\n                \n              \n            \n            )"
+    "uitleg": "Een octaaf is verdeeld in twaalf halve tonen."
   },
   "Hoeveel haren heeft een mens gemiddeld op zijn hoofd (afgerond)?": {
     "bron": "https://en.wikipedia.org/wiki/Hair_follicle",
@@ -1422,7 +1414,7 @@ window.NETTO_BRONNEN = {
   },
   "Hoeveel jaar duurde de Dertigjarige Oorlog?": {
     "bron": "https://nl.wikipedia.org/wiki/Dertigjarige_Oorlog",
-    "uitleg": "Frankrijk en Zweden winnen de oorlog\nDe langverwachte genadeslag volgde, toen de Franse legers van Condé en Turenne zich met de Zweden konden verenigen, en in het West-Beierse Zusmarshausen (mei 1648) tussen Ulm en Augsburg, verpletterden wat er nog over was van de keizerlijke en Beierse legers; hun"
+    "uitleg": "De oorlog duurde van 1618 tot 1648, dertig jaar; het staat in de naam."
   },
   "Hoeveel jaar duurde de Honderdjarige Oorlog daadwerkelijk?": {
     "bron": "https://nl.wikipedia.org/wiki/Honderdjarige_Oorlog",
@@ -1509,8 +1501,8 @@ window.NETTO_BRONNEN = {
     "uitleg": "Dit schip leverde op 8 en 9 maart 1862 de eerste slag tussen twee ijzeren schepen met de CSS Virginia en won nipt."
   },
   "Hoeveel jongleurs deden mee aan het grootste jongleerrecord?": {
-    "bron": "https://www.guinnessworldrecords.com/",
-    "uitleg": "Deelnemersrecords worden vaak verbroken."
+    "bron": "https://www.guinnessworldrecords.com/world-records/68643-most-people-juggling-simultaneously",
+    "uitleg": "Op 7 augustus 1998 jongleerden 1508 mensen tegelijk in Edinburgh. Dat record staat sindsdien, dus het veroudert niet."
   },
   "Hoeveel kaarten bevat een klassiek Monopoly-spel in totaal aan eigendoms-, kans- en algemeenfondskaarten?": {
     "bron": "https://www.hasbro.com/en-us/brands/monopoly",
@@ -1862,7 +1854,7 @@ window.NETTO_BRONNEN = {
   },
   "Hoeveel kilometer lang is de Kongo?": {
     "bron": "https://nl.wikipedia.org/wiki/Kongo_%28rivier%29",
-    "uitleg": "| lengte = 4 700"
+    "uitleg": "De infobox geeft een lengte van 4700 kilometer."
   },
   "Hoeveel kilometer lang is de Mississippi ongeveer?": {
     "bron": "http://web.archive.org/web/20260831035541/https://www.britannica.com/place/Mississippi-River",
@@ -2112,10 +2104,6 @@ window.NETTO_BRONNEN = {
     "bron": "https://en.wikipedia.org/wiki/Five-spice_powder",
     "uitleg": "Vijf kruiden; het antwoord staat in de naam."
   },
-  "Hoeveel landen deden er mee aan het Nederlands kampioenschap wielrennen voor clubs?": {
-    "bron": "https://nl.wikipedia.org/wiki/Nederlands",
-    "uitleg": "Het Nederlands alleen wordt door meer mensen gesproken dan de Noord-Germaanse (Scandinavische) talen bij elkaar: Zweeds (10 miljoen), Noors (5 miljoen), Deens (5 miljoen) en IJslands (0,3 miljoen)."
-  },
   "Hoeveel landen deden mee aan het FIFA World Cup 2022?": {
     "bron": "https://en.wikipedia.org/wiki/FIFA_World_Cup",
     "uitleg": "He said: \"[The World Cup is] not based on the quality of the teams because you don't have the best 32 at the World Cup ..."
@@ -2169,8 +2157,8 @@ window.NETTO_BRONNEN = {
     "uitleg": "Geschiedenis\n\nAl minstens 10.000 jaar voor Christus waren het Amazonebekken, het Paranábekken, het São Franciscobekken en de kustgebieden van Brazilië bewoond door indianen."
   },
   "Hoeveel landen grenzen aan Chili?": {
-    "bron": "https://en.wikipedia.org/wiki/Chili",
-    "uitleg": "Chili or chilli may refer to:\n\n\nFood\nChili pepper, the spicy fruit of plants in the genus Capsicum; sometimes spelled \"chilli\" in the UK and \"chile\" in the southwestern US\nChili powder, the dried, pulverized fruit of one or more varieties of chili pepper\nChili con carne, often referred to simply as"
+    "bron": "https://en.wikipedia.org/wiki/Chile",
+    "uitleg": "Chili grenst aan Peru, Bolivia en Argentinie. De oude bron was de Engelse doorverwijspagina voor chilipeper."
   },
   "Hoeveel landen grenzen aan China (vasteland excl. zee)?": {
     "bron": "https://nl.wikipedia.org/wiki/China",
@@ -2322,7 +2310,7 @@ window.NETTO_BRONNEN = {
   },
   "Hoeveel landen grenzen aan Zwitserland?": {
     "bron": "https://nl.wikipedia.org/wiki/Zwitserland",
-    "uitleg": "Taal\n\nDe nationale en officiële talen van Zwitserland zijn:\n\nDuits, als hoofdtaal gesproken door 63,0% van de bevolking\nFrans, als hoofdtaal gesproken door 22,6% van de bevolking\nItaliaans, als hoofdtaal gesproken door 8,1% van de bevolking\nReto-Romaans, als hoofdtaal gesproken door 0,6% van de bevo"
+    "uitleg": "Zwitserland grenst aan Duitsland, Frankrijk, Italie, Oostenrijk en Liechtenstein."
   },
   "Hoeveel landen grenzen aan de Dode Zee?": {
     "bron": "https://nl.wikipedia.org/wiki/Dode_Zee",
@@ -2419,10 +2407,6 @@ window.NETTO_BRONNEN = {
   "Hoeveel landen ondertekenden oorspronkelijk het Handvest van de Verenigde Naties?": {
     "bron": "https://www.un.org/en/about-us/history-of-the-un",
     "uitleg": "Bestaande bron opgehaald; het antwoord staat op de pagina."
-  },
-  "Hoeveel landen stemden vóór het Nederlands als EU-taal?": {
-    "bron": "https://nl.wikipedia.org/wiki/Nederlands",
-    "uitleg": "Het Nederlands alleen wordt door meer mensen gesproken dan de Noord-Germaanse (Scandinavische) talen bij elkaar: Zweeds (10 miljoen), Noors (5 miljoen), Deens (5 miljoen) en IJslands (0,3 miljoen)."
   },
   "Hoeveel landen telt Afrika?": {
     "bron": "https://nl.wikipedia.org/wiki/Afrika",
@@ -2745,8 +2729,8 @@ window.NETTO_BRONNEN = {
     "uitleg": "Ondertekenaars\nHier de 56 ondertekenaars die hun staat vertegenwoordigden: (van het Noorden naar het Zuiden)\n\n\nVaria\nThomas Jefferson schreef de onafhankelijkheidsverklaring op papier met het watermerk LvG, de initialen van de Veluwse papiermaker Lubbert van Gerrevink, eigenaar van molens bij Vaasse"
   },
   "Hoeveel marathons liep de persoon met het record voor de meeste marathons?": {
-    "bron": "https://www.guinnessworldrecords.com/world-records/most-marathons-run",
-    "uitleg": "Het aantal groeit zolang de recordhouder blijft lopen."
+    "bron": "https://www.guinnessworldrecords.com/world-records/64777-most-marathons-completed",
+    "uitleg": "Horst Preisler liep tussen 1974 en eind 2004 1305 marathons of langer. Het opgegeven 1000 was een ronde gok."
   },
   "Hoeveel medeklinkerletters heeft het Thaise alfabet?": {
     "bron": "https://en.wikipedia.org/wiki/Thai_script",
@@ -2786,7 +2770,7 @@ window.NETTO_BRONNEN = {
   },
   "Hoeveel mensen werden geëvacueerd tijdens de evacuatie van Duinkerke?": {
     "bron": "https://en.wikipedia.org/wiki/Dunkirk_evacuation",
-    "uitleg": "Er werden 338.226 militairen geevacueerd."
+    "uitleg": "Er werden 338.226 militairen geevacueerd uit Duinkerke."
   },
   "Hoeveel meter breed mag een internationaal voetbalveld maximaal zijn?": {
     "bron": "https://www.theifab.com/laws/latest/the-field-of-play/",
@@ -3066,7 +3050,7 @@ window.NETTO_BRONNEN = {
   },
   "Hoeveel meter per seconde is de lichtsnelheid in vacuüm exact volgens de SI-definitie?": {
     "bron": "https://nl.wikipedia.org/wiki/Lichtsnelheid",
-    "uitleg": "In vacuüm heeft de lichtsnelheid (in SI-eenheden) voor alle frequenties de waarde \n\nc = 299 792 458 m/s\n\n\nKenmerken\nDe lichtsnelheid in vacuüm wordt beschouwd als een natuurconstante."
+    "uitleg": "De meter is sinds 1983 gedefinieerd via een lichtsnelheid van exact 299.792.458 m/s."
   },
   "Hoeveel meter per seconde meet een wind van windkracht 5?": {
     "bron": "https://nl.wikipedia.org/wiki/Schaal_van_Beaufort",
@@ -3321,12 +3305,8 @@ window.NETTO_BRONNEN = {
     "uitleg": "Sinds de grondwetswijziging van 2023 erkent Zuid-Afrika twaalf talen; de Zuid-Afrikaanse gebarentaal is toegevoegd aan de oorspronkelijke elf."
   },
   "Hoeveel natuurlijke manen heeft Mars?": {
-    "bron": "https://nl.wikipedia.org/wiki/Mars",
-    "uitleg": "Mars kan verwijzen naar:\n\nMythologie\n\nMars (mythologie), de Romeinse god van de oorlog (veel andere betekenissen zijn direct of indirect hieraan ontleend)\nPlaneet\n\nMars (planeet), een planeet in het zonnestelsel genoemd naar de gelijknamige Romeinse god\nMars (astrologie), een planeet in de astrologi"
-  },
-  "Hoeveel natuursonden (beelden) staan er op Paaseiland - sorry dat zit niet in Europa!": {
-    "bron": "https://nl.wikipedia.org/wiki/Paaseiland",
-    "uitleg": "Bahn (2002), The enigma's of Easter Island, Oxford University Press, ISBN 0-19-280340-9\n\n\nExterne link\n(en)  Korte documentaire van David Attenborough over Paaseiland\n\n\nReferenties"
+    "bron": "https://nl.wikipedia.org/wiki/Mars_(planeet)",
+    "uitleg": "Mars heeft twee manen, Phobos en Deimos. De oude bron was de doorverwijspagina voor het woord Mars."
   },
   "Hoeveel neutronen heeft koolstof-14?": {
     "bron": "https://en.wikipedia.org/wiki/Carbon-14",
@@ -3345,8 +3325,8 @@ window.NETTO_BRONNEN = {
     "uitleg": "De tussenvorm, de extended play (ep), met vier tot zes nummers op een grammofoonplaat van 7\", werd oorspronkelijk opgenomen in de Hot 100, maar verhuisde medio jaren zestig van de 20e eeuw naar de Billboard 200."
   },
   "Hoeveel nummers bevatte het album Un Verano Sin Ti van Bad Bunny?": {
-    "bron": "https://nl.wikipedia.org/wiki/Bad_Bunny",
-    "uitleg": "Op 5 mei 2025 kondigde Bad Bunny Debí Tirar Más Fotos World Tour aan, een wereldtournee van 23 stadionconcerten in Europa, Australië, Japan en Latijns-Amerika, die in november 2025 van start is gegaan."
+    "bron": "https://en.wikipedia.org/wiki/Un_Verano_Sin_Ti",
+    "uitleg": "Het album telt 23 nummers. De oude bron was het artikel over Bad Bunny zelf, met een zin over een tournee uit 2025."
   },
   "Hoeveel nummers staan er op het album Thriller van Michael Jackson?": {
     "bron": "https://nl.wikipedia.org/wiki/Michael_Jackson",
@@ -3377,8 +3357,8 @@ window.NETTO_BRONNEN = {
     "uitleg": "3 dat België drie gewesten omvat: het Vlaams Gewest (waarin vooral Nederlandstaligen wonen, met in bepaalde gemeenten faciliteiten voor Franstaligen), het Waals Gewest (waarin vooral Franstaligen en de Duitstalige gemeenschap wonen, in bepaalde gemeenten faciliteiten voor de Nederlandstaligen) en he"
   },
   "Hoeveel officiële talen heeft Zwitserland?": {
-    "bron": "https://en.wikipedia.org/wiki/HC_Klein_Zwitserland",
-    "uitleg": "Honours\n\n\nMen\nHoofdklasse\n\nWinners (8): 1976–77, 1977–78, 1978–79, 1979–80, 1980–81, 1981–82, 1982–83, 1983–84\nRunners-up (2): 1974–75, 1975–76 :\nGold Cup\n\nWinners (1): 2021–22\nEuroHockey Club Champions Cup:\n\nWinners (2): 1979, 1981\nRunners-up (4): 1980, 1982, 1983, 1985\nHoofdklasse Indoor\n\nWinners"
+    "bron": "https://nl.wikipedia.org/wiki/Zwitserland",
+    "uitleg": "Zwitserland heeft vier landstalen: Duits, Frans, Italiaans en Reto-Romaans. De oude bron was HC Klein Zwitserland, een hockeyclub."
   },
   "Hoeveel officiële talen telt Zuid-Afrika sinds 2023?": {
     "bron": "https://en.wikipedia.org/wiki/South_Africa",
@@ -3390,7 +3370,7 @@ window.NETTO_BRONNEN = {
   },
   "Hoeveel officiële tijdzones heeft China?": {
     "bron": "https://nl.wikipedia.org/wiki/China",
-    "uitleg": "Ongeveer 1,4 miljard van hen leven in de Volksrepubliek China, dat daarmee qua inwoners na India het grootste land ter wereld is."
+    "uitleg": "China houdt sinds 1949 een enkele tijdzone aan voor het hele land."
   },
   "Hoeveel ogen had de Noorse god Odin nadat hij er één opofferde voor wijsheid?": {
     "bron": "https://en.wikipedia.org/wiki/Odin",
@@ -3802,7 +3782,7 @@ window.NETTO_BRONNEN = {
   },
   "Hoeveel push-ups werden er in 24 uur uitgevoerd bij het huidige record?": {
     "bron": "https://www.guinnessworldrecords.com/world-records/most-push-ups-in-24-hours",
-    "uitleg": "Push-uprecords worden regelmatig verbroken."
+    "uitleg": "Charles Servizio deed er 46.001 in april 1993. Het staat er dus al ruim dertig jaar; afgerond op 46.000 klopt het."
   },
   "Hoeveel rechters telt het Europees Hof voor de Rechten van de Mens?": {
     "bron": "https://nl.wikipedia.org/wiki/Europees_Hof_voor_de_Rechten_van_de_Mens",
@@ -3894,7 +3874,7 @@ window.NETTO_BRONNEN = {
   },
   "Hoeveel seizoenen heeft Breaking Bad?": {
     "bron": "https://nl.wikipedia.org/wiki/Breaking_Bad",
-    "uitleg": "Afleveringen\n\n\nPrijzen\n\n\nSeizoen 1\nEmmy Award\n\nOutstanding Lead Actor in a Drama Series (Bryan Cranston)\nOutstanding Single-Camera Picture Editing for a Drama Series\n\n\nSeizoen 2\nEmmy Award\n\nOutstanding Lead Actor in a Drama Series (Bryan Cranston)\nOutstanding Single-Camera Picture Editing for a Dram"
+    "uitleg": "Breaking Bad telt vijf seizoenen."
   },
   "Hoeveel seizoenen heeft The Sopranos?": {
     "bron": "https://en.wikipedia.org/wiki/The_Sopranos",
@@ -4025,8 +4005,8 @@ window.NETTO_BRONNEN = {
     "uitleg": "Hij schreef 154 sonnetten en een aantal langere gedichten en kan beschouwd worden als de eerste moderne toneelschrijver."
   },
   "Hoeveel soorten dieren bevat de Chinese zodiac?": {
-    "bron": "https://nl.wikipedia.org/wiki/Schorpioenen_%28dieren%29",
-    "uitleg": "Orde Scorpiones\n\nFamilie Akravidae (uitgestorven)\nFamilie Bothriuridae, 15 geslachten en 137 soorten\nFamilie Buthidae, 85 geslachten (1 uitgestorven) en 889 soorten\nFamilie Caraboctonidae, 5 geslachten en 18 soorten\nFamilie Chactidae, 11 geslachten en 166 soorten\nFamilie Chaerilidae, 1 geslacht met"
+    "bron": "https://nl.wikipedia.org/wiki/Chinese_astrologie",
+    "uitleg": "De Chinese dierenriem telt twaalf dieren. De oude bron ging over schorpioenen."
   },
   "Hoeveel soorten sushi wordt er klassiek onderscheiden in Japan (hoofdtypes)?": {
     "bron": "https://nl.wikipedia.org/wiki/Japan",
@@ -4526,7 +4506,7 @@ window.NETTO_BRONNEN = {
   },
   "Hoeveel treden heeft de trap van de CN Tower ongeveer?": {
     "bron": "https://en.wikipedia.org/wiki/CN_Tower",
-    "uitleg": "As of 2013, there were two other freestanding structures in the Western Hemisphere exceeding 500 m (1,640.4 ft) in height: the Willis Tower in Chicago, which stands at 527 m (1,729.0 ft) when measured to its pinnacle, and One World Trade Center in New York City, which has a pinnacle height of 541.33"
+    "uitleg": "De trap telt 1776 treden naar het LookOut-niveau en 2579 naar de SkyPod."
   },
   "Hoeveel treden heeft het Empire State Building van straatniveau tot het observatiedek?": {
     "bron": "https://www.esbnyc.com/about/facts-figures",
@@ -4552,9 +4532,9 @@ window.NETTO_BRONNEN = {
     "bron": "https://en.wikipedia.org/wiki/Year",
     "uitleg": "365 dagen maal 24 uur is 8760. De oude bron ging over de val van de Berlijnse Muur."
   },
-  "Hoeveel uur duurde het langste videogame-marathonrecord?": {
-    "bron": "https://www.guinnessworldrecords.com/world-records/longest-videogames-marathon",
-    "uitleg": "Marathonrecords worden regelmatig verbroken."
+  "Hoeveel uur duurde het langste videogame-marathonrecord (stand 2026)?": {
+    "bron": "https://www.guinnessworldrecords.com/world-records/longest-video-games-marathon",
+    "uitleg": "Szabolcs Csepe speelde in oktober 2024 144 uur Dance Dance Revolution. Dit record verschuift regelmatig, vandaar het peiljaar in de vraag."
   },
   "Hoeveel uur duurt de treinreis Amsterdam-Paris Thalys ongeveer (in hele uren)?": {
     "bron": "https://nl.wikipedia.org/wiki/Thalys",
@@ -4794,11 +4774,11 @@ window.NETTO_BRONNEN = {
   },
   "Hoeveel wielen heeft een Airbus A380?": {
     "bron": "https://en.wikipedia.org/wiki/Airbus_A380",
-    "uitleg": "In 2015, Airbus said development costs were €15 billion (£11.4 billion, $16.64 billion), though analysts believe the figure is likely to be at least €5bn ($5.55 Bn) more for a €20 Bn ($22.19 Bn) total."
+    "uitleg": "De A380 staat op 22 wielen: twintig onder de hoofdstellen en twee onder de neus."
   },
   "Hoeveel wielen heeft een Boeing 747 volgens de standaardconfiguratie?": {
-    "bron": "https://nl.wikipedia.org/wiki/Boeing",
-    "uitleg": "De totale kosten met betrekking tot de 737 MAX zijn opgelopen tot US$ 18 miljard voor Boeing."
+    "bron": "https://nl.wikipedia.org/wiki/Boeing_747",
+    "uitleg": "De 747 staat op achttien wielen: vier hoofdstellen van vier plus een neuswiel van twee. De oude bron was het artikel over het bedrijf Boeing, en het getang 18 kwam daar uit een bedrag van 18 miljard dollar."
   },
   "Hoeveel wielen heeft een Formule 1-auto?": {
     "bron": "https://en.wikipedia.org/wiki/Formula_One_car",
@@ -5586,7 +5566,7 @@ window.NETTO_BRONNEN = {
   },
   "Wat is de totale lengte van alle stukken van de Chinese Muur in kilometers?": {
     "bron": "https://nl.wikipedia.org/wiki/Chinese_Muur",
-    "uitleg": "De gehele verdedigingslinie, inclusief verdedigingsgroeven van 359 kilometer en 2232 kilometer aan natuurlijke grenzen (rivieren, heuvels en bergen), heeft een lengte van 21 196 kilometer."
+    "uitleg": "De officiele meting uit 2012 komt op 21.196 kilometer. Dubbel met 779 en 858."
   },
   "Wat is een perfecte score bij tienpinsbowling?": {
     "bron": "https://en.wikipedia.org/wiki/Ten-pin_bowling",
