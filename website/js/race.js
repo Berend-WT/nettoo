@@ -488,6 +488,7 @@
     if (autoCalcNote) localStorage.setItem('netto_auto_calc_note_seen', 'true');
     listEl.innerHTML = [[p.q1_label, p.q1_answer], [p.q2_label, p.q2_answer], [p.q3_label, p.q3_answer]].map((q, i) =>
       `<div class="q-block"><div class="q-label">${q[0] || 'Vraag niet beschikbaar'}</div><div class="input-wrapper"><input type="text" class="daily-style-input" id="raceAnswer${i}" inputmode="numeric" placeholder="Jouw schatting" autocomplete="off"></div></div>${i < 2 ? `<div class="connector"><div class="connector-line"></div><div class="connector-badge ${i === 1 ? 'eq' : ''}">${i === 0 ? (p.operator || '×') : '='}</div><div class="connector-line"></div></div>` : ''}`).join('') + autoCalcNote;
+    renderPuzzelfoto(listEl, p);
     bindRaceInputs(p.operator || '×');
     const first = document.getElementById('raceAnswer0');
     if (first) first.focus();

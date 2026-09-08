@@ -1563,7 +1563,10 @@
   // over de vraag, dus de tekst eronder mag niet blijven beweren dat het beeld
   // niets met de puzzel te maken heeft.
   function gekoppeldeFoto() {
-    const f = PUZZLE_DATA?.photo;
+    // Dagpuzzels uit de databank dragen geen photo-veld; fotoUitVraagtekst uit
+    // js/photo-credits.js zoekt de foto dan alsnog op via NETTO_FOTOS.
+    const f = PUZZLE_DATA?.photo
+      || (typeof fotoUitVraagtekst === 'function' ? fotoUitVraagtekst(PUZZLE_DATA) : null);
     if (!f?.url) return null;
     const nr = Number(f.vraag);
     const bij = nr >= 1 && nr <= 3 ? PUZZLE_DATA['q' + nr + '_label'] : '';
@@ -2540,6 +2543,7 @@
   }
 
   function showScreen(name) {
+    document.getElementById('fotoCreditsScreen')?.classList.toggle('active', name === 'fotoverantwoording');
     stopPuzzleTimer('library');
     stopPuzzleTimer('premium');
     if (name === 'library') document.getElementById('libraryCardGrid').style.display = 'none';

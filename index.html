@@ -26,9 +26,9 @@
 <script src="data/netto_race_pool.js?v=36"></script>
 <script src="data/netto_breinkrakers.js?v=27"></script>
 <script src="data/netto_translations_en.js?v=36"></script>
-<script src="js/i18n.js?v=50"></script>
+<script src="js/i18n.js?v=51"></script>
 <link rel="stylesheet" href="css/styles.css?v=50">
-<link rel="stylesheet" href="css/refinement.css?v=69">
+<link rel="stylesheet" href="css/refinement.css?v=70">
 
 </head>
 <body>
@@ -112,6 +112,7 @@
       </div>
       <div class="sidebar-group">
         <div class="sidebar-group-title">Meer</div>
+        <button class="sidebar-item" onclick="openFotoverantwoording()"><span class="sidebar-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8" cy="8" r="2"/><path d="m3 18 6-6 4 4 3-3 5 5"/></svg></span><span class="label">Fotoverantwoording</span><span class="arrow">→</span></button>
         <button class="sidebar-item" onclick="openHowItWorks()"><span class="sidebar-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M9.8 9a2.4 2.4 0 1 1 3.3 2.2c-.8.4-1.1.9-1.1 1.8M12 17h.01"/></svg></span><span class="label">Hoe werkt het?</span><span class="arrow">→</span></button>
         <button class="sidebar-item" onclick="openSubmitQuestion()"><span class="sidebar-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20h4l11-11a2.8 2.8 0 0 0-4-4L4 16v4Z"/><path d="m13.5 6.5 4 4"/></svg></span><span class="label">Vraag insturen</span><span class="arrow">→</span></button>
         <button class="sidebar-item" onclick="openSettings()"><span class="sidebar-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h10M18 7h2M4 17h2M10 17h10"/><circle cx="16" cy="7" r="2"/><circle cx="8" cy="17" r="2"/></svg></span><span class="label">Instellingen</span><span class="arrow">→</span></button>
@@ -970,11 +971,25 @@
     </div>
   </div>
 
+<main class="screen" id="fotoCreditsScreen">
+  <div class="inner foto-credits-inner">
+    <button type="button" class="daily-home-button" onclick="goHome()">Naar home</button>
+    <h1>Fotoverantwoording</h1>
+    <p>De foto's komen van Wikimedia Commons en worden gebruikt onder de licentie die bij elke foto staat.</p>
+    <div id="fotoCreditsLijst" class="foto-credits-lijst"></div>
+  </div>
+</main>
+<dialog id="puzzelFotoDialog" class="daily-photo-dialog" onclick="if(event.target === this) this.close()">
+  <button type="button" class="photo-close" onclick="this.closest('dialog').close()" aria-label="Foto sluiten">×</button>
+  <img alt="">
+  <p class="daily-photo-credit" data-i18n-skip></p>
+</dialog>
 <!-- De volgorde is bewust: modules delen de bestaande classic-script scope. -->
+<script src="js/photo-credits.js?v=2"></script>
 <script src="js/daily-photos.js?v=2"></script>
-<script src="js/core.js?v=79"></script>
-<script src="js/puzzle-modes.js?v=44"></script>
-<script src="js/race.js?v=50"></script>
+<script src="js/core.js?v=81"></script>
+<script src="js/puzzle-modes.js?v=45"></script>
+<script src="js/race.js?v=51"></script>
 <script src="js/submissions.js?v=39"></script>
 <script src="js/library.js?v=47"></script>
 <script src="js/app.js?v=34"></script>

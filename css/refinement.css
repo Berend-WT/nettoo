@@ -1,5 +1,27 @@
 /* Netto refinement layer — shared editorial game system */
 .daily-photo[hidden] { display: none; }
+/* Dezelfde polaroid, met de verplichte bron direct bij het beeld. */
+.puzzelfoto { width: 144px; margin: 0 0 18px auto; }
+.puzzelfoto .daily-photo { width: 100%; margin: 0 0 8px; }
+.puzzelfoto .daily-photo-credit { color: var(--text-muted); line-height: 1.5; overflow-wrap: anywhere; }
+.puzzelfoto-lijst .q-block { position: relative; }
+.puzzelfoto-lijst .q-block:has(.puzzelfoto) { min-height: 250px; }
+.foto-credits-inner { width: min(100%, 1000px); }
+.foto-credits-inner > h1 { margin: 28px 0 14px; }
+.foto-credits-inner > p { color: var(--text-muted); line-height: 1.6; }
+.foto-credits-inner > .daily-home-button { width: auto; color: inherit; }
+.foto-credits-lijst { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 290px), 1fr)); gap: 16px; margin-top: 28px; }
+.foto-credit-kaart { padding: 18px; border-radius: 12px; background: var(--surface); color: var(--ink); border: 1px solid var(--surface-border); overflow-wrap: anywhere; }
+.foto-credit-kaart img { width: 100%; height: 144px; object-fit: cover; border-radius: 5px; margin-bottom: 14px; }
+.foto-credit-kaart p { color: var(--text-muted); margin: 8px 0; }
+.foto-credit-kaart a { color: var(--ink); text-decoration: underline; text-underline-offset: 3px; }
+@media (min-width: 1000px) {
+  .puzzelfoto-lijst .q-block:has(.puzzelfoto) { padding-right: 145px; overflow: visible; }
+  .puzzelfoto-lijst .puzzelfoto { position: absolute; top: 8px; right: -34px; z-index: 2; width: 152px; margin: 0; }
+  .puzzelfoto .daily-photo { transform: rotate(3deg); box-shadow: 0 16px 34px rgba(5, 7, 35, .30); }
+  .puzzelfoto .daily-photo:hover { transform: rotate(0) scale(1.03); }
+  .puzzelfoto .daily-photo img { height: 108px; }
+}
 /* Smalle schermen: gewoon in de flow, rechts uitgelijnd boven de eerste vraag.
    Naast de kaart is daar geen ruimte, en buiten de kaart hangen zou horizontaal
    scrollen veroorzaken. */
