@@ -45,3 +45,7 @@ fotos/daily_vragen_review_input.json
 # Backups die de scripts zelf wegschrijven; de bank staat al in git
 vragen/_backup_*.xlsx
 puzzels/_backup_*.xlsx
+
+# Fotokandidaten: opnieuw op te halen, en de miniaturen zijn regenereerbaar
+fotos/assets/kandidaten/
+fotos/ophalen.log
