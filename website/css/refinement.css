@@ -1,11 +1,26 @@
 /* Netto refinement layer — shared editorial game system */
 .daily-photo[hidden] { display: none; }
 /* Dezelfde polaroid, met de verplichte bron direct bij het beeld. */
-.puzzelfoto { width: 144px; margin: 0 0 18px auto; }
-.puzzelfoto .daily-photo { width: 100%; margin: 0 0 8px; }
-.puzzelfoto .daily-photo-credit { color: var(--text-muted); line-height: 1.5; overflow-wrap: anywhere; }
+/* De foto zweeft rechts en de vraagtekst loopt ernaast, zoals een afbeelding in
+   een gewone alinea. Rechts uitlijnen zonder zweven zette hem alleen op zijn
+   eigen regel met een lege band ernaast — dat kostte de halve kaarthoogte. */
+.puzzelfoto { float: right; width: 120px; margin: 2px 0 8px 14px; shape-margin: 8px; }
+/* Het invoerveld gaat er niet naast staan maar eronder: een veld dat naast een
+   foto wordt platgedrukt is lastiger te raken dan een veld over de volle breedte. */
+.puzzelfoto-lijst .q-block:has(.puzzelfoto) .input-wrapper { clear: both; }
+.puzzelfoto-lijst .q-block:has(.puzzelfoto)::after { content: ''; display: block; clear: both; }
+.puzzelfoto .daily-photo { width: 100%; margin: 0; }
+/* De bronvermelding staat wel in de opmaak maar niet in beeld: op een smalle
+   kaart kostte die regel thirty-three pixels naast een foto van honderdvijftig,
+   en hij leidt af van de vraag. Hij verschijnt zodra je de foto aanklikt, en de
+   volledige lijst staat onder Fotoverantwoording in het menu. Verbergen gebeurt
+   met clip, niet met display:none, zodat schermlezers hem blijven voorlezen —
+   naamsvermelding is bij CC BY-SA een licentievoorwaarde. */
+.puzzelfoto .daily-photo-credit {
+  position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0;
+  overflow: hidden; clip: rect(0 0 0 0); clip-path: inset(50%); white-space: nowrap;
+}
 .puzzelfoto-lijst .q-block { position: relative; }
-.puzzelfoto-lijst .q-block:has(.puzzelfoto) { min-height: 250px; }
 .foto-credits-inner { width: min(100%, 1000px); }
 .foto-credits-inner > h1 { margin: 28px 0 14px; }
 .foto-credits-inner > p { color: var(--text-muted); line-height: 1.6; }
@@ -16,15 +31,19 @@
 .foto-credit-kaart p { color: var(--text-muted); margin: 8px 0; }
 .foto-credit-kaart a { color: var(--ink); text-decoration: underline; text-underline-offset: 3px; }
 @media (min-width: 1000px) {
-  .puzzelfoto-lijst .q-block:has(.puzzelfoto) { padding-right: 145px; overflow: visible; }
-  .puzzelfoto-lijst .puzzelfoto { position: absolute; top: 8px; right: -34px; z-index: 2; width: 152px; margin: 0; }
+  /* Alleen hier is ruimte vrijhouden nodig: de foto hangt dan absoluut op de
+     kaartrand en duwt de kaart niet vanzelf hoger. */
+  .puzzelfoto-lijst .q-block:has(.puzzelfoto) { padding-right: 145px; overflow: visible; min-height: 150px; }
+  .puzzelfoto-lijst .puzzelfoto { position: absolute; float: none; top: 8px; right: -34px; z-index: 2; width: 152px; margin: 0; }
   .puzzelfoto .daily-photo { transform: rotate(3deg); box-shadow: 0 16px 34px rgba(5, 7, 35, .30); }
   .puzzelfoto .daily-photo:hover { transform: rotate(0) scale(1.03); }
   .puzzelfoto .daily-photo img { height: 108px; }
 }
-/* Smalle schermen: gewoon in de flow, rechts uitgelijnd boven de eerste vraag.
-   Naast de kaart is daar geen ruimte, en buiten de kaart hangen zou horizontaal
+/* Smalle schermen: zwevend rechts, zodat de vraagtekst ernaast loopt in plaats
+   van eronder. Naast de kaart hangen kan hier niet, want dat zou horizontaal
    scrollen veroorzaken. */
+#dailyQuestionView > .daily-photo { float: right; margin: 2px 0 8px 14px; }
+#dailyQuestionView > .daily-photo + .q-block .input-wrapper { clear: both; }
 .daily-photo { display: block; width: 132px; margin: 0 0 18px auto; padding: 6px 6px 0; background: #fff; border: 1px solid #E3E4F7; border-radius: 6px; box-shadow: 0 6px 16px rgba(20,22,59,.12); transform: rotate(2deg); cursor: zoom-in; transition: transform .15s; }
 .daily-photo:hover { transform: rotate(0); }
 .daily-photo img { display: block; width: 100%; height: 104px; object-fit: cover; border-radius: 2px; }
