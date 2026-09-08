@@ -40,6 +40,7 @@ import argparse
 import json
 import math
 import os
+import re
 import random
 import sys
 from collections import Counter, defaultdict
@@ -54,9 +55,36 @@ REVIEW = os.path.join(WORTEL, 'vragen', 'vragen_review_compleet.xlsx')
 DATA = os.path.join(WORTEL, 'data')
 SPIEGEL = os.path.join(WORTEL, 'website', 'data')
 
+STIJL = os.path.join(WORTEL, 'css', 'styles.css')
+
 OPERATORS = ('+', '−', '×', '÷')
 OPERATOR_GEWICHT = {'+': 0.0, '−': 8.0, '×': 14.0, '÷': 18.0}
 NIVEAUS = ('easy', 'intermediate', 'hard', 'extremely-hard')
+
+
+def kleurfamilies():
+    """Leest uit de stylesheet welke categorie welke kleurfamilie krijgt.
+
+    De frontend geeft elke vraagkaart een tint op basis van de categorie, maar
+    29 categorieen delen 8 kleurfamilies. Drie verschillende categorieen in een
+    puzzel kunnen dus twee keer dezelfde kleur opleveren, en dat gebeurde bij 28
+    procent van de puzzels. De stylesheet is de enige plek waar die koppeling
+    staat, dus die wordt hier gelezen in plaats van overgeschreven — anders
+    lopen de twee stilletjes uiteen zodra iemand een kleur verandert.
+    """
+    uit = {}
+    with open(STIJL, encoding='utf-8') as f:
+        for regel in f:
+            m = re.match(r"\s*--categorie-([a-z0-9-]+):\s*var\(--familie-([a-z]+)\)", regel)
+            if m:
+                uit[m.group(1)] = m.group(2)
+    return uit
+
+
+def categoriesleutel(categorie):
+    """Zelfde omzetting als categorieKleurVariabele in js/core.js."""
+    s = categorie.lower().replace('&', 'en')
+    return re.sub(r'^-|-$', '', re.sub(r'[^a-z0-9]+', '-', s))
 
 
 def rondheid(n):
@@ -117,6 +145,15 @@ def waardedrietallen(waarden):
 
 def bouw(vragen, doel_aantal, seed, quota=10**9):
     rng = random.Random(seed)
+    families = kleurfamilies()
+    for q in vragen:
+        # De kleur is bepalender dan de categorie: drie verschillende
+        # categorieen leverden bij 28 procent van de puzzels toch twee gelijke
+        # tinten op, omdat 29 categorieen 8 families delen. Twee kaarten met
+        # dezelfde kleur naast elkaar ziet er slordig uit, dus de eis verschuift
+        # van categorie naar familie. Dat is meteen strenger: verschillende
+        # families betekent altijd ook verschillende categorieen.
+        q['familie'] = families.get(categoriesleutel(q['categorie']), q['categorie'])
     per_waarde = defaultdict(list)
     for i, q in enumerate(vragen):
         per_waarde[q['antwoord']].append(i)
@@ -162,7 +199,7 @@ def bouw(vragen, doel_aantal, seed, quota=10**9):
                                       beschikbaar[t[2]]))
 
     def kies(waarde, verboden_cats, gebruikt):
-        """Pak een vrije vraag met deze waarde en een nog ongebruikte categorie.
+        """Pak een vrije vraag met deze waarde en een nog ongebruikte kleur.
 
         De categorie-eis is hard: drie vragen uit dezelfde puzzel horen uit drie
         verschillende categorieen te komen. Bij het uitproberen bleek dat maar
@@ -172,7 +209,7 @@ def bouw(vragen, doel_aantal, seed, quota=10**9):
         """
         opties = [i for i in per_waarde[waarde]
                   if i in vrij and i not in gebruikt
-                  and vragen[i]['categorie'] not in verboden_cats]
+                  and vragen[i]['familie'] not in verboden_cats]
         return opties[0] if opties else None
 
     puzzels = []
@@ -206,7 +243,7 @@ def bouw(vragen, doel_aantal, seed, quota=10**9):
                         keuze = None
                         break
                     gebruikt.add(i)
-                    cats.add(vragen[i]['categorie'])
+                    cats.add(vragen[i]['familie'])
                     keuze.append(i)
                 if keuze is None:
                     lijst.pop(idx)
@@ -270,9 +307,12 @@ def main():
     print(f'ondergrens score {ondergrens} | niveaugrenzen {grenzen}\n')
     print('per bewerking :', dict(Counter(p['op'] for p in puzzels)))
     print('per niveau    :', dict(Counter(p['niveau'] for p in puzzels)))
-    dubbel = sum(1 for p in puzzels
-                 if len({q['categorie'] for q in p['vragen']}) < 3)
-    print(f'puzzels met een dubbele categorie: {dubbel}')
+    dubbel_cat = sum(1 for p in puzzels
+                     if len({q['categorie'] for q in p['vragen']}) < 3)
+    dubbel_kleur = sum(1 for p in puzzels
+                       if len({q['familie'] for q in p['vragen']}) < 3)
+    print(f'puzzels met een dubbele categorie: {dubbel_cat}')
+    print(f'puzzels met een dubbele kleur    : {dubbel_kleur}')
 
     alle = [q['nr'] for p in puzzels for q in p['vragen']]
     assert len(alle) == len(set(alle)), 'een vraag komt twee keer voor'
