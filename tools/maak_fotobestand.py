@@ -24,7 +24,10 @@ achteraf niet meer na te gaan van wie een foto is.
 
 import json
 import os
+import re
 import sys
+import unicodedata
+import urllib.parse
 
 import pandas as pd
 
@@ -37,6 +40,33 @@ KEUZE = os.path.join(WORTEL, 'vragen', 'fotokeuze.xlsx')
 FOTOS = os.path.join(WORTEL, 'fotos')
 DATA = os.path.join(WORTEL, 'data')
 SPIEGEL = os.path.join(WORTEL, 'website', 'data')
+
+
+def woorden(tekst):
+    kaal = ''.join(c for c in unicodedata.normalize('NFD', tekst)
+                   if unicodedata.category(c) != 'Mn').lower()
+    return set(re.findall(r'[a-z]{4,}', kaal))
+
+
+def past_bij_onderwerp(titel, bron):
+    """Deelt de bestandsnaam een woord met de titel van het bronartikel?
+
+    De oudere zoekronde vroeg prop=images op, en die geeft de afbeeldingen van
+    een artikel terug op alfabetische bestandsnaam — niet in de volgorde waarin
+    ze in de tekst staan. Bij het artikel over Antarctica leverde dat een foto
+    van Antennarius striatus op, een hengelaarsvis, puur omdat die naam met een
+    A begint. Dat verklaarde de matige kwaliteit van die ronde.
+
+    Deze toets houdt er alleen de kandidaten aan over waarvan de bestandsnaam
+    het onderwerp noemt: "CN Tower 1976" bij het artikel CN_Tower, "Hobbit
+    runes" bij The_Hobbit. Van de 175 vragen die alleen zulke kandidaten hadden
+    overleven er zo 62; de overige 113 waren willekeurig.
+    """
+    m = re.match(r'https://[a-z]+\.wikipedia\.org/wiki/(.+)', str(bron))
+    if not m:
+        return False
+    onderwerp = woorden(urllib.parse.unquote(m.group(1)).replace('_', ' '))
+    return bool(woorden(titel.replace('File:', '')) & onderwerp)
 
 
 def lees(pad):
@@ -76,7 +106,8 @@ def main():
         # vooraan, daarna wat de oudere ronde vond.
         beste = (hoofd.get(str(nr), {}).get('kandidaten') or [None])[0]
         rest = [k for k in (oud.get(str(nr), {}).get('kandidaten') or [])
-                if not beste or k.get('titel') != beste.get('titel')]
+                if (not beste or k.get('titel') != beste.get('titel'))
+                and past_bij_onderwerp(k.get('titel', ''), r['Bron (geverifieerd)'])]
         lijst = ([beste] if beste else []) + rest[:2]
 
         keuze = keuzes.get(nr)

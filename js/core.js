@@ -1558,31 +1558,49 @@
     }
   }
 
+  // De generator koppelt aan bijna elke puzzel een foto uit Wikimedia Commons,
+  // bij een van de drie vragen. Anders dan de sfeerfoto's gaat deze wel echt
+  // over de vraag, dus de tekst eronder mag niet blijven beweren dat het beeld
+  // niets met de puzzel te maken heeft.
+  function gekoppeldeFoto() {
+    const f = PUZZLE_DATA?.photo;
+    if (!f?.url) return null;
+    const nr = Number(f.vraag);
+    const bij = nr >= 1 && nr <= 3 ? PUZZLE_DATA['q' + nr + '_label'] : '';
+    const maker = String(f.maker || '').trim();
+    const stukjes = [maker && ('Foto: ' + maker), f.licentie].filter(Boolean);
+    return { src: f.url, alt: bij, vraag: nr,
+             credit: stukjes.join(' · '), bron: f.pagina };
+  }
+
   function renderDailyPhoto() {
     const photo = document.getElementById('dailyPhotoButton');
     const image = document.getElementById('dailyPhotoImage');
     const dialogImage = document.getElementById('dailyPhotoDialogImage');
     if (!photo || !image || !dialogImage) return;
 
-    // Een door de redactie toegewezen foto wint van de sfeerfoto-rotatie.
+    // Volgorde: een door de redactie toegewezen foto wint, daarna de foto die
+    // de generator bij een van de vragen zocht, en pas als laatste de
+    // sfeerfoto-rotatie die nergens over gaat.
     const assigned = PUZZLE_DATA?.image_path;
-    const rotatie = assigned ? null : pickDailyPhoto(getActivePuzzleKey());
-    if (!assigned && !rotatie) { photo.hidden = true; return; }
+    const gekoppeld = assigned ? null : gekoppeldeFoto();
+    const rotatie = assigned || gekoppeld ? null : pickDailyPhoto(getActivePuzzleKey());
+    if (!assigned && !gekoppeld && !rotatie) { photo.hidden = true; return; }
 
-    const src = assigned || (DAILY_PHOTO_DIR + rotatie.file);
+    const src = assigned || gekoppeld?.src || (DAILY_PHOTO_DIR + rotatie.file);
     if (image.getAttribute('src') !== src) {
       image.src = src;
       dialogImage.src = src;
     }
     // Toegewezen foto's hebben een echte alt-tekst; de rotatiefoto's zijn puur
     // decoratief en houden een lege alt, zodat schermlezers ze overslaan.
-    const alt = assigned ? (PUZZLE_DATA.image_alt || '') : '';
+    const alt = assigned ? (PUZZLE_DATA.image_alt || '') : (gekoppeld?.alt || '');
     image.alt = alt;
     dialogImage.alt = alt;
     // Ook de rotatiefoto's krijgen bronvermelding: het zijn Commons-bestanden
     // onder CC BY of CC BY-SA, waar naamsvermelding een licentievoorwaarde is.
-    renderDailyPhotoCredit(assigned
-      ? PUZZLE_DATA
+    renderDailyPhotoCredit(assigned ? PUZZLE_DATA
+      : gekoppeld ? { image_credit: gekoppeld.credit, image_source_url: gekoppeld.bron }
       : { image_credit: rotatie.credit, image_source_url: rotatie.source });
     photo.hidden = false;
     // Alleen ruimte reserveren in de vraag als er ook echt een foto staat.
@@ -1590,8 +1608,15 @@
     // Decoratief beeld: de knop draagt het label, de img blijft leeg zodat
     // schermlezers het niet dubbel voorlezen.
     photo.setAttribute('aria-label', statsCopy('Vergroot de voorbeeldfoto', 'Enlarge sample photo'));
-    document.getElementById('dailyPhotoCaption').textContent = statsCopy('Voorbeeldfoto ↗', 'Sample photo ↗');
-    document.getElementById('dailyPhotoDisclaimer').textContent = statsCopy('Ontwerpvoorbeeld — deze foto is geen hint.', 'Design preview — this photo is not a clue.');
+    document.getElementById('dailyPhotoCaption').textContent = gekoppeld
+      ? statsCopy('Bij vraag ' + gekoppeld.vraag + ' ↗', 'With question ' + gekoppeld.vraag + ' ↗')
+      : statsCopy('Voorbeeldfoto ↗', 'Sample photo ↗');
+    // Bij een sfeerfoto klopt "geen hint"; bij een gekoppelde foto niet, want
+    // die gaat juist over het onderwerp van de vraag.
+    document.getElementById('dailyPhotoDisclaimer').textContent = gekoppeld
+      ? statsCopy('Hoort bij vraag ' + gekoppeld.vraag + '. Het antwoord staat er niet op.',
+                  'Belongs to question ' + gekoppeld.vraag + '. The answer is not in the photo.')
+      : statsCopy('Ontwerpvoorbeeld — deze foto is geen hint.', 'Design preview — this photo is not a clue.');
   }
 
   // Alleen een herkenbare gevraagde eenheid tonen, nooit een contextgetal

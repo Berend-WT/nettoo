@@ -90,6 +90,8 @@
     'Snel verder': 'Quick actions',
     'Ga verder': 'Continue',
     'Ga verder waar je gebleven was': 'Pick up where you left off',
+    'Speel online tegen anderen': 'Play online against others',
+    'Daag vrienden uit of doe mee met een open game.': 'Challenge friends or join an open game.',
     'Vind je volgende uitdaging': 'Find your next challenge',
     'Zoek op categorie, operator en niveau': 'Browse by category, operator and level',
     'Ontdek Netto': 'Explore Netto',

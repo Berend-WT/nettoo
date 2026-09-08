@@ -56,6 +56,7 @@ DATA = os.path.join(WORTEL, 'data')
 SPIEGEL = os.path.join(WORTEL, 'website', 'data')
 
 STIJL = os.path.join(WORTEL, 'css', 'styles.css')
+KERN = os.path.join(WORTEL, 'js', 'core.js')
 FOTOS = os.path.join(WORTEL, 'fotos')
 MAX_FOTOS_PER_PUZZEL = 2
 
@@ -84,28 +85,39 @@ def kleurfamilies():
 
 
 def fotos_per_vraag():
-    """Foto per vraagnummer: adres, bestandspagina, licentie en maker.
+    """Foto per vraagtekst, gelezen uit data/netto_fotos.js.
+
+    Dat bestand is de enige plek waar wordt beslist welke foto bij een vraag
+    hoort — inclusief de handmatige keuzes uit fotokeuze.xlsx. De generator
+    kiest dus niet zelf, want dan zouden de twee uiteenlopen zodra jij een rij
+    invult.
 
     Drie foto's in een puzzel is zonde: dan hangen ze bij elkaar terwijl een
     andere puzzel er geen heeft. Twee is het plafond, en bij het vullen krijgt
     een puzzel zonder foto voorrang. Zo raken de 385 foto's over zo veel
     mogelijk puzzels verspreid in plaats van opgehoopt.
     """
-    uit = {}
-    # De hoofdafbeelding wint; de oudere ronde vult alleen de gaten. Zelfde
-    # volgorde als tools/maak_fotobestand.py, zodat de puzzel dezelfde foto
-    # toont als het losse fotobestand.
-    for naam in ('kandidaten.json', 'hoofdafbeeldingen.json'):
-        pad = os.path.join(FOTOS, naam)
-        if not os.path.exists(pad):
-            continue
-        with open(pad, encoding='utf-8') as f:
-            for nr, blok in json.load(f).items():
-                beste = (blok.get('kandidaten') or [None])[0]
-                if beste:
-                    uit[int(nr)] = {'url': beste['miniatuur'], 'pagina': beste['pagina'],
-                                    'licentie': beste['licentie'], 'maker': beste['maker']}
-    return uit
+    pad = os.path.join(DATA, 'netto_fotos.js')
+    if not os.path.exists(pad):
+        print('let op: data/netto_fotos.js ontbreekt — draai eerst '
+              'tools/maak_fotobestand.py')
+        return {}
+    ruw = open(pad, encoding='utf-8').read()
+    return json.loads(ruw[ruw.index('=', ruw.index('window.')) + 1:].strip().rstrip(';'))
+
+
+def iconen():
+    """Categorie naar icoonnaam, gelezen uit js/core.js.
+
+    Negenentwintig categorieen delen zesentwintig iconen: Kunst en Mode delen
+    het palet, Landbouw en Merken de fabriek, Records en Economie de grafiek.
+    Twee gelijke iconen naast elkaar op het landingsscherm ziet er net zo
+    slordig uit als twee gelijke kleuren, dus dit telt als aparte eis.
+    """
+    tekst = open(KERN, encoding='utf-8').read()
+    begin = tekst.index('DAILY_CATEGORY_ICON_KEYS = Object.freeze({')
+    blok = tekst[begin:tekst.index('});', begin)]
+    return dict(re.findall(r"'([^']+)':\s*'([^']+)'", blok))
 
 
 def categoriesleutel(categorie):
@@ -173,6 +185,7 @@ def waardedrietallen(waarden):
 def bouw(vragen, doel_aantal, seed, quota=10**9):
     rng = random.Random(seed)
     families = kleurfamilies()
+    icoon = iconen()
     for q in vragen:
         # De kleur is bepalender dan de categorie: drie verschillende
         # categorieen leverden bij 28 procent van de puzzels toch twee gelijke
@@ -180,10 +193,14 @@ def bouw(vragen, doel_aantal, seed, quota=10**9):
         # dezelfde kleur naast elkaar ziet er slordig uit, dus de eis verschuift
         # van categorie naar familie. Dat is meteen strenger: verschillende
         # families betekent altijd ook verschillende categorieen.
-        q['familie'] = families.get(categoriesleutel(q['categorie']), q['categorie'])
+        # Kleur en icoon moeten allebei verschillen. Ze overlappen grotendeels,
+        # maar niet helemaal: Records en Economie hebben verschillende kleuren
+        # en hetzelfde icoon.
+        q['familie'] = (families.get(categoriesleutel(q['categorie']), q['categorie']),
+                        icoon.get(q['categorie'], 'idea'))
     met_foto = fotos_per_vraag()
     for q in vragen:
-        q['fotogegevens'] = met_foto.get(q['nr'])
+        q['fotogegevens'] = met_foto.get(q['tekst'])
         q['foto'] = q['fotogegevens'] is not None
     per_waarde = defaultdict(list)
     for i, q in enumerate(vragen):
@@ -244,7 +261,7 @@ def bouw(vragen, doel_aantal, seed, quota=10**9):
         """
         opties = [i for i in per_waarde[waarde]
                   if i in vrij and i not in gebruikt
-                  and vragen[i]['familie'] not in verboden_cats]
+                  and not (set(vragen[i]['familie']) & verboden_cats)]
         if fotos_al >= MAX_FOTOS_PER_PUZZEL:
             # Hard: liever een puzzel minder dan drie foto's op een hoop. De
             # uitwijk "neem dan toch maar een fotovraag" liet er dertien door.
@@ -284,7 +301,7 @@ def bouw(vragen, doel_aantal, seed, quota=10**9):
                         keuze = None
                         break
                     gebruikt.add(i)
-                    cats.add(vragen[i]['familie'])
+                    cats.update(vragen[i]['familie'])
                     fotos += 1 if vragen[i]['foto'] else 0
                     keuze.append(i)
                 if keuze is None:
@@ -360,9 +377,12 @@ def main():
     dubbel_cat = sum(1 for p in puzzels
                      if len({q['categorie'] for q in p['vragen']}) < 3)
     dubbel_kleur = sum(1 for p in puzzels
-                       if len({q['familie'] for q in p['vragen']}) < 3)
+                       if len({q['familie'][0] for q in p['vragen']}) < 3)
+    dubbel_icoon = sum(1 for p in puzzels
+                       if len({q['familie'][1] for q in p['vragen']}) < 3)
     print(f'puzzels met een dubbele categorie: {dubbel_cat}')
     print(f'puzzels met een dubbele kleur    : {dubbel_kleur}')
+    print(f'puzzels met een dubbel icoon     : {dubbel_icoon}')
     fv = Counter(sum(1 for q in p['vragen'] if q['foto']) for p in puzzels)
     met = len(puzzels) - fv[0]
     print(f'puzzels met minstens een foto    : {met} van {len(puzzels)} '
@@ -382,31 +402,29 @@ def main():
         schrijf_bestand('netto_race_pool.js', 'NETTO_RACE_POOL', lijst, args.doel)
         return
 
-    # De bibliotheek wordt vervangen; de dagpuzzels blijven staan. Die dragen
-    # een datum en zijn al gespeeld — dat is geschiedenis, geen voorraad. Nieuwe
-    # dagpuzzels komen uit deze bibliotheek, via de databank.
+    # Bibliotheek en dagpuzzels delen een set, dus ze komen uit dezelfde ronde:
+    # de eerste puzzels worden dagpuzzels en houden hun bestaande datum, de rest
+    # vult de bibliotheek. Zo komt geen vraag in allebei voor, en gelden voor de
+    # dagpuzzels dezelfde eisen — de oude set had negen van de vijfendertig met
+    # twee gelijke iconen omdat hij nooit opnieuw gebouwd was.
     pad = os.path.join(DATA, 'netto_frontend_puzzles.js')
     ruw = open(pad, encoding='utf-8').read()
     bestaand = json.loads(ruw[ruw.index('=', ruw.index('window.')) + 1:].strip().rstrip(';'))
-    bestaand['library'] = [als_puzzel(p, i, 'library')
-                           for i, p in enumerate(puzzels, start=1)]
-    bestaand['race'] = []
+    datums = [d.get('date') for d in bestaand.get('daily', []) if d.get('date')]
 
-    # De dagpuzzels worden niet opnieuw gebouwd, maar ze verdienen wel een foto.
-    # Ze worden opgezocht op vraagtekst; bij meer dan een fotovraag wordt er
-    # geloot, met dezelfde rng-seed zodat het reproduceerbaar blijft.
-    loot = random.Random(seed)
-    op_tekst = {q['tekst']: q['fotogegevens'] for q in vragen if q['fotogegevens']}
-    met_foto = 0
-    for dp in bestaand.get('daily', []):
-        keuzes = [(i, op_tekst[dp[f'q{i}_label']]) for i in (1, 2, 3)
-                  if dp.get(f'q{i}_label') in op_tekst]
-        dp.pop('photo', None)
-        if keuzes:
-            plek, bron = loot.choice(keuzes)
-            dp['photo'] = dict(bron, vraag=plek)
-            met_foto += 1
-    print(f'dagpuzzels met een foto: {met_foto} van {len(bestaand.get("daily", []))}')
+    dagpuzzels = []
+    for i, (datum, p) in enumerate(zip(datums, puzzels), start=1):
+        dp = als_puzzel(p, i, 'daily')
+        dp['date'] = datum
+        dp['source_library_id'] = None
+        dagpuzzels.append(dp)
+    bestaand['daily'] = dagpuzzels
+    bestaand['library'] = [als_puzzel(p, i, 'library')
+                           for i, p in enumerate(puzzels[len(dagpuzzels):], start=1)]
+    bestaand['race'] = []
+    print(f'dagpuzzels opnieuw gebouwd: {len(dagpuzzels)}')
+    print(f'bibliotheek: {len(bestaand["library"])}')
+
     schrijf_bestand('netto_frontend_puzzles.js', 'NETTO_REBUILT_PUZZLES',
                     bestaand, args.doel)
     print(f"dagpuzzels ongemoeid gelaten: {len(bestaand.get('daily', []))}")
