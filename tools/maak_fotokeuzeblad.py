@@ -17,8 +17,10 @@ mee naar git; het werkblad is opnieuw te maken zolang kandidaten.json er is.
 
 import json
 import os
+import re
 import ssl
 import sys
+import urllib.parse
 import urllib.request
 
 import pandas as pd
@@ -47,6 +49,45 @@ ONEDRIVE = os.path.join(os.path.expanduser('~'), 'OneDrive - Driestar-Wartburg')
 BREED = 150   # pixels; bepaalt ook de kolombreedte
 HOOG = 110    # pixels; bepaalt de rijhoogte
 AGENT = 'Netto-fotokeuze/1.0 (educatief quizspel)'
+
+# Woorden die de vraag opbouwen maar niets over het onderwerp zeggen. Eruit
+# halen scheelt ruis in de zoekopdracht.
+RUIS = {
+    'how', 'many', 'much', 'what', 'which', 'does', 'did', 'the', 'and',
+    'are', 'was', 'were', 'has', 'have', 'for', 'with', 'that', 'this',
+    'about', 'average', 'approximately', 'estimated', 'contain', 'made',
+    'you', 'your', 'its', 'their', 'from', 'into', 'over', 'per',
+    'hoeveel', 'welk', 'welke', 'hoe', 'wat', 'een', 'de', 'het', 'van', 'in',
+    'op', 'is', 'zijn', 'er', 'en', 'of', 'die', 'dat', 'met', 'voor', 'per',
+    'bij', 'aan', 'te', 'tot', 'als', 'werd', 'wordt', 'heeft', 'hebben',
+    'telt', 'staan', 'staat', 'duurt', 'ongeveer', 'gemiddeld', 'standaard',
+    'volgens', 'totaal', 'jaar', 'meter', 'kilometer', 'centimeter',
+    'millimeter', 'kilogram', 'gram', 'liter', 'ton', 'procent', 'graden',
+    'seconde', 'seconden', 'minuut', 'minuten', 'uur', 'uren', 'dagen', 'dag',
+    'maanden', 'miljoen', 'miljard', 'duizend', 'aantal', 'lang', 'hoog',
+    'diep', 'breed', 'groot', 'zwaar', 'maximaal', 'wereldwijd', 'eerste',
+    'stand', 'klassiek', 'bevat', 'kent', 'gebruikt', 'ooit',
+}
+
+
+def zoekterm(vraag, engels=None):
+    # Commons en Unsplash zijn Engelstalig: "knipperbewegingen ogen" levert daar
+    # niets op, "blinks eyes" wel. De bank heeft bij 1313 van de 1409 vragen een
+    # Engelse zoekhulp staan; die gaat voor.
+    bron = engels if isinstance(engels, str) and engels.strip() else vraag
+    woorden = re.findall(r"[A-Za-zÀ-ÿ'’-]{3,}", str(bron))
+    kern = [w for w in woorden if w.lower() not in RUIS]
+    return ' '.join(kern[:4]) or str(bron)[:50]
+
+
+def zoeklinks(vraag, bron, engels=None):
+    q = urllib.parse.quote_plus(zoekterm(vraag, engels))
+    return {
+        'Commons': f'https://commons.wikimedia.org/w/index.php?search={q}'
+                   f'&title=Special:MediaSearch&type=image',
+        'Unsplash': f'https://unsplash.com/s/photos/{q}',
+        'Artikel': bron if isinstance(bron, str) and 'wikipedia.org/wiki/' in bron else '',
+    }
 
 
 def context():
@@ -87,7 +128,10 @@ def main():
         kandidaten = json.load(f)
 
     d = pd.read_excel(REVIEW, sheet_name='Vragen')
-    d = d[d['Nr'].astype(str).isin(kandidaten)].copy()
+    # Ook de vragen zonder kandidaat komen erin: juist daar moet je zelf zoeken,
+    # en dan wil je de zoeklinks bij de hand hebben in plaats van in een tweede
+    # bestand. De rij is dan leeg op de fotokolommen na.
+    d = d[d['In gebruik'].isin(['daily', 'puzzel'])].copy()
     d['_r'] = d['In gebruik'].map({'daily': 0, 'puzzel': 1}).fillna(2)
     d = d.sort_values(['_r', 'Nr'])
 
@@ -95,8 +139,9 @@ def main():
     ws = wb.active
     ws.title = 'Fotokeuze'
     koppen = ['Nr', 'In gebruik', 'Vraag', 'Antwoord',
-              'Foto 1', 'Foto 2', 'Foto 3', 'Keuze', 'Gevonden via', 'Opmerking']
-    breedtes = [6, 11, 52, 11, 22, 22, 22, 9, 14, 24]
+              'Foto 1', 'Foto 2', 'Foto 3', 'Keuze', 'Gevonden via',
+              'Commons', 'Unsplash', 'Artikel', 'Opmerking']
+    breedtes = [6, 11, 48, 11, 22, 22, 22, 9, 13, 11, 11, 11, 22]
     for i, (k, b) in enumerate(zip(koppen, breedtes), start=1):
         ws.column_dimensions[get_column_letter(i)].width = b
         c = ws.cell(row=1, column=i, value=k)
@@ -111,9 +156,7 @@ def main():
     for _, r in d.iterrows():
         blok = kandidaten.get(str(int(r['Nr'])), {})
         lijst = blok.get('kandidaten') or []
-        if not lijst:
-            continue
-        ws.row_dimensions[rij].height = HOOG * 0.78 + 22
+        ws.row_dimensions[rij].height = (HOOG * 0.78 + 22) if lijst else 30
         for kol, waarde in ((1, int(r['Nr'])), (2, r['In gebruik']),
                             (3, str(r['Vraag NL'])), (4, r['Antwoord'])):
             c = ws.cell(row=rij, column=kol, value=waarde)
@@ -147,13 +190,25 @@ def main():
         # Foto's uit het bronartikel gaan gegarandeerd over het juiste
         # onderwerp; die uit de zoekfunctie lang niet altijd. Dat verschil moet
         # zichtbaar zijn, anders kost het beoordelen alsnog tijd.
-        h = ws.cell(row=rij, column=9, value=blok.get('herkomst', ''))
+        h = ws.cell(row=rij, column=9, value=blok.get('herkomst', 'zelf zoeken'))
         h.font = Font(name='Arial', size=9)
         h.alignment = Alignment(horizontal='center', vertical='center')
         h.fill = PatternFill('solid',
                              fgColor='D6EAD6' if blok.get('herkomst') == 'artikel'
-                             else 'FBE9A5')
-        ws.cell(row=rij, column=10).fill = PatternFill('solid', fgColor='FBFBFB')
+                             else 'FBE9A5' if lijst else 'F0F0F0')
+
+        # Drie klikbare zoeklinks per rij, zodat afkeuren geen doodlopende weg is.
+        for i, (naam, adres) in enumerate(
+                zoeklinks(r['Vraag NL'], r.get('Bron (geverifieerd)'),
+                          r.get('Vraag EN (zoekhulp)')).items()):
+            c = ws.cell(row=rij, column=10 + i)
+            if not adres:
+                continue
+            c.hyperlink = adres
+            c.value = naam.lower()
+            c.font = Font(name='Arial', size=9, color='0563C1', underline='single')
+            c.alignment = Alignment(horizontal='center', vertical='center')
+        ws.cell(row=rij, column=13).fill = PatternFill('solid', fgColor='FBFBFB')
         rij += 1
         gevuld += 1
 
