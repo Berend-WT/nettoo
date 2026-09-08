@@ -822,6 +822,16 @@
   .race-duration-options button:hover { border-color:#B6BCF0; }
   .race-duration-options button.active { border-color:var(--bg-main); background:#EEF2FF; }
   .race-duration-options button.active span { color:var(--bg-main); }
+  /* Speling-balk: vijf smalle knoppen naast elkaar, net als de tempokeuze.
+     De vakjes zijn krapper omdat er vijf in passen in plaats van drie. */
+  .race-tolerance-options { display:flex; gap:4px; }
+  .race-tolerance-options button { flex:1; border:2px solid var(--border-color); background:var(--surface); border-radius:10px; padding:8px 2px; cursor:pointer; text-align:center; transition:border-color .15s ease,background .15s ease; }
+  .race-tolerance-options button b { display:block; font:700 12px 'Space Grotesk',sans-serif; color:var(--bg-dark); }
+  .race-tolerance-options button span { display:block; color:#9CA3AF; font:600 9px 'JetBrains Mono',monospace; text-transform:uppercase; letter-spacing:.04em; margin-top:2px; }
+  .race-tolerance-options button:hover { border-color:#B6BCF0; }
+  .race-tolerance-options button.active { border-color:var(--bg-main); background:#EEF2FF; }
+  .race-tolerance-options button.active span { color:var(--bg-main); }
+  .race-tolerance-note { display:block; margin-top:7px; font:400 11.5px 'Space Grotesk',sans-serif; color:#6B7280; }
   .race-online-layout { display:grid; grid-template-columns:1fr 1fr; gap:14px; align-items:start; }
   .race-online-controls { display:grid; gap:12px; }
   .race-online-create { width:100%; margin-top:10px; }

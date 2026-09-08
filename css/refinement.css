@@ -719,6 +719,7 @@ textarea:focus-visible,
 
 /* Dark theme surface corrections for the new layer. */
 [data-theme="dark"] .race-config-card,
+[data-theme="dark"] .race-tolerance-options button,
 [data-theme="dark"] .race-open-games,
 [data-theme="dark"] .race-duel-room,
 [data-theme="dark"] .submit-mode-tabs,

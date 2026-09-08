@@ -13,6 +13,23 @@
     snel: { label: '5 minuten', name: 'Snel', emoji: '⏱️' },
     blitz: { label: '10 minuten', name: 'Blitz', emoji: '🚀' }
   };
+
+  // Hoe dicht je bij het antwoord moet zitten om een punt te pakken. De factor
+  // is het aantal keren dat je ernaast zat: 1,00 betekent precies goed, 1,25 dat
+  // je binnen een kwart van de waarde bleef. De race telt de drie vragen samen
+  // en middelt hun factor, dus een misser op een vraag kun je met twee goede
+  // deels goedmaken.
+  const RACE_TOLERANTIES = {
+    perfect: 1.00, scherp: 1.10, netjes: 1.25, ruim: 1.50, grof: 2.00
+  };
+  const RACE_TOLERANTIE_META = {
+    perfect: { label: '1,00×', name: 'Perfect', uitleg: 'Exact goed, niets ernaast' },
+    scherp: { label: '1,10×', name: 'Scherp', uitleg: 'Tien procent speling' },
+    netjes: { label: '1,25×', name: 'Netjes', uitleg: 'Een kwart ernaast mag' },
+    ruim: { label: '1,50×', name: 'Ruim', uitleg: 'Anderhalf keer ernaast mag' },
+    grof: { label: '2,00×', name: 'Grof', uitleg: 'Factor twee, orde van grootte' }
+  };
+  const RACE_TOLERANTIE_STANDAARD = 'perfect';
   const RACE_LEVEL_ORDER = { 'easy': 0, 'intermediate': 1, 'hard': 2, 'extremely-hard': 3 };
   const RACE_LEVEL_LABEL = { 'easy': 'Easy', 'intermediate': 'Intermediate', 'hard': 'Hard', 'extremely-hard': 'Extremely Hard' };
   const RACE_MODE_CONFIG_KEY = 'netto_race_mode_config';
@@ -74,7 +91,9 @@
     try { saved = JSON.parse(localStorage.getItem(RACE_MODE_CONFIG_KEY) || '{}'); } catch (_) {}
     const config = saved[mode] || {};
     return {
-      durationKey: RACE_DURATIONS[config.durationKey] ? config.durationKey : 'snel'
+      durationKey: RACE_DURATIONS[config.durationKey] ? config.durationKey : 'snel',
+      toleranceKey: RACE_TOLERANTIES[config.toleranceKey]
+        ? config.toleranceKey : RACE_TOLERANTIE_STANDAARD
     };
   }
 
@@ -83,6 +102,10 @@
     try { saved = JSON.parse(localStorage.getItem(RACE_MODE_CONFIG_KEY) || '{}'); } catch (_) {}
     saved[mode] = { ...getRaceModeConfig(mode), ...patch };
     localStorage.setItem(RACE_MODE_CONFIG_KEY, JSON.stringify(saved));
+  }
+
+  function raceTolerantieMeta(key) {
+    return RACE_TOLERANTIE_META[key] || RACE_TOLERANTIE_META[RACE_TOLERANTIE_STANDAARD];
   }
 
   function raceDurationMeta(key) {
@@ -166,6 +189,7 @@
         roomCode: session.code,
         name: raceDisplayName(),
         durationKey: session.durationKey || getRaceModeConfig('online').durationKey,
+        toleranceKey: session.toleranceKey || getRaceModeConfig('online').toleranceKey,
         createdAt: session.createdAt || Date.now(),
         client_id: RACE_CLIENT_ID
       });
@@ -212,7 +236,8 @@
     const el = document.getElementById('raceRoomSettings');
     if (!el || !raceDuelSession) return;
     const duration = raceDurationMeta(raceDuelSession.durationKey);
-    el.textContent = `${duration.emoji} ${duration.label}`;
+    const tol = raceTolerantieMeta(raceDuelSession.toleranceKey);
+    el.textContent = `${duration.emoji} ${duration.label} · 🎯 ${tol.label} ${tol.name}`;
   }
 
   function openSettings() {
@@ -240,8 +265,32 @@
     });
   }
 
+  function renderRaceTolerantieOptions(mode) {
+    const container = document.getElementById(
+      `race${mode[0].toUpperCase() + mode.slice(1)}Tolerances`);
+    if (!container) return;
+    const config = getRaceModeConfig(mode);
+    container.querySelectorAll('[data-tolerance]').forEach(button => {
+      const actief = button.dataset.tolerance === config.toleranceKey;
+      button.classList.toggle('active', actief);
+      button.setAttribute('aria-pressed', actief ? 'true' : 'false');
+    });
+    const uitleg = document.getElementById(
+      `race${mode[0].toUpperCase() + mode.slice(1)}ToleranceNote`);
+    if (uitleg) uitleg.textContent = raceTolerantieMeta(config.toleranceKey).uitleg;
+  }
+
+  function selectRaceTolerantie(mode, key) {
+    if (!RACE_TOLERANTIES[key]) return;
+    saveRaceModeConfig(mode, { toleranceKey: key });
+    renderRaceTolerantieOptions(mode);
+  }
+
   function renderRaceModeControls() {
-    ['solo', 'online'].forEach(renderRaceDurationOptions);
+    ['solo', 'online'].forEach(mode => {
+      renderRaceDurationOptions(mode);
+      renderRaceTolerantieOptions(mode);
+    });
   }
 
   function switchRaceMode(mode) {
@@ -346,16 +395,20 @@
     stopRaceTimer();
     const session = raceDuelSession;
     const durationKey = options.durationKey || (session && session.durationKey) || 'snel';
+    const toleranceKey = options.toleranceKey || (session && session.toleranceKey)
+      || getRaceModeConfig(isDuel ? 'online' : 'solo').toleranceKey;
     const totalSeconds = RACE_DURATIONS[durationKey] || RACE_TOTAL_SECONDS;
     if (isDuel && session && session.role === 'host') {
       session.seed = (Date.now() ^ (Math.random() * 0xffffffff)) >>> 0;
       session.durationKey = durationKey;
+      session.toleranceKey = toleranceKey;
       unpublishOpenRaceEntry();
-      broadcastRaceEvent(session.code, 'start', { startedAt: Date.now(), seed: session.seed, durationKey });
+      broadcastRaceEvent(session.code, 'start', { startedAt: Date.now(), seed: session.seed, durationKey, toleranceKey });
     }
     raceQueue = buildRaceQueue(isDuel && session ? session.seed : undefined);
     if (!raceQueue.length) { showNoticeToast('Er zijn nog geen race-puzzels geladen.'); return; }
-    raceState = { index: 0, results: [], correct: 0, streak: 0, longestStreak: 0, remaining: totalSeconds, totalSeconds, durationKey, timerId: null, progress: 0, endsAt: null };
+    raceState = { index: 0, results: [], correct: 0, streak: 0, longestStreak: 0, remaining: totalSeconds, totalSeconds, durationKey, toleranceKey,
+      tolerantie: RACE_TOLERANTIES[toleranceKey] || 1.0, timerId: null, progress: 0, endsAt: null };
     const inDuel = Boolean(isDuel && raceDuelSession);
     if (inDuel) raceDuelSession.opponent = { correct: 0, finished: false };
     const oppEl = document.getElementById('raceOpponentHistory');
@@ -470,16 +523,22 @@
     });
     const factor = answers.reduce((sum, a, i) => sum + scoreVraag(guesses[i], a), 0) / 3;
     const exact = guesses[0] === answers[0] && guesses[1] === answers[1] && guesses[2] === answers[2];
-    if (exact) launchConfetti();
-    raceState.results.push({ puzzle: p, guesses, factor, exact });
-    raceState.correct += exact ? 1 : 0;
-    raceState.streak = exact ? raceState.streak + 1 : 0;
+    // Een punt valt binnen de gekozen speling. Bij 1,00 komt dat neer op exact
+    // goed; de kleine marge vangt alleen afrondingsruis van het delen door drie.
+    const grens = raceState.tolerantie;
+    const raak = factor <= grens + 0.0001;
+    if (raak) launchConfetti();
+    raceState.results.push({ puzzle: p, guesses, factor, exact, raak });
+    raceState.correct += raak ? 1 : 0;
+    raceState.streak = raak ? raceState.streak + 1 : 0;
     raceState.longestStreak = Math.max(raceState.longestStreak, raceState.streak);
-    pushRaceChip(exact);
-    if (raceDuelSession) broadcastRaceEvent(raceDuelSession.code, 'result', { exact, factor });
+    pushRaceChip(raak);
+    if (raceDuelSession) broadcastRaceEvent(raceDuelSession.code, 'result', { exact: raak, factor });
     const fb = document.getElementById('raceFeedback');
-    fb.textContent = exact ? '✓ Exact — door!' : `✗ Niet exact (${factor.toFixed(2)}×) — door!`;
-    fb.classList.add(exact ? 'is-good' : 'is-bad');
+    fb.textContent = raak
+      ? (exact ? '✓ Exact — door!' : `✓ Binnen ${grens.toFixed(2)}× (${factor.toFixed(2)}×) — door!`)
+      : `✗ ${factor.toFixed(2)}× ernaast — door!`;
+    fb.classList.add(raak ? 'is-good' : 'is-bad');
     raceState.index += 1;
     if (raceState.index >= raceQueue.length) { finishRace(false); return; }
     renderRacePuzzle();
@@ -569,7 +628,8 @@
     leaveRaceRoom();
     connectRaceRoom(generateRaceRoomCode(), 'host', {
       visibility,
-      durationKey: selected.durationKey
+      durationKey: selected.durationKey,
+      toleranceKey: selected.toleranceKey
     });
   }
 
@@ -597,11 +657,13 @@
   function connectRaceRoom(code, role, config = {}) {
     if (!supabaseClient) { showSarcasticToast('Geen verbinding met Supabase.'); return; }
     const durationKey = RACE_DURATIONS[config.durationKey] ? config.durationKey : null;
+    const toleranceKey = RACE_TOLERANTIES[config.toleranceKey] ? config.toleranceKey : null;
     raceDuelSession = {
       code: String(code).toUpperCase(),
       role,
       visibility: config.visibility === 'open' ? 'open' : 'closed',
       durationKey,
+      toleranceKey,
       createdAt: Number(config.createdAt) || Date.now(),
       channel: null,
       opponentName: null,
@@ -636,6 +698,7 @@
             role,
             visibility: raceDuelSession.visibility,
             durationKey: raceDuelSession.durationKey,
+            toleranceKey: raceDuelSession.toleranceKey,
             createdAt: raceDuelSession.createdAt
           });
           setRaceDuelStatus(raceDuelSession.role === 'host'
@@ -659,6 +722,7 @@
       // Gast neemt de instellingen van de host over — iedereen speelt dezelfde set en tijd.
       if (raceDuelSession.role === 'guest') {
         if (RACE_DURATIONS[opponentMeta.durationKey]) raceDuelSession.durationKey = opponentMeta.durationKey;
+        if (RACE_TOLERANTIES[opponentMeta.toleranceKey]) raceDuelSession.toleranceKey = opponentMeta.toleranceKey;
         renderRaceRoomSettings();
       }
       if (!raceDuelSession.opponent) raceDuelSession.opponent = { correct: 0, finished: false };
@@ -681,6 +745,7 @@
       // Neem de tijd van de host over uit het start-signaal. Een oudere client
       // stuurt hier mogelijk nog een setKey mee; die wordt genegeerd.
       if (raceDuelSession && RACE_DURATIONS[payload.durationKey]) raceDuelSession.durationKey = payload.durationKey;
+      if (raceDuelSession && RACE_TOLERANTIES[payload.toleranceKey]) raceDuelSession.toleranceKey = payload.toleranceKey;
       if (!raceState) startRaceCore(true);
     } else if (event === 'result') {
       if (!raceDuelSession.opponent) raceDuelSession.opponent = { correct: 0, finished: false };

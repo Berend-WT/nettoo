@@ -338,6 +338,7 @@ function renderLibraryStats() {
   window.createClosedRaceGame = createClosedRaceGame;
   window.refreshOpenGames = refreshOpenGames;
   window.joinOpenRaceGame = joinOpenRaceGame;
+  window.selectRaceTolerantie = selectRaceTolerantie;
   window.toggleAutoCalc = toggleAutoCalc;
   window.toggleTheme = toggleTheme;
   window.applyTheme = applyTheme;
