@@ -34,6 +34,9 @@ from openpyxl.styles import Alignment, Font, PatternFill
 from openpyxl.utils import get_column_letter
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+# Het downloaden en schalen van miniaturen staat al in het keuzeblad-script;
+# tweemaal dezelfde code onderhouden is vragen om verschil.
+from maak_fotokeuzeblad import haal_miniatuur
 
 if hasattr(sys.stdout, 'reconfigure'):
     sys.stdout.reconfigure(encoding='utf-8', errors='replace')
@@ -70,7 +73,12 @@ def main():
         kandidaat = (onderwerp.get(nr, {}).get('kandidaten') or [None])[0]
         if not kandidaat:
             continue
-        te_doen.append((RANG[gebruik], int(nr), gebruik, str(r[k['Vraag NL']]),
+        # Sorteren op zichtbaarheid, en daarbinnen op de naamtreffer: klopt de
+        # naam van het gevonden artikel met de vraag, dan is het voorstel
+        # sterker. Zo staat het beste bovenaan en is een half nagelopen blad
+        # nog steeds het meest bruikbare deel.
+        te_doen.append((RANG[gebruik], 0 if kandidaat.get('naamtreffer') else 1,
+                        int(nr), gebruik, str(r[k['Vraag NL']]),
                         r[k['Antwoord']], kandidaat))
     te_doen.sort()
     print(f'{len(te_doen)} voorstellen om na te lopen')
@@ -90,7 +98,7 @@ def main():
     ws.freeze_panes = 'C2'
 
     meegenomen = 0
-    for rij, (_, nr, gebruik, vraag, antwoord, kandidaat) in enumerate(te_doen, start=2):
+    for rij, (_, _, nr, gebruik, vraag, antwoord, kandidaat) in enumerate(te_doen, start=2):
         waarden = [nr, gebruik, vraag, antwoord, None, None,
                    kandidaat.get('gezocht', ''),
                    'ja' if kandidaat.get('naamtreffer') else 'nee',
@@ -104,6 +112,11 @@ def main():
                 cel.hyperlink = kandidaat['pagina']
                 cel.font = Font(color='0563C1', underline='single')
         pad = os.path.join(MINIATUREN, f'{nr}_0.jpg')
+        # Het keuzeblad haalt alleen miniaturen op voor daily- en puzzelvragen.
+        # Race en breinkrakers staan hier ook in, dus die ontbreken nog. Een rij
+        # zonder plaatje valt niet te beoordelen, dus die halen we alsnog.
+        if not os.path.exists(pad) and kandidaat.get('miniatuur'):
+            haal_miniatuur(kandidaat['miniatuur'], pad)
         if os.path.exists(pad):
             try:
                 beeld = XlImage(pad)
