@@ -872,7 +872,7 @@ window.NETTO_BRONNEN = {
     "bron": "https://www.cdc.gov/niosh/noise/about/noise.html",
     "uitleg": "Een normaal gesprek zit rond de zestig decibel."
   },
-  "Hoeveel deelstaten (Bundesländer) telt Duitsland?": {
+  "Hoeveel deelstaten telt Duitsland?": {
     "bron": "https://nl.wikipedia.org/wiki/Duitsland",
     "uitleg": "Duitsland telt 16 nationale parken en meer dan 100 natuurparken."
   },
@@ -1452,7 +1452,7 @@ window.NETTO_BRONNEN = {
     "bron": "https://en.wikipedia.org/wiki/Elizabeth_II",
     "uitleg": "Zij regeerde van 1952 tot 2022, zeventig jaar."
   },
-  "Hoeveel jaar duurden de Punische oorlogen samen?": {
+  "Hoeveel jaar zaten er tussen het begin en het einde van de Punische oorlogen?": {
     "bron": "https://en.wikipedia.org/wiki/Punic_Wars",
     "uitleg": "Van 264 tot 146 voor Christus is 118 jaar tussen begin en eind."
   },
@@ -5012,7 +5012,7 @@ window.NETTO_BRONNEN = {
     "bron": "https://en.wikipedia.org/wiki/St._Petersburg%E2%80%93Tampa_Airboat_Line",
     "uitleg": "De eerste lijnvlucht met betalende passagiers vertrok op 1 januari 1914. De oude bron was het artikel over de Eerste Wereldoorlog."
   },
-  "In welk jaar viel Carthago aan de Romeinen tijdens de Derde Punische Oorlog?": {
+  "In welk jaar voor Christus viel Carthago in handen van de Romeinen?": {
     "bron": "https://nl.wikipedia.org/wiki/Punische_oorlogen",
     "uitleg": "Er werden drie oorlogen tussen de Carthagers en de Romeinen uitgevochten tussen 264 en 146 v.Chr."
   },
