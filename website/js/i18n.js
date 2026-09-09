@@ -80,6 +80,7 @@
     'Deel jouw beste feit of formule': 'Share your best fact or equation',
     'Deel een feit of bouw een puzzel': 'Share a fact or build a puzzle',
     'Instellingen': 'Settings',
+    'Open instellingen': 'Open settings',
     'Taal, uiterlijk en race-vraagsets': 'Language, appearance and race question sets',
     'Hoofdnavigatie': 'Main navigation',
     'Menu sluiten': 'Close menu',

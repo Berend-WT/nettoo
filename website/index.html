@@ -25,10 +25,10 @@
 <script src="data/netto_frontend_puzzles.js?v=48"></script>
 <script src="data/netto_race_pool.js?v=36"></script>
 <script src="data/netto_breinkrakers.js?v=28"></script>
-<script src="data/netto_translations_en.js?v=36"></script>
-<script src="js/i18n.js?v=52"></script>
+<script src="data/netto_translations_en.js?v=37"></script>
+<script src="js/i18n.js?v=53"></script>
 <link rel="stylesheet" href="css/styles.css?v=50">
-<link rel="stylesheet" href="css/refinement.css?v=75">
+<link rel="stylesheet" href="css/refinement.css?v=76">
 
 </head>
 <body>
@@ -60,6 +60,9 @@
       </button>
       <button class="stats-button" id="statsButton" type="button" aria-haspopup="dialog" aria-controls="modalStats" aria-label="Open statistieken" onclick="openStatsModal()">
         <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8" aria-hidden="true"><path d="M5 20V10h3v10M11 20V4h3v16M17 20v-7h3v7M3 20h19"/></svg>
+      </button>
+      <button class="stats-button topbar-settings-button" type="button" aria-label="Open instellingen" title="Instellingen" onclick="openSettings()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7h10M18 7h2M4 17h2M10 17h10"/><circle cx="16" cy="7" r="2"/><circle cx="8" cy="17" r="2"/></svg>
       </button>
       <section class="streak-popover" id="streakCalendarPopover" role="dialog" aria-label="Daily streak kalender" hidden>
         <div class="streak-popover-heading">
@@ -115,8 +118,6 @@
         <button class="sidebar-item" onclick="openFotoverantwoording()"><span class="sidebar-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8" cy="8" r="2"/><path d="m3 18 6-6 4 4 3-3 5 5"/></svg></span><span class="label">Fotoverantwoording</span><span class="arrow">→</span></button>
         <button class="sidebar-item" onclick="openHowItWorks()"><span class="sidebar-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M9.8 9a2.4 2.4 0 1 1 3.3 2.2c-.8.4-1.1.9-1.1 1.8M12 17h.01"/></svg></span><span class="label">Hoe werkt het?</span><span class="arrow">→</span></button>
         <button class="sidebar-item" onclick="openSubmitQuestion()"><span class="sidebar-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20h4l11-11a2.8 2.8 0 0 0-4-4L4 16v4Z"/><path d="m13.5 6.5 4 4"/></svg></span><span class="label">Vraag insturen</span><span class="arrow">→</span></button>
-        <button class="sidebar-item" onclick="openSettings()"><span class="sidebar-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h10M18 7h2M4 17h2M10 17h10"/><circle cx="16" cy="7" r="2"/><circle cx="8" cy="17" r="2"/></svg></span><span class="label">Instellingen</span><span class="arrow">→</span></button>
-        <button class="sidebar-item" onclick="openAbout()"><span class="sidebar-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/></svg></span><span class="label">Over Netto</span><span class="arrow">→</span></button>
       </div>
     </div>
 
@@ -205,11 +206,6 @@
         </div>
       </div>
       <div class="home-more-grid">
-        <button class="home-more-card" type="button" onclick="openAbout()">
-          <span class="home-more-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/></svg></span>
-          <span><b>Over Netto</b><small>Het idee achter het spel</small></span>
-          <span class="home-more-arrow" aria-hidden="true">↗</span>
-        </button>
         <button class="home-more-card" type="button" onclick="openSubmitQuestion()">
           <span class="home-more-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20h4l11-11a2.8 2.8 0 0 0-4-4L4 16v4Z"/><path d="m13.5 6.5 4 4"/></svg></span>
           <span><b>Stuur een vraag in</b><small>Deel een feit of bouw een puzzel</small></span>

@@ -239,6 +239,8 @@
   font: 600 14px 'Space Grotesk', sans-serif; cursor: pointer;
 }
 .stats-button svg { width: 20px; height: 20px; }
+.topbar-settings-button { color: #fff; }
+.stats-button:focus-visible { outline: 3px solid #fff; outline-offset: 3px; }
 .stats-button:hover { background: rgba(255,255,255,.1); }
 .btn-stats-open { border-color: var(--surface-border); color: var(--ink); }
 #modalStats { padding: 16px; }
@@ -345,7 +347,7 @@ textarea:focus-visible,
 
 .home-more-grid {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 12px;
 }
 
