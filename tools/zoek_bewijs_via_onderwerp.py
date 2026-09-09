@@ -65,8 +65,14 @@ def main():
     print(f'{len(doel)} vragen via het onderwerp opzoeken ...')
     uitkomst = []
     for teller, (nr, vraag, antwoord) in enumerate(doel, start=1):
+        # Alleen het artikel over het onderwerp telt. Doorzoeken tot ergens het
+        # getal opduikt is precies hoe de koningspinguin bij het
+        # Eurovisiesongfestival belandde: dan bepaalt het getal het onderwerp in
+        # plaats van andersom. Vindt het eerste echte artikel het getal niet,
+        # dan is het antwoord "niet gevonden" en niet "verder zoeken".
         beste = None
         for term in zo.onderwerpen(vraag)[:3]:
+            gevonden_artikel = None
             for taal in ('nl', 'en'):
                 titel = zo.artikel(taal, term)
                 time.sleep(PAUZE)
@@ -76,19 +82,21 @@ def main():
                 time.sleep(PAUZE)
                 if not tekst:
                     continue
-                zinnen = zb.zinnen_met(tekst, antwoord)
-                zinnen.sort(key=lambda z: -zb.raakvlak(vraag, z))
-                if zinnen:
-                    beste = {
-                        'artikel': f'https://{taal}.wikipedia.org/wiki/'
-                                   + urllib.parse.quote(titel.replace(' ', '_')),
-                        'gezocht': term,
-                        'zinnen': [{'zin': ' '.join(z.split()),
-                                    'raakvlak': zb.raakvlak(vraag, z)} for z in zinnen[:3]],
-                    }
-                    break
-            if beste:
+                gevonden_artikel = (taal, titel, tekst)
                 break
+            if not gevonden_artikel:
+                continue
+            taal, titel, tekst = gevonden_artikel
+            zinnen = zb.zinnen_met(tekst, antwoord)
+            zinnen.sort(key=lambda z: -zb.raakvlak(vraag, z))
+            beste = {
+                'artikel': f'https://{taal}.wikipedia.org/wiki/'
+                           + urllib.parse.quote(titel.replace(' ', '_')),
+                'gezocht': term,
+                'zinnen': [{'zin': ' '.join(z.split()),
+                            'raakvlak': zb.raakvlak(vraag, z)} for z in zinnen[:3]],
+            }
+            break
         uitkomst.append({'nr': nr, 'vraag': vraag, 'antwoord': antwoord,
                          **(beste or {'artikel': None, 'gezocht': None, 'zinnen': []})})
         merk = (beste['gezocht'] if beste else '-')[:28]

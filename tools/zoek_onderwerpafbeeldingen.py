@@ -48,6 +48,10 @@ PAUZE = 0.6  # Wikipedia geeft boven de tien verzoeken per seconde zwijgend niet
 
 # Woorden die met een hoofdletter beginnen maar geen onderwerp zijn.
 GEEN_NAAM = {'Hoeveel', 'Welke', 'Welk', 'Hoe', 'Wat', 'In', 'Er', 'De', 'Het', 'Een'}
+# Woorden die achteraan de vraag hangen zonder het onderwerp te zijn.
+STAART = {'ongeveer', 'wereldwijd', 'totaal', 'samen', 'maximaal', 'minimaal',
+    'gemiddeld', 'jaarlijks', 'precies', 'volgens', 'benadering', 'afgerond',
+    'stand', 'ruwweg', 'naar', 'schatting', 'veld', 'begin', 'start'}
 TELWOORD_OVERSLAAN = {'verschillende', 'officiele', 'officiële', 'individuele', 'erkende',
     'bekende', 'gepubliceerde', 'complete', 'standaard', 'totale', 'unieke', 'actieve',
     'echte', 'grote', 'kleine', 'afzonderlijke', 'belangrijkste', 'centrale', 'natuurlijke',
@@ -73,9 +77,16 @@ def onderwerpen(vraag):
     if reeks:
         uit.append(' '.join(reeks))
     uit.sort(key=lambda s: -len(s.split()))
-    # Zonder eigennaam is het onderwerp meestal het lijdend voorwerp: bij
-    # "Hoeveel bulten heeft een dromedaris" gaat het om de dromedaris, niet om
-    # de bulten. Daarom komt dit voor de terugval op het getelde woord.
+    # Zonder eigennaam staat het onderwerp meestal achteraan: "Hoeveel kilo
+    # weegt een KONINGSPINGUIN", "Hoeveel toetsen heeft een standaard PIANO".
+    # Bijwoorden als "ongeveer" en "wereldwijd" hangen er los achter en tellen
+    # dus niet mee.
+    achteraan = [w for w in re.findall(r'[a-zA-Zà-ÿ]{4,}', vraag.split('?')[0])
+                 if w.lower() not in TELWOORD_OVERSLAAN and w.lower() not in STAART]
+    if achteraan:
+        uit.append(achteraan[-1])
+    # Daarna pas het lijdend voorwerp: bij "Hoeveel bulten heeft een dromedaris"
+    # gaat het om de dromedaris, niet om de bulten.
     m = re.search(r'\b(?:heeft|hebben|telt|tellen|bevat|kent|zit er in|zitten er in)\s+'
                   r'(?:een |de |het |)([a-zA-Zà-ÿ]{4,})', vraag, re.I)
     if m and m.group(1).lower() not in TELWOORD_OVERSLAAN:
