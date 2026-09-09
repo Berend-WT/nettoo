@@ -43,6 +43,14 @@ REVIEW = os.path.join(WORTEL, 'vragen', 'vragen_review_compleet.xlsx')
 FOTOS = os.path.join(WORTEL, 'fotos')
 VOORTGANG = os.path.join(FOTOS, 'kandidaten.json')
 HOOFD = os.path.join(FOTOS, 'hoofdafbeeldingen.json')
+ONDERWERP = os.path.join(FOTOS, 'onderwerpafbeeldingen.json')
+
+
+def _nummers(pad):
+    if not os.path.exists(pad):
+        return []
+    with open(pad, encoding='utf-8') as f:
+        return list(json.load(f))
 MINIATUREN = os.path.join(FOTOS, 'assets', 'kandidaten')
 DOEL = os.path.join(WORTEL, 'vragen', 'fotokeuze.xlsx')
 ONEDRIVE = os.path.join(os.path.expanduser('~'), 'OneDrive - Driestar-Wartburg')
@@ -132,17 +140,33 @@ def main():
     # een onderwerp verwacht. De kandidaten uit de vorige ronde blijven staan
     # als tweede en derde, want die zijn al opgehaald en vullen de gaten waar
     # geen infobox-afbeelding is. Dubbelen eruit.
-    if os.path.exists(HOOFD):
-        with open(HOOFD, encoding='utf-8') as f:
-            hoofd = json.load(f)
-        for nr, blok in hoofd.items():
-            beste = (blok.get('kandidaten') or [None])[0]
-            if not beste:
+    def eerste(pad, nr):
+        if not os.path.exists(pad):
+            return None
+        with open(pad, encoding='utf-8') as f:
+            blok = json.load(f).get(str(nr), {})
+        return (blok.get('kandidaten') or [None])[0]
+
+    # Volgorde van vertrouwen: de infoboxfoto van het bronartikel klopt per
+    # definitie, de foto van het onderwerpartikel is geraden uit de vraagtekst
+    # en klopt ongeveer zeven van de tien keer, de tekstzoekronde is het
+    # zwakst. Alleen de eerste wordt vanzelf toegepast; de andere twee staan
+    # hier zodat een mens ze kan aanwijzen.
+    for nr in list(kandidaten) + [n for n in _nummers(ONDERWERP)]:
+        beste = eerste(HOOFD, nr)
+        tweede = eerste(ONDERWERP, nr)
+        oud_lijst = kandidaten.get(str(nr), {}).get('kandidaten') or []
+        volgorde = [k for k in ([beste] if beste else []) + ([tweede] if tweede else []) + oud_lijst if k]
+        gezien, uniek = set(), []
+        for k in volgorde:
+            if k.get('titel') in gezien:
                 continue
-            oud = kandidaten.get(nr, {}).get('kandidaten') or []
-            rest = [k for k in oud if k.get('titel') != beste.get('titel')]
-            kandidaten[nr] = {'herkomst': 'hoofdafbeelding',
-                              'kandidaten': [beste] + rest[:2]}
+            gezien.add(k.get('titel'))
+            uniek.append(k)
+        if uniek:
+            kandidaten[str(nr)] = {
+                'herkomst': 'hoofdafbeelding' if beste else ('onderwerpartikel' if tweede else 'zoeken'),
+                'kandidaten': uniek[:3]}
 
     d = pd.read_excel(REVIEW, sheet_name='Vragen')
     # Ook de vragen zonder kandidaat komen erin: juist daar moet je zelf zoeken,

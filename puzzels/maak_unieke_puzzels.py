@@ -434,7 +434,10 @@ def main():
 
     schrijf_bestand('netto_frontend_puzzles.js', 'NETTO_REBUILT_PUZZLES',
                     bestaand, args.doel)
-    print(f"dagpuzzels ongemoeid gelaten: {len(bestaand.get('daily', []))}")
+    # Deze regel meldde eerder "dagpuzzels ongemoeid gelaten" en telde daarbij
+    # de zojuist vervangen lijst. Dat was overgebleven uit de tijd dat het
+    # archief met rust werd gelaten; nu wordt het meegebouwd.
+    print(f"datums hergebruikt: {datums[0]} t/m {datums[-1]}" if datums else 'geen datums gevonden')
 
 
 def schrijf_bestand(naam, globale, inhoud, doel):

@@ -3,17 +3,23 @@
 
 Draaien:  python tools/maak_fotobestand.py
 
-WELKE FOTO EEN VRAAG KRIJGT, IN DEZE VOLGORDE
+WELKE FOTO EEN VRAAG KRIJGT
   1. Jouw keuze in vragen/fotokeuze.xlsx, kolom "Keuze". Een 1, 2 of 3 wijst een
      van de getoonde kandidaten aan; een 0 betekent dat je ze alle drie hebt
      afgekeurd en dat de vraag geen foto krijgt.
-  2. De hoofdafbeelding uit de infobox van het bronartikel. Dat is de foto die
-     je van een onderwerp verwacht.
-  3. De eerste kandidaat uit de oudere zoekronde.
+  2. Anders: de hoofdafbeelding uit de infobox van het bronartikel, en verder
+     niets.
 
-Zolang het keuzeblad leeg is wint dus vanzelf de hoofdafbeelding, en zodra je
-een rij invult overschrijft die keuze het automatische voorstel. Opnieuw draaien
-na het invullen is genoeg; er gaat niets verloren.
+Dat "en verder niets" is een besluit, geen tekortkoming. De infoboxfoto klopt
+per definitie, want hij hoort bij het artikel waar het antwoord vandaan komt.
+Alle andere kandidaten worden geraden — uit de vraagtekst of uit een tekstzoek-
+opdracht op Commons — en zitten er ongeveer drie van de tien keer naast. Dat
+leverde een negentiende-eeuwse cola-advertentie bij een vraag over een blikje,
+en een Maya-god bij een vraag over de negen Muzen.
+
+Die geraden kandidaten verdwijnen niet: ze staan in het keuzeblad en wachten op
+een mens. Zolang die keuze er niet is heeft de vraag geen foto, en dat is beter
+dan een verkeerde.
 
 WAT ERUIT KOMT
 data/netto_fotos.js met per vraagtekst het adres van de afbeelding, de
@@ -125,7 +131,7 @@ def main():
     d = pd.read_excel(REVIEW, sheet_name='Vragen')
     uit = {}
     telling = {'keuze': 0, 'hoofdafbeelding': 0, 'onderwerpartikel': 0, 'oude kandidaat': 0,
-               'afgekeurd': 0, 'geen': 0}
+               'wacht op keuze': 0, 'afgekeurd': 0, 'geen': 0}
 
     for _, r in d.iterrows():
         nr = int(r['Nr'])
@@ -140,15 +146,20 @@ def main():
         # infobox om uit te putten. Het onderwerp van de vraag heeft er meestal
         # zelf wel een: "Coca-Cola" levert een fles, waar de tekstzoekronde met
         # drie negentiende-eeuwse advertenties kwam.
-        if not beste:
-            beste = (onderwerp.get(str(nr), {}).get('kandidaten') or [None])[0]
-            if beste and not geschikt_beeld(beste.get('titel', '')):
-                beste = None
-            bron_van_beste = 'onderwerpartikel' if beste else None
-        rest = [k for k in (oud.get(str(nr), {}).get('kandidaten') or [])
-                if (not beste or k.get('titel') != beste.get('titel'))
-                and past_bij_onderwerp(k.get('titel', ''), r['Bron (geverifieerd)'])
-                and geschikt_beeld(k.get('titel', ''))]
+        #
+        # Die zoektocht raadt het onderwerp uit de vraagtekst en zit er in
+        # ongeveer drie van de tien gevallen naast: "Muzen" leverde een Maya-god
+        # op, "snaren" een foto van George Kooymans. Zeven op de tien is te
+        # weinig om vanzelf toe te passen, dus deze kandidaten wachten op een
+        # keuze in het werkblad. Hetzelfde geldt voor de oude zoekronde.
+        gevonden = (onderwerp.get(str(nr), {}).get('kandidaten') or [None])[0]
+        if gevonden and not geschikt_beeld(gevonden.get('titel', '')):
+            gevonden = None
+        rest = [k for k in ([gevonden] if gevonden else []) +
+                [k for k in (oud.get(str(nr), {}).get('kandidaten') or [])
+                 if past_bij_onderwerp(k.get('titel', ''), r['Bron (geverifieerd)'])
+                 and geschikt_beeld(k.get('titel', ''))]
+                if not beste or k.get('titel') != beste.get('titel')]
         lijst = ([beste] if beste else []) + rest[:2]
 
         keuze = keuzes.get(nr)
@@ -160,7 +171,10 @@ def main():
         elif beste:
             gekozen, herkomst = beste, bron_van_beste
         elif lijst:
-            gekozen, herkomst = lijst[0], 'oude kandidaat'
+            # Geen infoboxfoto en geen keuze: dan liever niets. Dit is precies
+            # de groep waar de negentiende-eeuwse cola-advertenties in zaten.
+            telling['wacht op keuze'] += 1
+            continue
         else:
             telling['geen'] += 1
             continue

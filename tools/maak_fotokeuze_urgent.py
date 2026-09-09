@@ -4,10 +4,15 @@
 Draaien:  python tools/maak_fotokeuze_urgent.py
 
 WAAROM
-vragen/fotokeuze.xlsx heeft 590 rijen met 896 zwevende afbeeldingen in een
-enkel blad. Excel tekent die allemaal tegelijk en loopt daarop vast. Voor het
-werk dat nu klaar moet liggen is dat ook niet nodig: alleen de vragen die in het
-spel nog een foto uit de oude zoekronde tonen hebben een keuze nodig.
+vragen/fotokeuze.xlsx heeft ruim achthonderd rijen met bijna duizend zwevende
+afbeeldingen in een enkel blad. Excel tekent die allemaal tegelijk en loopt
+daarop vast.
+
+Dat is ook niet nodig, want maar een deel vraagt om een oordeel. Een vraag
+waarvan de bron een Wikipedia-artikel is heeft de infoboxfoto, en die klopt per
+definitie. Overblijven de vragen waar wél kandidaten voor gevonden zijn maar
+waar het spel niets toont, omdat de automatische keuze zich er niet aan durfde
+te wagen. Precies daar maakt een menselijk oordeel het verschil.
 
 Dit script kopieert die rijen naar een klein bestand en neemt de miniaturen mee
 uit het bestaande werkblad, dus zonder opnieuw te downloaden.
@@ -32,7 +37,7 @@ if hasattr(sys.stdout, 'reconfigure'):
 WORTEL = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 GROOT = os.path.join(WORTEL, 'vragen', 'fotokeuze.xlsx')
 KLEIN = os.path.join(WORTEL, 'vragen', 'fotokeuze_urgent.xlsx')
-SELECTIE = 'oude zoekronde'
+LIVE = os.path.join(WORTEL, 'data', 'netto_fotos.js')
 
 KOLOMMEN = ['Nr', 'In gebruik', 'Vraag', 'Antwoord',
             'Foto 1', 'Foto 2', 'Foto 3', 'Keuze', 'Commons', 'Artikel', 'Opmerking']
@@ -51,9 +56,19 @@ def main():
     for beeld in bl._images:
         beelden.setdefault((beeld.anchor._from.row + 1, beeld.anchor._from.col + 1), []).append(beeld)
 
-    rijen = [r for r in range(2, bl.max_row + 1)
-             if bl.cell(r, k['Nu in het spel']).value == SELECTIE]
-    print(f'{len(rijen)} rijen met "{SELECTIE}"')
+    # De rijen die er echt toe doen: er zijn kandidaten, maar het spel toont
+    # niets. Dat zijn precies de vragen waar de automatische keuze zich niet
+    # aan durfde te wagen, en waar jouw oordeel het verschil maakt.
+    import json
+    tekst = open(LIVE, encoding='utf-8').read()
+    in_het_spel = set(json.loads(tekst[tekst.index('{'):tekst.rindex('}') + 1]))
+    rijen = []
+    for r in range(2, bl.max_row + 1):
+        vraag = bl.cell(r, k['Vraag']).value
+        heeft_kandidaat = any(beelden.get((r, k[f'Foto {n}'])) for n in (1, 2, 3))
+        if heeft_kandidaat and str(vraag) not in in_het_spel:
+            rijen.append(r)
+    print(f'{len(rijen)} vragen met kandidaten maar zonder foto in het spel')
 
     doel = openpyxl.Workbook()
     ws = doel.active
