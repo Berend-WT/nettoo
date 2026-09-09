@@ -5,13 +5,17 @@ bestand legt vast wie waar zit en hoe we elkaar bereiken.
 
 ## Wie doet wat
 
-**Codex** — puzzelsamenstelling. Zie `BRIEFING_codex_puzzelalgoritme.md`.
-Werkgebied: `puzzels/**`, `.freebuff/**`, de gegenereerde puzzeldata
-(`netto_frontend_puzzles.js`, `puzzles_embedded.js`, `netto_race_*.js`,
-`netto_breinkrakers.js`), `vragen/**`.
+De verdeling is gaandeweg omgedraaid en werkt zo beter:
 
-**Claude** — database-integratie, frontend en admin. Werkgebied: `index.html`,
-`admin.html`, `js/**`, `css/**`, `supabase/**`, `fotos/**`, `tools/**`.
+**Codex** — frontend. Werkgebied: `index.html`, `admin.html`, `js/**`, `css/**`.
+Wie de frontend aanraakt, werkt ook `website/**` bij: dat is een kopie die
+byte voor byte gelijk moet blijven, anders bereikt de wijziging geen speler.
+
+**Claude** — data en generatoren. Werkgebied: `vragen/**`, `puzzels/**`,
+`tools/**`, `fotos/**`, `supabase/**` en de gegenereerde bestanden in `data/**`.
+
+Vaste volgorde bij reparaties: **eerst de vragen, dan de puzzels.** Nooit in één
+beweging allebei, want dan is niet meer na te gaan waar een fout vandaan komt.
 
 Kom je iets tegen buiten je eigen gebied, wijzig het dan niet zelf maar meld het
 (zie hieronder). Dat is geen formaliteit: we hebben vanavond al een keer

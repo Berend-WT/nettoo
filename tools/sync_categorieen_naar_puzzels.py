@@ -25,7 +25,7 @@ WORTEL = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 BANK = os.path.join(WORTEL, 'vragen', '1000+ vragen netjes gecategoriseerd.xlsx')
 # Alleen deze twee dragen een categories-veld. netto_race_pool.js en
 # netto_breinkrakers.js hebben er geen, dus daar valt niets bij te werken.
-BESTANDEN = ['data/netto_frontend_puzzles.js', 'data/netto_race_sets.js']
+BESTANDEN = ['data/netto_frontend_puzzles.js']
 
 
 def lees_js(pad):

@@ -31,7 +31,6 @@ MIRROR_FILES = (
     "js/daily-photos.js",
     "data/netto_translations_en.js",
     "data/netto_frontend_puzzles.js",
-    "data/netto_race_sets.js",
     "data/netto_race_pool.js",
     "data/netto_breinkrakers.js",
 )

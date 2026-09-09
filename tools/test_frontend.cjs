@@ -28,7 +28,7 @@ const context = vm.createContext({ console, Date: ClockDate, Intl, Math, Set, Ma
   NettoI18n: { locale: () => 'en', t: text => text }
 });
 context.window = context;
-for (const file of ['netto_frontend_puzzles.js', 'netto_breinkrakers.js', 'netto_race_sets.js', 'netto_race_pool.js']) {
+for (const file of ['netto_frontend_puzzles.js', 'netto_breinkrakers.js', 'netto_race_pool.js']) {
   vm.runInContext(fs.readFileSync(path.join(root, file), 'utf8'), context, { filename: file });
 }
 for (const file of ['core.js', 'puzzle-modes.js', 'race.js', 'submissions.js', 'library.js']) {

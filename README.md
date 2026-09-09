@@ -7,10 +7,10 @@ Een quiz-puzzelgame waar je vragen uit een vragenbank (1.000+ vragen) combineert
 | Modus | Beschrijving |
 |---|---|
 | **Dagpuzzel** | Elke dag één officiële puzzel, met streak en deelbare score |
-| **Puzzels (Library)** | 200 puzzels opgesplitst per moeilijkheid (50 per niveau × 50 per operator), direct speelbaar zonder unlocks |
+| **Puzzels (Library)** | 237 puzzels over vier niveaus, direct speelbaar zonder unlocks. Elke vraag komt in de hele set precies één keer voor |
 | **Puzzel Race** | 5 minuten, zoveel mogelijk puzzels exact oplossen — van makkelijk naar moeilijk, met directe feedback en eindscore. Ook **1v1-duel** via room-code (Supabase Realtime) |
-| **Breinkrakers** | Uitdagende kettingpuzzels: `a (× of ÷) b + of − c = d` — 4 vragen per puzzel |
-| **Daily Archive** | 28 genummerde Hard-puzzels uit het archief |
+| **Breinkrakers** | Kettingpuzzels van 4 vragen: `a op1 b op2 c = d`, **van links naar rechts** gelezen. `2 + 3 × 4` is hier dus 20 en niet 14 |
+| **Daily Archive** | 35 genummerde dagpuzzels uit het archief; ze delen hun vragenset met Puzzels |
 
 ## Structuur
 
@@ -19,9 +19,10 @@ Een quiz-puzzelgame waar je vragen uit een vragenbank (1.000+ vragen) combineert
 ├── admin.html      ← admin-paneel
 ├── css/ · js/      ← frontend (handgeschreven)
 ├── data/           ← gegenereerde puzzeldata die de browser inlaadt
-│                     netto_frontend_puzzles.js  library + race + daily
-│                     netto_race_sets.js         regio- en themasets
-│                     netto_race_pool.js         6.000 puzzels voor de race
+│                     netto_frontend_puzzles.js  library + daily
+│                     netto_race_pool.js         puzzels voor de race
+│                     netto_fotos.js             foto per vraag, met licentie
+│                     netto_bronnen.js           bron en bewijszin per vraag
 │                     netto_breinkrakers.js      breinkrakers
 │                     netto_translations_en.js   Engelse vertalingen
 ├── vragen/         ← vragenbank (xlsx) + reviewbladen
@@ -29,7 +30,7 @@ Een quiz-puzzelgame waar je vragen uit een vragenbank (1.000+ vragen) combineert
 ├── fotos/          ← Commons-foto's voor de daily + de scripts eromheen
 ├── supabase/       ← SQL-migraties, met de hand te draaien in de SQL Editor
 ├── tools/          ← losse hulpscripts (sync_website.py, plan_dailies.py, …)
-├── docs/           ← briefings en samenwerkingsnotities
+├── docs/           ← werkafspraken tussen de agents
 └── website/        ← gegenereerde, zelfstandige kopie; nooit met de hand wijzigen
 ```
 
@@ -60,18 +61,23 @@ python tools/sync_website.py --check
 ## Lokaal draaien
 
 ```bash
-python -m http.server 5500
-# open http://localhost:5500
+python -m http.server 8765
+# open http://127.0.0.1:8765
 ```
 
 ## Puzzelbanken opnieuw genereren
 
 ```bash
-python puzzels/maak_puzzels.py          # hoofdpuzzelbank
-python puzzels/maak_puzzels_race.py     # race + daily set
-python puzzels/maak_breinkrakers.py     # breinkrakers (100k puzzels)
-python puzzels/maak_alle_puzzels.py     # alle 4,2 miljoen mogelijke puzzels
+python puzzels/maak_unieke_puzzels.py --doel puzzels --schrijf   # library + daily
+python puzzels/maak_unieke_puzzels.py --doel race --schrijf      # racepool
+python puzzels/maak_breinkrakers.py                              # breinkrakers
+python tools/controleer_puzzels.py                               # controle achteraf
 ```
+
+`controleer_puzzels.py` leest de weggeschreven bestanden en niet wat de generator
+bewéért: het controleert onder meer of `a op b = c` echt uitkomt, of elke vraag
+maar in één puzzel staat en of geen puzzel twee vragen uit dezelfde kleurfamilie
+heeft. Draai hem na elke wijziging aan de puzzeldata.
 
 ## Backend
 
