@@ -1,0 +1,293 @@
+[
+ {
+  "nr": 7,
+  "vraag": "Hoeveel kilo weegt een koningspinguin?",
+  "antwoord": 15,
+  "artikel": "https://nl.wikipedia.org/wiki/Koningspingu%C3%AFn",
+  "gezocht": "koningspinguin",
+  "zinnen": []
+ },
+ {
+  "nr": 10,
+  "vraag": "Hoeveel poten heeft een krab?",
+  "antwoord": 10,
+  "artikel": "https://nl.wikipedia.org/wiki/Krabben",
+  "gezocht": "krab",
+  "zinnen": [
+   {
+    "zin": "De tijd tussen twee vervellingen loopt op van 10 tot 15 dagen bij jonge exemplaren tot 30 tot 50 dagen bij oudere dieren.",
+    "raakvlak": 0
+   }
+  ]
+ },
+ {
+  "nr": 149,
+  "vraag": "Hoeveel bulten heeft een dromedaris?",
+  "antwoord": 1,
+  "artikel": "https://nl.wikipedia.org/wiki/Dromedaris",
+  "gezocht": "dromedaris",
+  "zinnen": []
+ },
+ {
+  "nr": 150,
+  "vraag": "Hoeveel bulten heeft een kameel?",
+  "antwoord": 2,
+  "artikel": "https://nl.wikipedia.org/wiki/Kameel",
+  "gezocht": "kameel",
+  "zinnen": []
+ },
+ {
+  "nr": 172,
+  "vraag": "Hoeveel landen gebruiken de CFA-frank in West- en Centraal-Afrika samen?",
+  "antwoord": 14,
+  "artikel": "https://nl.wikipedia.org/wiki/CFA-frank",
+  "gezocht": "CFA-frank",
+  "zinnen": []
+ },
+ {
+  "nr": 218,
+  "vraag": "Hoeveel beelden staan er op de top van de Brandenburger Tor?",
+  "antwoord": 5,
+  "artikel": "https://en.wikipedia.org/wiki/Brandenburg_Gate",
+  "gezocht": "Brandenburger Tor",
+  "zinnen": [
+   {
+    "zin": "On the night of 5 January 2015, the lights illuminating the gate were completely shut off in protest against a protest held by far-right anti-Islamic group Pegida.",
+    "raakvlak": 0
+   }
+  ]
+ },
+ {
+  "nr": 223,
+  "vraag": "Hoeveel jaar duurde de bouw van de Taj Mahal?",
+  "antwoord": 21,
+  "artikel": "https://nl.wikipedia.org/wiki/Taj_Mahal",
+  "gezocht": "Taj Mahal",
+  "zinnen": []
+ },
+ {
+  "nr": 398,
+  "vraag": "Hoeveel toetsen heeft een standaard piano?",
+  "antwoord": 88,
+  "artikel": "https://nl.wikipedia.org/wiki/Klavier_%28toetsen%29",
+  "gezocht": "toetsen",
+  "zinnen": []
+ },
+ {
+  "nr": 425,
+  "vraag": "Hoeveel artikelen bevat de Franse Verklaring van de Rechten van de Mens en de Burger?",
+  "antwoord": 17,
+  "artikel": "https://nl.wikipedia.org/wiki/Franse_Revolutie",
+  "gezocht": "Franse Verklaring",
+  "zinnen": [
+   {
+    "zin": "Op 17 juni 1789 roept de derde stand zich uit tot de Assemblée nationale (nationale vergadering - niet te verwarren met de huidige Franse assemblée nationale).",
+    "raakvlak": 1
+   },
+   {
+    "zin": "Hij wijdde verschillende hoofdstukken (17-18 en 26-27) van zijn boek La Grande Révolution aan deze historische \"maskerade\", en titelde zijn hoofdstuk 18 \"De feodale rechten blijven\".",
+    "raakvlak": 1
+   },
+   {
+    "zin": "De 17 artikelen behandelen ieder aspect van de nieuwe staatsopvatting.",
+    "raakvlak": 1
+   }
+  ]
+ },
+ {
+  "nr": 432,
+  "vraag": "Hoeveel oorspronkelijke leden had de NAVO bij de oprichting in 1949?",
+  "antwoord": 12,
+  "artikel": "https://nl.wikipedia.org/wiki/Verdrag_tot_oprichting_van_de_Europese_Economische_Gemeenschap",
+  "gezocht": "oprichting",
+  "zinnen": []
+ },
+ {
+  "nr": 462,
+  "vraag": "Hoeveel elektronen deelt een enkelvoudige covalente binding?",
+  "antwoord": 2,
+  "artikel": "https://nl.wikipedia.org/wiki/Binding",
+  "gezocht": "binding",
+  "zinnen": []
+ },
+ {
+  "nr": 463,
+  "vraag": "Hoeveel elektronen heeft een natriumion, Na⁺?",
+  "antwoord": 10,
+  "artikel": "https://nl.wikipedia.org/wiki/NA",
+  "gezocht": "Na",
+  "zinnen": []
+ },
+ {
+  "nr": 466,
+  "vraag": "Hoeveel elementen bevat koolstofdioxide?",
+  "antwoord": 2,
+  "artikel": "https://nl.wikipedia.org/wiki/Koolstofdioxide",
+  "gezocht": "koolstofdioxide",
+  "zinnen": [
+   {
+    "zin": "Koolstofdioxide, kooldioxide, ook koolzuurgas, in de 19e eeuw ook koolstofzuurgas genoemd, is een anorganische verbinding van koolstof en zuurstof, met als brutoformule CO2.",
+    "raakvlak": 1
+   },
+   {
+    "zin": "Koolstofdioxide opgelost in water vormt koolzuur of diwaterstofcarbonaat (H2CO3).",
+    "raakvlak": 1
+   },
+   {
+    "zin": "Bij deze chemische reactie worden water (H2O) en koolstofdioxide (CO2) opgenomen en in glucose omgezet, terwijl zuurstofgas (O2) wordt afgegeven.",
+    "raakvlak": 1
+   }
+  ]
+ },
+ {
+  "nr": 471,
+  "vraag": "Hoeveel perioden heeft het moderne periodiek systeem?",
+  "antwoord": 7,
+  "artikel": "https://nl.wikipedia.org/wiki/Systeem",
+  "gezocht": "systeem",
+  "zinnen": []
+ },
+ {
+  "nr": 472,
+  "vraag": "Hoeveel procent azijnzuur bevat gewone huishoudazijn ongeveer?",
+  "antwoord": 5,
+  "artikel": null,
+  "gezocht": null,
+  "zinnen": []
+ },
+ {
+  "nr": 473,
+  "vraag": "Hoeveel protonen heeft een neutraal atoom van uranium?",
+  "antwoord": 92,
+  "artikel": "https://nl.wikipedia.org/wiki/Uranium",
+  "gezocht": "uranium",
+  "zinnen": [
+   {
+    "zin": "Uranium of uraan (IUPAC-naam) is een chemisch element met symbool U en atoomnummer 92.",
+    "raakvlak": 2
+   }
+  ]
+ },
+ {
+  "nr": 499,
+  "vraag": "Hoeveel punten levert een safety op bij American football?",
+  "antwoord": 2,
+  "artikel": "https://nl.wikipedia.org/wiki/American",
+  "gezocht": "American",
+  "zinnen": []
+ },
+ {
+  "nr": 503,
+  "vraag": "Hoeveel spelers staan er per voetbalteam op het veld?",
+  "antwoord": 11,
+  "artikel": "https://nl.wikipedia.org/wiki/Lijst_van_spelers_van_Feyenoord_%28mannen%29",
+  "gezocht": "spelers",
+  "zinnen": []
+ },
+ {
+  "nr": 573,
+  "vraag": "Hoeveel lijnen heeft de metro van Londen volgens de klassieke Underground-indeling?",
+  "antwoord": 11,
+  "artikel": "https://nl.wikipedia.org/wiki/Londen",
+  "gezocht": "Londen",
+  "zinnen": [
+   {
+    "zin": "De universiteitsstad Cambridge is bereikbaar via de M11.",
+    "raakvlak": 0
+   }
+  ]
+ },
+ {
+  "nr": 666,
+  "vraag": "Hoeveel paar chromosomen heeft een fruitvlieg Drosophila melanogaster?",
+  "antwoord": 4,
+  "artikel": "https://nl.wikipedia.org/wiki/Melanogaster",
+  "gezocht": "melanogaster",
+  "zinnen": []
+ },
+ {
+  "nr": 1077,
+  "vraag": "Hoeveel procent van de wereldwijde landbouwgrond wordt geïrrigeerd?",
+  "antwoord": 20,
+  "artikel": "https://nl.wikipedia.org/wiki/Damascus",
+  "gezocht": "geïrrigeerd",
+  "zinnen": []
+ },
+ {
+  "nr": 1320,
+  "vraag": "Hoeveel elektronen heeft een chloride-ion, Cl⁻?",
+  "antwoord": 18,
+  "artikel": "https://nl.wikipedia.org/wiki/Chloride",
+  "gezocht": "chloride",
+  "zinnen": []
+ },
+ {
+  "nr": 1322,
+  "vraag": "Hoeveel elektronenparen deelt een stikstofatoom in het molecuul N₂?",
+  "antwoord": 3,
+  "artikel": "https://nl.wikipedia.org/wiki/N",
+  "gezocht": "N₂",
+  "zinnen": []
+ },
+ {
+  "nr": 1349,
+  "vraag": "Hoeveel holes heeft een standaard golfbaan?",
+  "antwoord": 18,
+  "artikel": "https://nl.wikipedia.org/wiki/Holes",
+  "gezocht": "holes",
+  "zinnen": []
+ },
+ {
+  "nr": 1351,
+  "vraag": "Hoeveel holes telt een standaard ronde op een professionele golfbaan?",
+  "antwoord": 18,
+  "artikel": "https://nl.wikipedia.org/wiki/Golfbaan",
+  "gezocht": "golfbaan",
+  "zinnen": [
+   {
+    "zin": "Een volledige golfbaan heeft 18 holes.",
+    "raakvlak": 2
+   },
+   {
+    "zin": "Hoewel een golfbaan meestal 18 holes heeft, wordt vaak gesproken over de 19e hole.",
+    "raakvlak": 2
+   },
+   {
+    "zin": "Veelal bestaan golfbanen uit tien par 4 holes, vier par 3 holes en vier par 5 holes waardoor de par van een 18 holes baan vaak 72 is.",
+    "raakvlak": 1
+   }
+  ]
+ },
+ {
+  "nr": 1387,
+  "vraag": "Hoeveel minuten officiële speeltijd heeft een Americanfootballwedstrijd in de NFL?",
+  "antwoord": 60,
+  "artikel": "https://nl.wikipedia.org/wiki/NFL_Europa",
+  "gezocht": "NFL",
+  "zinnen": []
+ },
+ {
+  "nr": 1425,
+  "vraag": "Hoeveel erkende planeten telt ons zonnestelsel?",
+  "antwoord": 8,
+  "artikel": "https://nl.wikipedia.org/wiki/Zonnestelsel",
+  "gezocht": "zonnestelsel",
+  "zinnen": []
+ },
+ {
+  "nr": 1438,
+  "vraag": "In welk jaar zette de eerste mens voet op de maan?",
+  "antwoord": 1969,
+  "artikel": null,
+  "gezocht": null,
+  "zinnen": []
+ },
+ {
+  "nr": 1508,
+  "vraag": "Hoeveel positieve delers heeft het getal 360?",
+  "antwoord": 24,
+  "artikel": "https://nl.wikipedia.org/wiki/Getal",
+  "gezocht": "getal",
+  "zinnen": []
+ }
+]

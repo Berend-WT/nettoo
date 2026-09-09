@@ -137,8 +137,8 @@ window.NETTO_BRONNEN = {
     "uitleg": "Creme Puff werd 38 jaar."
   },
   "Hoe zwaar was de grootste chocoladereep ooit in kilogram?": {
-    "bron": "https://www.guinnessworldrecords.com/world-records/largest-chocolate-bar",
-    "uitleg": "De grootste chocoladereep woog 5792,5 kg; het opgegeven getal hoort mogelijk bij een andere categorie. Nakijken."
+    "bron": "https://en.wikipedia.org/wiki/Chocolate_bar",
+    "uitleg": "The world's largest chocolate bar was produced as a stunt by Thorntons plc (UK) on 7 October 2011. It weighed 5,792.5 kg."
   },
   "Hoe zwaar was de grootste kaas ooit gemaakt in kilogram?": {
     "bron": "https://www.guinnessworldrecords.com/world-records/largest-cheese",
@@ -157,8 +157,8 @@ window.NETTO_BRONNEN = {
     "uitleg": "Zorba woog 155,58 kg."
   },
   "Hoe zwaar was de zwaarste pompoen ooit in kilogram?": {
-    "bron": "https://www.guinnessworldrecords.com/world-records/heaviest-pumpkin",
-    "uitleg": "Sinds 6 oktober 2025 staat het record op 1278,8 kg. Het opgegeven 1247 was het record van 2023."
+    "bron": "https://en.wikipedia.org/wiki/Giant_pumpkin",
+    "uitleg": "As of 2025, the largest weighed 2,819.3 lb (1,278.8 kg)."
   },
   "Hoe zwaar was de zwaarste schildpad ooit in kilogram?": {
     "bron": "https://www.guinnessworldrecords.com/world-records/heaviest-turtle",
@@ -402,11 +402,11 @@ window.NETTO_BRONNEN = {
   },
   "Hoeveel aardse dagen duurt een jaar op Jupiter ongeveer?": {
     "bron": "https://science.nasa.gov/jupiter/facts/",
-    "uitleg": "Bestaande bron opgehaald; het antwoord staat op de pagina."
+    "uitleg": "One day on Jupiter takes 9.9 hours (the time it takes for Jupiter to rotate or spin around once), and Jupiter makes a complete orbit around the Sun (a year in Jovian time) in about 12 Earth years (4,333 Earth days)."
   },
   "Hoeveel aardse dagen duurt een jaar op Venus ongeveer?": {
     "bron": "https://science.nasa.gov/venus/venus-facts/",
-    "uitleg": "Bestaande bron opgehaald; het antwoord staat op de pagina."
+    "uitleg": "For one thing, your “day” would be 243 Earth days long — longer even than a Venus year (one trip around the Sun), which takes only 225 Earth days."
   },
   "Hoeveel aardse dagen duurt één volledige draai van Venus ongeveer?": {
     "bron": "https://nl.wikipedia.org/wiki/Venus_%28planeet%29",
@@ -414,7 +414,7 @@ window.NETTO_BRONNEN = {
   },
   "Hoeveel aardse jaren duurt een jaar op Neptunus ongeveer?": {
     "bron": "https://science.nasa.gov/neptune/facts/",
-    "uitleg": "Bestaande bron opgehaald; het antwoord staat op de pagina."
+    "uitleg": "And Neptune makes a complete orbit around the Sun (a year in Neptunian time) in about 165 Earth years (60,190 Earth days)."
   },
   "Hoeveel aardse uren duurt één volledige draai van Jupiter ongeveer?": {
     "bron": "https://nl.wikipedia.org/wiki/Jupiter_%28planeet%29",
@@ -500,10 +500,6 @@ window.NETTO_BRONNEN = {
     "bron": "https://en.wikipedia.org/wiki/Octopus",
     "uitleg": "Een octopus heeft acht armen. Tentakels is het verkeerde woord: die hebben inktvissen, octopussen niet."
   },
-  "Hoeveel artikelen bevat de Franse Verklaring van de Rechten van de Mens en de Burger?": {
-    "bron": "https://www.conseil-constitutionnel.fr/en/declaration-of-human-and-civic-rights-of-26-august-1789",
-    "uitleg": "Bestaande bron opgehaald; het antwoord staat op de pagina."
-  },
   "Hoeveel artikelen bevat de Nederlandse Grondwet?": {
     "bron": "https://nl.wikipedia.org/wiki/Nederlandse_Grondwet",
     "uitleg": "Indien de Grondwet afwijkt van het Statuut, kan deze bij gewone wet (dus in één lezing met gewone meerderheden in beide kamers) met het Statuut in overeenstemming worden gebracht (artikel 142 Grondwet)."
@@ -568,10 +564,6 @@ window.NETTO_BRONNEN = {
     "bron": "https://en.wikipedia.org/wiki/Nasdaq-100",
     "uitleg": "De index bevat honderd niet-financiele bedrijven; het staat in de naam."
   },
-  "Hoeveel beelden staan er op de top van de Brandenburger Tor?": {
-    "bron": "https://www.berlin.de/en/attractions-and-sights/3560266-3104050-brandenburg-gate.en.html",
-    "uitleg": "Bestaande bron opgehaald; het antwoord staat op de pagina."
-  },
   "Hoeveel bekende manen heeft Jupiter (stand 2026)?": {
     "bron": "https://en.wikipedia.org/wiki/Moons_of_Jupiter",
     "uitleg": "Zelfde als vraag 515; dubbel in de bank."
@@ -626,7 +618,7 @@ window.NETTO_BRONNEN = {
   },
   "Hoeveel bloedgroepen kent het ABO-systeem?": {
     "bron": "https://www.nhs.uk/conditions/blood-groups/",
-    "uitleg": "Bestaande bron opgehaald; het antwoord staat op de pagina."
+    "uitleg": "There are 4 main blood groups (types of blood) – A, B, AB and O."
   },
   "Hoeveel boeken bevat Homerus’ Odyssee?": {
     "bron": "https://nl.wikipedia.org/wiki/Odyssee",
@@ -715,14 +707,6 @@ window.NETTO_BRONNEN = {
   "Hoeveel bovengrondse verdiepingen heeft het Witte Huis?": {
     "bron": "https://www.whitehouse.gov/about-the-white-house/the-white-house/",
     "uitleg": "Het Witte Huis telt zes niveaus: twee kelderlagen, twee publieke en twee woonverdiepingen. Vier is alleen juist als je de kelders niet meetelt."
-  },
-  "Hoeveel bulten heeft een dromedaris?": {
-    "bron": "https://animals.sandiegozoo.org/animals/camel",
-    "uitleg": "Bestaande bron opgehaald; het antwoord staat op de pagina."
-  },
-  "Hoeveel bulten heeft een kameel?": {
-    "bron": "https://animals.sandiegozoo.org/animals/camel",
-    "uitleg": "Bestaande bron opgehaald; het antwoord staat op de pagina."
   },
   "Hoeveel cent zit er in één euro?": {
     "bron": "https://en.wikipedia.org/wiki/Euro",
@@ -818,7 +802,7 @@ window.NETTO_BRONNEN = {
   },
   "Hoeveel dagen duurde de reis van de Mayflower naar Noord-Amerika?": {
     "bron": "https://plimoth.org/learn/just-kids/homework-help/mayflower",
-    "uitleg": "Bestaande bron opgehaald; het antwoord staat op de pagina."
+    "uitleg": "After more than two months (66 days) at sea, the Pilgrims finally arrived at Cape Cod on November 11, 1620."
   },
   "Hoeveel dagen duurt de Nederlands Film Festival in Utrecht?": {
     "bron": "https://nl.wikipedia.org/wiki/Nederlands_Film_Festival",
@@ -874,7 +858,7 @@ window.NETTO_BRONNEN = {
   },
   "Hoeveel deelstaten telt Duitsland?": {
     "bron": "https://nl.wikipedia.org/wiki/Duitsland",
-    "uitleg": "Duitsland telt 16 nationale parken en meer dan 100 natuurparken."
+    "uitleg": "De Bondsrepubliek Duitsland is een federatie van zestien deelstaten, in het Duits Bundesländer of Länder (enkelvoud Land) geheten."
   },
   "Hoeveel deelverzamelingen heeft een verzameling met acht elementen?": {
     "bron": "https://en.wikipedia.org/wiki/Power_set",
@@ -1084,25 +1068,9 @@ window.NETTO_BRONNEN = {
     "bron": "https://www.archives.gov/electoral-college/about",
     "uitleg": "Van de 538 kiesmannen zijn er 270 nodig voor een meerderheid."
   },
-  "Hoeveel elektronen deelt een enkelvoudige covalente binding?": {
-    "bron": "https://openstax.org/books/chemistry-2e/pages/7-2-covalent-bonding",
-    "uitleg": "Bestaande bron opgehaald; het antwoord staat op de pagina."
-  },
-  "Hoeveel elektronen heeft een chloride-ion, Cl⁻?": {
-    "bron": "https://openstax.org/books/chemistry-2e/pages/2-3-atomic-structure-and-symbolism",
-    "uitleg": "Bestaande bron opgehaald; het antwoord staat op de pagina."
-  },
-  "Hoeveel elektronen heeft een natriumion, Na⁺?": {
-    "bron": "https://openstax.org/books/chemistry-2e/pages/2-3-atomic-structure-and-symbolism",
-    "uitleg": "Bestaande bron opgehaald; het antwoord staat op de pagina."
-  },
   "Hoeveel elektronen kan de derde elektronenschil maximaal bevatten?": {
     "bron": "https://en.wikipedia.org/wiki/Electron_shell",
     "uitleg": "De derde schil bevat maximaal achttien elektronen."
-  },
-  "Hoeveel elektronenparen deelt een stikstofatoom in het molecuul N₂?": {
-    "bron": "https://openstax.org/books/chemistry-2e/pages/7-2-covalent-bonding",
-    "uitleg": "Bestaande bron opgehaald; het antwoord staat op de pagina."
   },
   "Hoeveel elementen bevat baking soda?": {
     "bron": "https://en.wikipedia.org/wiki/Sodium_bicarbonate",
@@ -1112,10 +1080,6 @@ window.NETTO_BRONNEN = {
     "bron": "https://en.wikipedia.org/wiki/Sodium_chloride",
     "uitleg": "NaCl bevat twee elementen: natrium en chloor."
   },
-  "Hoeveel elementen bevat koolstofdioxide?": {
-    "bron": "https://pubchem.ncbi.nlm.nih.gov/compound/Carbon-dioxide",
-    "uitleg": "Bestaande bron opgehaald; het antwoord staat op de pagina."
-  },
   "Hoeveel emiraten telt de Verenigde Arabische Emiraten?": {
     "bron": "https://nl.wikipedia.org/wiki/Verenigde_Arabische_Emiraten",
     "uitleg": "Bestuurlijke indeling\n\nDe Verenigde Arabische Emiraten zijn onderverdeeld in 7 emiraten:\n\nIeder emiraat kent zijn eigen wetgeving over lokaal bestuur."
@@ -1123,10 +1087,6 @@ window.NETTO_BRONNEN = {
   "Hoeveel eredivisiestadions hebben een capaciteit boven de 50.000?": {
     "bron": "https://www.eredivisie.nl/",
     "uitleg": "De Johan Cruijff Arena en De Kuip. De oude vraagtekst noemde beide stadions tussen haakjes en gaf daarmee het antwoord weg."
-  },
-  "Hoeveel erkende planeten telt ons zonnestelsel?": {
-    "bron": "https://science.nasa.gov/solar-system/planets/",
-    "uitleg": "Bestaande bron opgehaald; het antwoord staat op de pagina."
   },
   "Hoeveel etappes telt de Tour de France doorgaans?": {
     "bron": "https://en.wikipedia.org/wiki/Tour_de_France",
@@ -1286,7 +1246,7 @@ window.NETTO_BRONNEN = {
   },
   "Hoeveel gram suiker zit er in een blikje Coca-Cola van 330 ml?": {
     "bron": "https://www.coca-cola.com/ng/en/about-us/faq/how-much-sugar-is-in-cocacola-original-taste",
-    "uitleg": "Bestaande bron opgehaald; het antwoord staat op de pagina."
+    "uitleg": "Coca-Cola over het eigen product: \"35 g in a 330 ml can.\""
   },
   "Hoeveel gram weegt een standaard Mars reep?": {
     "bron": "https://nl.wikipedia.org/wiki/Mars_%28reep%29",
@@ -1325,16 +1285,16 @@ window.NETTO_BRONNEN = {
     "uitleg": "De kamertoon a is genormeerd op 440 Hz in ISO 16."
   },
   "Hoeveel holes heeft een standaard golfbaan?": {
-    "bron": "https://www.randa.org/en/rog/the-rules-of-golf",
-    "uitleg": "Bestaande bron opgehaald; het antwoord staat op de pagina."
+    "bron": "https://nl.wikipedia.org/wiki/Golfbaan",
+    "uitleg": "Een volledige golfbaan heeft 18 holes."
   },
   "Hoeveel holes heeft een standaard minigolfronde meestal?": {
     "bron": "https://en.wikipedia.org/wiki/Miniature_golf",
     "uitleg": "Achttien holes is de gangbare baanlengte, maar geen voorschrift."
   },
   "Hoeveel holes telt een standaard ronde op een professionele golfbaan?": {
-    "bron": "https://www.randa.org/en/rog/the-rules-of-golf",
-    "uitleg": "Bestaande bron opgehaald; het antwoord staat op de pagina."
+    "bron": "https://nl.wikipedia.org/wiki/Golfbaan",
+    "uitleg": "Een volledige golfbaan heeft 18 holes."
   },
   "Hoeveel hoofdeilanden heeft Japan?": {
     "bron": "https://en.wikipedia.org/wiki/Japan",
@@ -1440,10 +1400,6 @@ window.NETTO_BRONNEN = {
     "bron": "https://en.wikipedia.org/wiki/Hagia_Sophia",
     "uitleg": "De bouw liep van 532 tot 537, bijna vijf jaar."
   },
-  "Hoeveel jaar duurde de bouw van de Taj Mahal?": {
-    "bron": "https://asi.nic.in/taj-mahal/",
-    "uitleg": "Bestaande bron opgehaald; het antwoord staat op de pagina."
-  },
   "Hoeveel jaar duurde de bouw van het Colosseum?": {
     "bron": "https://en.wikipedia.org/wiki/Colosseum",
     "uitleg": "De bouw liep van 72 tot 80, ongeveer acht jaar."
@@ -1451,10 +1407,6 @@ window.NETTO_BRONNEN = {
   "Hoeveel jaar duurde de regering van Elizabeth II?": {
     "bron": "https://en.wikipedia.org/wiki/Elizabeth_II",
     "uitleg": "Zij regeerde van 1952 tot 2022, zeventig jaar."
-  },
-  "Hoeveel jaar zaten er tussen het begin en het einde van de Punische oorlogen?": {
-    "bron": "https://en.wikipedia.org/wiki/Punic_Wars",
-    "uitleg": "Van 264 tot 146 voor Christus is 118 jaar tussen begin en eind."
   },
   "Hoeveel jaar duurt een termijn van het Australische Huis van Afgevaardigden?": {
     "bron": "https://www.aph.gov.au/",
@@ -1466,7 +1418,7 @@ window.NETTO_BRONNEN = {
   },
   "Hoeveel jaar kan een reuzenschildpad ongeveer oud worden?": {
     "bron": "https://nationalzoo.si.edu/animals/aldabra-tortoise",
-    "uitleg": "Bestaande bron opgehaald; het antwoord staat op de pagina."
+    "uitleg": "One of the world's largest land tortoises, Aldabra tortoises can reach sizes of up to 550 pounds and ages of up to 150 years old."
   },
   "Hoeveel jaar regeerde Cleopatra VII?": {
     "bron": "https://en.wikipedia.org/wiki/Cleopatra",
@@ -1475,6 +1427,10 @@ window.NETTO_BRONNEN = {
   "Hoeveel jaar zat Nelson Mandela gevangen?": {
     "bron": "https://nl.wikipedia.org/wiki/Nelson_Mandela",
     "uitleg": "Mandela werd op 27 april 1994, op 75-jarige leeftijd, president van Zuid-Afrika, als opvolger van De Klerk, die al een aarzelend begin had gemaakt met afschaffing van apartheidsregels."
+  },
+  "Hoeveel jaar zaten er tussen het begin en het einde van de Punische oorlogen?": {
+    "bron": "https://en.wikipedia.org/wiki/Punic_Wars",
+    "uitleg": "Van 264 tot 146 voor Christus is 118 jaar tussen het begin van de Eerste en het einde van de Derde Punische Oorlog. De drie oorlogen samen duurden 43 jaar; de rest van die periode was vrede."
   },
   "Hoeveel jaar zit er tussen twee WK-voetbaltoernooien?": {
     "bron": "https://www.fifa.com/tournaments/mens/worldcup",
@@ -1664,10 +1620,6 @@ window.NETTO_BRONNEN = {
     "bron": "https://nl.wikipedia.org/wiki/Amerikaanse_presidentsverkiezingen_2028",
     "uitleg": "Een kandidaat moet minimaal 270 van de 538 kiesmannen behalen om de verkiezing te winnen."
   },
-  "Hoeveel kilo weegt een koningspinguin?": {
-    "bron": "https://en.wikipedia.org/wiki/King_penguin",
-    "uitleg": "Bestaande bron opgehaald; het antwoord staat op de pagina."
-  },
   "Hoeveel kilocalorieën bevat een Amerikaanse McDonald’s Big Mac?": {
     "bron": "https://en.wikipedia.org/wiki/Big_Mac",
     "uitleg": "De Amerikaanse Big Mac bevat ongeveer 580 kilocalorieen."
@@ -1679,10 +1631,6 @@ window.NETTO_BRONNEN = {
   "Hoeveel kilogram aluminium zit er ongeveer in een gemiddelde auto?": {
     "bron": "https://en.wikipedia.org/wiki/Aluminium",
     "uitleg": "The yield strength of pure aluminium is 7–11 MPa, while aluminium alloys have yield strengths ranging from 200 MPa to 600 MPa."
-  },
-  "Hoeveel kilogram koffiebonen wordt wereldwijd jaarlijks geproduceerd?": {
-    "bron": "https://www.ico.org/",
-    "uitleg": "De wereldproductie is ongeveer 175 miljoen zakken van 60 kg, dus circa 10,5 MILJARD kilogram. Het opgegeven 10.000.000 is een factor duizend te laag."
   },
   "Hoeveel kilogram rundvlees eet een Argentijn per jaar?": {
     "bron": "https://en.wikipedia.org/wiki/Argentine_cuisine",
@@ -1865,8 +1813,8 @@ window.NETTO_BRONNEN = {
     "uitleg": "De Murray is met zijn 2.508 kilometer de langste rivier van Australië en ontspringt in de Australische Alpen."
   },
   "Hoeveel kilometer lang is de Nederlandse kustlijn ongeveer?": {
-    "bron": "https://nl.wikipedia.org/wiki/Nederlandse_kust",
-    "uitleg": "Rijkswaterstaat houdt ongeveer 430 km aan, of 523 km inclusief Westerschelde en Waddenzee. Het opgegeven 1500 komt uit geen enkele bron."
+    "bron": "https://nl.wikipedia.org/wiki/Nederland",
+    "uitleg": "De lengte van de landsgrens bedraagt 1027 km, terwijl de kustlijn 451 km lang is."
   },
   "Hoeveel kilometer lang is de Niger?": {
     "bron": "https://en.wikipedia.org/wiki/Niger_River",
@@ -1898,7 +1846,7 @@ window.NETTO_BRONNEN = {
   },
   "Hoeveel kilometer lang is de evenaar ongeveer?": {
     "bron": "https://education.nationalgeographic.org/resource/equator/",
-    "uitleg": "Bestaande bron opgehaald; het antwoord staat op de pagina."
+    "uitleg": "The distance around Earth at the Equator, its circumference , is 40,075 kilometers (24,901 miles)."
   },
   "Hoeveel kilometer lang is de kust van de Nederlandse Waddeneilanden ongeveer?": {
     "bron": "https://www.waddenzee.nl/",
@@ -1998,7 +1946,7 @@ window.NETTO_BRONNEN = {
   },
   "Hoeveel kilometer per uur is de geluidssnelheid op zeeniveau afgerond?": {
     "bron": "https://nl.wikipedia.org/wiki/Geluidssnelheid",
-    "uitleg": "Bij 15 °C op zeeniveau is de geluidssnelheid 340,3 m/s, oftewel 1225 km/u. Het opgegeven 1234 hoort bij 20 °C; verschil van minder dan één procent."
+    "uitleg": "Bij 15 °C op zeeniveau is de geluidssnelheid 340,3 m/s, oftewel 1225 km/u. De eerder opgegeven 1234 km/u hoort bij 20 °C."
   },
   "Hoeveel kilometer per uur kunnen de sterkste winden op Neptunus ongeveer bereiken?": {
     "bron": "https://nl.wikipedia.org/wiki/Neptunus_%28planeet%29",
@@ -2022,7 +1970,7 @@ window.NETTO_BRONNEN = {
   },
   "Hoeveel kilometer per uur zwemt een dolfijn op zijn snelst?": {
     "bron": "https://www.ifaw.org/international/journal/fastest-whales-dolphins-ocean",
-    "uitleg": "Bestaande bron opgehaald; het antwoord staat op de pagina."
+    "uitleg": "Though they typically cruise at speeds around 8 kilometres per hour (5 miles per hour), they can accelerate to more than 32 kilometres per hour (20 miles per hour) ."
   },
   "Hoeveel kilometer staaldraad zit er in beide hoofdkabels van de Golden Gate Bridge samen?": {
     "bron": "https://www.goldengate.org/bridge/history-research/statistics-data/design-construction-stats/",
@@ -2119,10 +2067,6 @@ window.NETTO_BRONNEN = {
   "Hoeveel landen doen mee aan het FIFA World Cup 2026?": {
     "bron": "https://en.wikipedia.org/wiki/FIFA_World_Cup",
     "uitleg": "In the tournament phase, 48 teams (as of the 2026 World Cup) compete for the title at venues within the host nation(s) over the course of about a month, initially in groups and then in a series of knockout rounds that culminate in the final to determine the overall winner."
-  },
-  "Hoeveel landen gebruiken de CFA-frank in West- en Centraal-Afrika samen?": {
-    "bron": "https://www.bceao.int/en/content/west-african-cfa-franc",
-    "uitleg": "Bestaande bron opgehaald; het antwoord staat op de pagina."
   },
   "Hoeveel landen gebruiken de Centraal-Afrikaanse CFA frank?": {
     "bron": "https://en.wikipedia.org/wiki/Central_African_CFA_franc",
@@ -2406,7 +2350,7 @@ window.NETTO_BRONNEN = {
   },
   "Hoeveel landen ondertekenden oorspronkelijk het Handvest van de Verenigde Naties?": {
     "bron": "https://www.un.org/en/about-us/history-of-the-un",
-    "uitleg": "Bestaande bron opgehaald; het antwoord staat op de pagina."
+    "uitleg": "Representatives of 50 countries gathered at the United Nations Conference on International Organization in San Francisco, California from 25 April to 26 June 1945."
   },
   "Hoeveel landen telt Afrika?": {
     "bron": "https://nl.wikipedia.org/wiki/Afrika",
@@ -2502,7 +2446,7 @@ window.NETTO_BRONNEN = {
   },
   "Hoeveel landen zijn lid van de NAVO?": {
     "bron": "https://www.nato.int/cps/en/natohq/topics_52044.htm",
-    "uitleg": "Bestaande bron opgehaald; het antwoord staat op de pagina."
+    "uitleg": "At present, NATO has 32 member countries."
   },
   "Hoeveel landen zijn lid van de Raad van Europa?": {
     "bron": "https://nl.wikipedia.org/wiki/Raad_van_Europa",
@@ -2514,7 +2458,7 @@ window.NETTO_BRONNEN = {
   },
   "Hoeveel leden heeft de G7?": {
     "bron": "https://www.g7italy.it/en/about-g7/",
-    "uitleg": "Bestaande bron opgehaald; het antwoord staat op de pagina."
+    "uitleg": "The Group of Seven (G7) is an informal forum that brings together Italy, Canada, France, Germany, Japan, the United Kingdom, and the United States of America."
   },
   "Hoeveel leden heeft de Nederlandse Eerste Kamer?": {
     "bron": "https://nl.wikipedia.org/wiki/Eerste_Kamer_der_Staten-Generaal",
@@ -2640,10 +2584,6 @@ window.NETTO_BRONNEN = {
     "bron": "https://nl.wikipedia.org/wiki/Empire_State_Building",
     "uitleg": "Van de 73 liften gaat er niet één rechtstreeks naar de bovenste verdieping."
   },
-  "Hoeveel lijnen heeft de metro van Londen volgens de klassieke Underground-indeling?": {
-    "bron": "https://tfl.gov.uk/corporate/about-tfl/what-we-do/london-underground",
-    "uitleg": "Bestaande bron opgehaald; het antwoord staat op de pagina."
-  },
   "Hoeveel lijnen heeft de metro van Rotterdam?": {
     "bron": "https://en.wikipedia.org/wiki/Rotterdam",
     "uitleg": "The top 5 highest buildings in the Netherlands consist entirely of buildings in Rotterdam."
@@ -2654,7 +2594,7 @@ window.NETTO_BRONNEN = {
   },
   "Hoeveel liter bloed pompt een mensenhart gemiddeld per dag rond?": {
     "bron": "https://en.wikipedia.org/wiki/Cardiac_output",
-    "uitleg": "Ongeveer vijf liter per minuut maal 1440 minuten geeft rond de 7200 liter per dag. De oude bron ging over diagonalen in veelhoeken."
+    "uitleg": "For a healthy individual weighing 70 kg, the cardiac output at rest averages about 5 L/min. Vijf liter per minuut maal 1440 minuten is 7200 liter per dag."
   },
   "Hoeveel liter bloed stroomt er ongeveer door een volwassen lichaam?": {
     "bron": "https://nl.wikipedia.org/wiki/Bloed",
@@ -2742,7 +2682,7 @@ window.NETTO_BRONNEN = {
   },
   "Hoeveel melktanden heeft een kind in een compleet melkgebit?": {
     "bron": "https://www.mouthhealthy.org/all-topics-a-z/eruption-charts",
-    "uitleg": "Bestaande bron opgehaald; het antwoord staat op de pagina."
+    "uitleg": "At birth people usually have 20 baby (primary) teeth, which start to come in (erupt) at about 6 months of age."
   },
   "Hoeveel mensen bezochten de Wereldtentoonstelling van 1889 in Parijs?": {
     "bron": "https://en.wikipedia.org/wiki/Exposition_Universelle_(1889)",
@@ -2774,7 +2714,7 @@ window.NETTO_BRONNEN = {
   },
   "Hoeveel meter breed mag een internationaal voetbalveld maximaal zijn?": {
     "bron": "https://www.theifab.com/laws/latest/the-field-of-play/",
-    "uitleg": "Bestaande bron opgehaald; het antwoord staat op de pagina."
+    "uitleg": "Length (goal line): minimum 45 m (50 yds) maximum 90 m (100 yds). De doellijn is de breedte van het veld."
   },
   "Hoeveel meter breed zijn de Victoriawatervallen?": {
     "bron": "https://nl.wikipedia.org/wiki/Victoriawatervallen",
@@ -2990,7 +2930,7 @@ window.NETTO_BRONNEN = {
   },
   "Hoeveel meter lang is een Airbus A380 ongeveer?": {
     "bron": "https://www.airbus.com/en/products-services/commercial-aircraft/passenger-aircraft/a380",
-    "uitleg": "Bestaande bron opgehaald; het antwoord staat op de pagina."
+    "uitleg": "The Airbus A380 is the largest passenger plane ever built , measuring 73 metres long with a wingspan of nearly 80 metres."
   },
   "Hoeveel meter lang is een officiële atletiekbaan op de binnenbaan?": {
     "bron": "https://nl.wikipedia.org/wiki/Atletiekbaan",
@@ -3022,7 +2962,7 @@ window.NETTO_BRONNEN = {
   },
   "Hoeveel meter lang mag een internationaal voetbalveld maximaal zijn?": {
     "bron": "https://www.theifab.com/laws/latest/the-field-of-play/",
-    "uitleg": "Bestaande bron opgehaald; het antwoord staat op de pagina."
+    "uitleg": "Length (touchline): minimum 90 m (100 yds) maximum 120 m (130 yds)"
   },
   "Hoeveel meter lang was de langste trouwjurkstaart volgens Guinness World Records?": {
     "bron": "https://www.guinnessworldrecords.com/world-records/longest-wedding-dress-train",
@@ -3176,6 +3116,10 @@ window.NETTO_BRONNEN = {
     "bron": "https://nl.wikipedia.org/wiki/Amsterdam",
     "uitleg": "Als hoofdstad van het nieuwe koninkrijk koos hij Amsterdam en na een feestelijke binnenkomst in de stad, kreeg hij op 20 april 1808 de stadssleutels overhandigd."
   },
+  "Hoeveel miljoen ton groene koffiebonen produceerde de wereld in 2023?": {
+    "bron": "https://en.wikipedia.org/wiki/Coffee",
+    "uitleg": "In 2023, world production of green coffee beans was 11 million tonnes, led by Brazil with 31% of the total and Vietnam as a secondary producer."
+  },
   "Hoeveel miljoen ton plastic afval lekt jaarlijks in de oceaan volgens een gangbare schatting?": {
     "bron": "https://www.unep.org/interactives/beat-plastic-pollution/",
     "uitleg": "De schatting van jaarlijkse plasticlekkage naar zee wordt regelmatig bijgesteld."
@@ -3231,10 +3175,6 @@ window.NETTO_BRONNEN = {
   "Hoeveel minuten duurt een volledige baan van het ISS rond de aarde ongeveer?": {
     "bron": "https://nl.wikipedia.org/wiki/Baan_%28hemellichaam%29",
     "uitleg": "Alle objecten in een LEO bewegen zich voort met een snelheid van ongeveer 8 km/s, waardoor een volledige omgang rond de Aarde circa 90 minuten duurt."
-  },
-  "Hoeveel minuten officiële speeltijd heeft een Americanfootballwedstrijd in de NFL?": {
-    "bron": "https://operations.nfl.com/the-rules/nfl-rulebook/",
-    "uitleg": "Bestaande bron opgehaald; het antwoord staat op de pagina."
   },
   "Hoeveel minuten officiële speeltijd heeft een NBA-wedstrijd?": {
     "bron": "https://official.nba.com/rulebook/",
@@ -3396,10 +3336,6 @@ window.NETTO_BRONNEN = {
     "bron": "https://nl.wikipedia.org/wiki/Verenigde_Staten",
     "uitleg": "Geografie\n\n\nBestuurlijke indeling\n\nSinds de Onafhankelijkheidsverklaring in 1776, waarbij de VS bestond uit 13 staten, groeide het land uit tot vijftig staten:\nAlabama - Alaska - Arizona - Arkansas - Californië - Colorado - Connecticut - Delaware - Florida - Georgia - Hawaï - Idaho - Illinois - Indi"
   },
-  "Hoeveel oorspronkelijke leden had de NAVO bij de oprichting in 1949?": {
-    "bron": "https://www.nato.int/cps/en/natolive/topics_52044.htm",
-    "uitleg": "Bestaande bron opgehaald; het antwoord staat op de pagina."
-  },
   "Hoeveel oorspronkelijke meetpunten van de Struve-geodetische boog zijn als UNESCO-onderdeel opgenomen?": {
     "bron": "https://nl.wikipedia.org/wiki/Geodetische_boog_van_Struve",
     "uitleg": "34 daarvan bestaan thans nog en zijn als tastbare herinnering aan dit enorme project op de Werelderfgoedlijst van UNESCO geplaatst als de Geodetische boog van Struve."
@@ -3407,10 +3343,6 @@ window.NETTO_BRONNEN = {
   "Hoeveel opdrachten (werken) moest Hercules voltooien volgens de Griekse mythologie?": {
     "bron": "https://en.wikipedia.org/wiki/Labours_of_Hercules",
     "uitleg": "Twaalf werken."
-  },
-  "Hoeveel paar chromosomen heeft een fruitvlieg Drosophila melanogaster?": {
-    "bron": "https://flybase.org/",
-    "uitleg": "Bestaande bron opgehaald; het antwoord staat op de pagina."
   },
   "Hoeveel paar chromosomen heeft een hond?": {
     "bron": "https://nl.wikipedia.org/wiki/Afrikaanse_wilde_hond",
@@ -3422,7 +3354,7 @@ window.NETTO_BRONNEN = {
   },
   "Hoeveel paar hersenzenuwen heeft een mens?": {
     "bron": "https://www.ncbi.nlm.nih.gov/books/NBK470353/",
-    "uitleg": "Bestaande bron opgehaald; het antwoord staat op de pagina."
+    "uitleg": "Ventral view of the human brain depicting the canonical organization of the 12 pairs of cranial nerves (CN) as described in the classical medical nomenclature (A)."
   },
   "Hoeveel paar ribben heeft een mens normaal?": {
     "bron": "https://en.wikipedia.org/wiki/Rib_cage",
@@ -3453,8 +3385,8 @@ window.NETTO_BRONNEN = {
     "uitleg": "De drie stations van Heathrow zijn Heathrow Terminals 2 & 3, Heathrow Terminal 4 en Heathrow Terminal 5."
   },
   "Hoeveel perioden heeft het moderne periodiek systeem?": {
-    "bron": "https://iupac.org/what-we-do/periodic-table-of-elements/",
-    "uitleg": "Bestaande bron opgehaald; het antwoord staat op de pagina."
+    "bron": "https://nl.wikipedia.org/wiki/Periode_(scheikunde)",
+    "uitleg": "In totaal komen er in het periodiek systeem zeven perioden voor, die genummerd zijn van 1 tot en met 7."
   },
   "Hoeveel periodes heeft een ijshockeywedstrijd?": {
     "bron": "https://en.wikipedia.org/wiki/Ice_hockey",
@@ -3536,10 +3468,6 @@ window.NETTO_BRONNEN = {
     "bron": "https://en.wikipedia.org/wiki/Flevoland",
     "uitleg": "Municipalities\n\n\nDemographics\n\nOn 1 January 2023, Flevoland had a total population of 444,701 and a population density of 315/km2 (820/sq mi)."
   },
-  "Hoeveel positieve delers heeft het getal 360?": {
-    "bron": "https://mathworld.wolfram.com/Divisor.html",
-    "uitleg": "Bestaande bron opgehaald; het antwoord staat op de pagina."
-  },
   "Hoeveel positieve delers heeft het getal 720?": {
     "bron": "https://en.wikipedia.org/wiki/Divisor",
     "uitleg": "720 is 2^4 maal 3^2 maal 5; het aantal delers is 5 maal 3 maal 2 is 30."
@@ -3552,13 +3480,9 @@ window.NETTO_BRONNEN = {
     "bron": "https://en.wikipedia.org/wiki/Insect",
     "uitleg": "Insecten hebben per definitie zes poten; het is het kenmerk van de klasse."
   },
-  "Hoeveel poten heeft een krab?": {
-    "bron": "https://en.wikipedia.org/wiki/Crab",
-    "uitleg": "Bestaande bron opgehaald; het antwoord staat op de pagina."
-  },
   "Hoeveel poten heeft een kreeft?": {
     "bron": "https://www.fisheries.noaa.gov/species/american-lobster",
-    "uitleg": "Bestaande bron opgehaald; het antwoord staat op de pagina."
+    "uitleg": "American lobster is a crustacean with a large shrimp-like body and 10 legs, two of which are large, strong claws."
   },
   "Hoeveel poten heeft een kreeftachtige van de orde Isopoda?": {
     "bron": "http://web.archive.org/web/20251122114109/https://www.britannica.com/animal/isopod",
@@ -3583,10 +3507,6 @@ window.NETTO_BRONNEN = {
   "Hoeveel presidenten werden er vermoord in de Amerikaanse geschiedenis?": {
     "bron": "https://nl.wikipedia.org/wiki/Lijst_van_presidenten_van_de_Verenigde_Staten",
     "uitleg": "Kennedy – op 22 november 1963 met een geweer doodgeschoten, na 2 jaar en 10 maanden presidentschap\nBuiten de vermoorde presidenten zijn er vier presidenten tijdens hun regeringsperiode overleden:\n\nWilliam Henry Harrison – op 4 april 1841 overleden aan een longontsteking of buiktyfus, precies 1 maand"
-  },
-  "Hoeveel procent azijnzuur bevat gewone huishoudazijn ongeveer?": {
-    "bron": "https://www.ecfr.gov/current/title-21/chapter-I/subchapter-B/part-169",
-    "uitleg": "Bestaande bron opgehaald; het antwoord staat op de pagina."
   },
   "Hoeveel procent bedraagt het standaard-btw-tarief in België?": {
     "bron": "https://nl.wikipedia.org/wiki/Sociale_zekerheid_%28Belgi%C3%AB%29",
@@ -3638,7 +3558,7 @@ window.NETTO_BRONNEN = {
   },
   "Hoeveel procent van de extra warmte door klimaatverandering wordt door de oceanen opgenomen?": {
     "bron": "https://www.ipcc.ch/report/ar6/wg1/chapter/chapter-5/",
-    "uitleg": "Bestaande bron opgehaald; het antwoord staat op de pagina."
+    "uitleg": "The excess heat generated by radiative forcing from increasing concentration of atmospheric CO 2 and other GHGs is mostly taken up by the ocean (>90%) and the residual balance partitioned between atmospheric, terrestrial and ice melting (Cross-Chapter Box 9.2; Frölicher et al., 2015 )."
   },
   "Hoeveel procent van de landbouwgrond wordt gebruikt voor voedsel dat uiteindelijk niet wordt opgegeten?": {
     "bron": "https://www.fao.org/food-loss-reduction/en/",
@@ -3669,8 +3589,8 @@ window.NETTO_BRONNEN = {
     "uitleg": "Brazilië beschikt over 35 internationale luchthavens en 2464 regionale luchthavens."
   },
   "Hoeveel procent van de wereldwijde landbouwgrond wordt geïrrigeerd?": {
-    "bron": "https://www.fao.org/aquastat/en/overview/methodology/water-use",
-    "uitleg": "Bestaande bron opgehaald; het antwoord staat op de pagina."
+    "bron": "https://en.wikipedia.org/wiki/Irrigation",
+    "uitleg": "The irrigation of 20% of farming land accounts for the production of 40% of food production."
   },
   "Hoeveel procent van de wetlands is sinds 1700 wereldwijd verdwenen?": {
     "bron": "https://www.ramsar.org/",
@@ -3702,7 +3622,7 @@ window.NETTO_BRONNEN = {
   },
   "Hoeveel procent van het menselijk lichaam bestaat ongeveer uit water?": {
     "bron": "https://www.usgs.gov/special-topics/water-science-school/science/water-you-water-and-human-body",
-    "uitleg": "Bestaande bron opgehaald; het antwoord staat op de pagina."
+    "uitleg": "Up to 60% of the human adult body is water."
   },
   "Hoeveel procent van het voedsel dat wereldwijd wordt geproduceerd gaat verloren of wordt verspild?": {
     "bron": "https://www.fao.org/food-loss-and-food-waste",
@@ -3714,15 +3634,15 @@ window.NETTO_BRONNEN = {
   },
   "Hoeveel protonen heeft een neutraal atoom van goud?": {
     "bron": "https://www.rsc.org/periodic-table/element/79/gold",
-    "uitleg": "Bestaande bron opgehaald; het antwoord staat op de pagina."
+    "uitleg": "Gold is element 79 and its symbol is Au. Het elementnummer is het aantal protonen in de kern."
   },
   "Hoeveel protonen heeft een neutraal atoom van uranium?": {
-    "bron": "https://www.rsc.org/periodic-table/element/92/uranium",
-    "uitleg": "Bestaande bron opgehaald; het antwoord staat op de pagina."
+    "bron": "https://nl.wikipedia.org/wiki/Uranium",
+    "uitleg": "Uranium of uraan (IUPAC-naam) is een chemisch element met symbool U en atoomnummer 92. Het atoomnummer is het aantal protonen in de kern."
   },
   "Hoeveel protonen heeft een neutraal atoom van wolfraam?": {
     "bron": "https://www.rsc.org/periodic-table/element/74/tungsten",
-    "uitleg": "Bestaande bron opgehaald; het antwoord staat op de pagina."
+    "uitleg": "Take for example the case of element 74 - or as we call it in English - tungsten. Het elementnummer is het aantal protonen in de kern."
   },
   "Hoeveel provincies heeft Argentinië (inclusief de hoofdstad als aparte provincie)?": {
     "bron": "https://en.wikipedia.org/wiki/Provinces_of_Argentina",
@@ -3761,8 +3681,8 @@ window.NETTO_BRONNEN = {
     "uitleg": "Als dit lukt scoort het team 3 punten, en als het niet lukt krijgt de tegenstander de bal op de plaats waar de poging werd ondernomen."
   },
   "Hoeveel punten levert een safety op bij American football?": {
-    "bron": "https://operations.nfl.com/the-rules/nfl-rulebook/",
-    "uitleg": "Bestaande bron opgehaald; het antwoord staat op de pagina."
+    "bron": "https://nl.wikipedia.org/wiki/American_football",
+    "uitleg": "Een safety is 2 punten waard."
   },
   "Hoeveel punten levert een touchdown op in American football (met extra point)?": {
     "bron": "https://en.wikipedia.org/wiki/Touchdown",
@@ -3864,9 +3784,9 @@ window.NETTO_BRONNEN = {
     "bron": "https://en.wikipedia.org/wiki/Rembrandt",
     "uitleg": "24 August 2019 – 1 December 2019: Leiden circa 1630: Rembrandt Emerges, Agnes Etherington Art Centre, Kingston, Ontario."
   },
-  "Hoeveel schilderijen worden aan Vincent van Gogh toegeschreven volgens de telling van het Van Gogh Museum?": {
-    "bron": "https://en.wikipedia.org/wiki/List_of_works_by_Vincent_van_Gogh",
-    "uitleg": "Het Van Gogh Museum houdt ongeveer 860 schilderijen aan; negenhonderd is de ronde vuistregel. De oude bron ging over een herdenkingsmunt."
+  "Hoeveel schilderijen van Vincent van Gogh bezit het Van Gogh Museum?": {
+    "bron": "https://en.wikipedia.org/wiki/Van_Gogh_Museum",
+    "uitleg": "The museum houses the largest Van Gogh collection in the world, with 200 paintings, 400 drawings, and 700 letters by the artist."
   },
   "Hoeveel seconden zitten er in één minuut?": {
     "bron": "https://en.wikipedia.org/wiki/Minute",
@@ -3914,7 +3834,7 @@ window.NETTO_BRONNEN = {
   },
   "Hoeveel smaakpapillen heeft een menselijke tong ongeveer?": {
     "bron": "https://www.nidcd.nih.gov/health/taste-disorders",
-    "uitleg": "Bestaande bron opgehaald; het antwoord staat op de pagina."
+    "uitleg": "At birth, you have about 10,000 taste buds, but after age 50, you may start to lose them."
   },
   "Hoeveel snaren heeft de Ethiopische krar?": {
     "bron": "https://en.wikipedia.org/wiki/Krar",
@@ -4034,7 +3954,7 @@ window.NETTO_BRONNEN = {
   },
   "Hoeveel speelvelden heeft een standaard schaakbord?": {
     "bron": "https://handbook.fide.com/chapter/E012023",
-    "uitleg": "Bestaande bron opgehaald; het antwoord staat op de pagina."
+    "uitleg": "2.1 The chessboard is composed of an 8 x 8 grid of 64 equal squares alternately light (the ‘white’ squares) and dark (the ‘black’ squares)."
   },
   "Hoeveel spelers heeft een basketbalteam op het veld per ploeg?": {
     "bron": "https://official.nba.com/rulebook/",
@@ -4075,10 +3995,6 @@ window.NETTO_BRONNEN = {
   "Hoeveel spelers staan er per team op het veld bij volleybal?": {
     "bron": "https://en.wikipedia.org/wiki/Volleyball",
     "uitleg": "Zes spelers per team op het veld."
-  },
-  "Hoeveel spelers staan er per voetbalteam op het veld?": {
-    "bron": "https://www.theifab.com/laws/latest/the-players/",
-    "uitleg": "Bestaande bron opgehaald; het antwoord staat op de pagina."
   },
   "Hoeveel spelers staan er tegelijk op het veld bij basketbal?": {
     "bron": "https://en.wikipedia.org/wiki/Basketball",
@@ -4270,7 +4186,7 @@ window.NETTO_BRONNEN = {
   },
   "Hoeveel stukken heeft iedere speler bij de start van schaken?": {
     "bron": "https://handbook.fide.com/chapter/E012023",
-    "uitleg": "Bestaande bron opgehaald; het antwoord staat op de pagina."
+    "uitleg": "2.2 At the beginning of the game White has 16 light-coloured pieces (the ‘white’ pieces); Black has 16 dark-coloured pieces (the ‘black’ pieces)."
   },
   "Hoeveel suikerklontjes zitten er volgens de standaardverpakking in een blikje Coca-Cola van 330 ml?": {
     "bron": "https://en.wikipedia.org/wiki/Coca-Cola",
@@ -4379,10 +4295,6 @@ window.NETTO_BRONNEN = {
   "Hoeveel toetsen heeft een standaard computertoetsenbord ongeveer?": {
     "bron": "https://en.wikipedia.org/wiki/Computer_keyboard",
     "uitleg": "Een volledig toetsenbord met numeriek deel telt 104 toetsen."
-  },
-  "Hoeveel toetsen heeft een standaard piano?": {
-    "bron": "https://www.yamaha.com/en/musical_instrument_guide/piano/structure/",
-    "uitleg": "Bestaande bron opgehaald; het antwoord staat op de pagina."
   },
   "Hoeveel ton aardappelen werd wereldwijd geproduceerd in 2023?": {
     "bron": "https://www.fao.org/faostat/en/#data/QCL",
@@ -4510,7 +4422,7 @@ window.NETTO_BRONNEN = {
   },
   "Hoeveel treden heeft het Empire State Building van straatniveau tot het observatiedek?": {
     "bron": "https://www.esbnyc.com/about/facts-figures",
-    "uitleg": "Bestaande bron opgehaald; het antwoord staat op de pagina."
+    "uitleg": "The Empire State Building has 103 floors, with 1,860 steps from street level to the 102nd floor observation deck."
   },
   "Hoeveel treden telt de wenteltrap in het Vrijheidsbeeld naar de kroon?": {
     "bron": "https://en.wikipedia.org/wiki/Statue_of_Liberty",
@@ -5012,10 +4924,6 @@ window.NETTO_BRONNEN = {
     "bron": "https://en.wikipedia.org/wiki/St._Petersburg%E2%80%93Tampa_Airboat_Line",
     "uitleg": "De eerste lijnvlucht met betalende passagiers vertrok op 1 januari 1914. De oude bron was het artikel over de Eerste Wereldoorlog."
   },
-  "In welk jaar voor Christus viel Carthago in handen van de Romeinen?": {
-    "bron": "https://nl.wikipedia.org/wiki/Punische_oorlogen",
-    "uitleg": "Er werden drie oorlogen tussen de Carthagers en de Romeinen uitgevochten tussen 264 en 146 v.Chr."
-  },
   "In welk jaar viel de Berlijnse Muur niet maar werd Japan aangevallen door de VS in Pearl Harbor?": {
     "bron": "https://nl.wikipedia.org/wiki/Aanval_op_Pearl_Harbor",
     "uitleg": "De aanval op Pearl Harbor was een verrassingsaanval door de Japanse Keizerlijke Marine onder leiding van admiraal Isoroku Yamamoto op de Amerikaanse marinebasis Pearl Harbor in Hawaï, op zondag 7 december 1941, om 17:55 UTC (op Hawaï in de ochtend, in Washington D.C."
@@ -5059,6 +4967,10 @@ window.NETTO_BRONNEN = {
   "In welk jaar vond de kernramp in Tsjernobyl plaats?": {
     "bron": "https://nl.wikipedia.org/wiki/Kernramp_van_Tsjernobyl",
     "uitleg": "Het ongeval gebeurde op 26 april 1986 nabij de Oekraïense (toen nog deel van de Sovjet-Unie) steden Tsjernobyl en Pripjat, vlak bij de grens met Wit-Rusland."
+  },
+  "In welk jaar voor Christus viel Carthago in handen van de Romeinen?": {
+    "bron": "https://nl.wikipedia.org/wiki/Punische_oorlogen",
+    "uitleg": "Er werden drie oorlogen tussen de Carthagers en de Romeinen uitgevochten tussen 264 en 146 v.Chr."
   },
   "In welk jaar werd Amazon opgericht?": {
     "bron": "https://nl.wikipedia.org/wiki/Amazon.com",
@@ -5274,7 +5186,7 @@ window.NETTO_BRONNEN = {
   },
   "In welk jaar werd de eerste floppy disk geïntroduceerd?": {
     "bron": "https://www.ibm.com/history/floppy-disk",
-    "uitleg": "Bestaande bron opgehaald; het antwoord staat op de pagina."
+    "uitleg": "IBM began selling floppy disk drives in 1971 and received US patents for the drive and floppy disk in 1972."
   },
   "In welk jaar werd de eerste foto van een zwart gat gepubliceerd?": {
     "bron": "https://nl.wikipedia.org/wiki/Zwart_gat",
@@ -5362,7 +5274,7 @@ window.NETTO_BRONNEN = {
   },
   "In welk jaar werd de eerste volledige sequentie van het menselijke genoom gepubliceerd?": {
     "bron": "https://www.genome.gov/human-genome-project/Completion-FAQ",
-    "uitleg": "Bestaande bron opgehaald; het antwoord staat op de pagina."
+    "uitleg": "In 2003, the Human Genome Project produced a genome sequence that accounted for over 90% of the human genome."
   },
   "In welk jaar werd de eerste website online gezet?": {
     "bron": "https://info.cern.ch/",
@@ -5374,15 +5286,11 @@ window.NETTO_BRONNEN = {
   },
   "In welk jaar werd het eerste succesvolle vaccin ontwikkeld?": {
     "bron": "https://www.who.int/news-room/spotlight/history-of-vaccination/history-of-smallpox-vaccination",
-    "uitleg": "Bestaande bron opgehaald; het antwoord staat op de pagina."
+    "uitleg": "It wasn’t until May 1796 that the world’s first vaccine was demonstrated, using the same principle as variolation but with a less dangerous viral source, cowpox."
   },
   "In welk jaar werd penicilline ontdekt?": {
     "bron": "https://nl.wikipedia.org/wiki/Penicilline",
     "uitleg": "Penicilline is een antibacteriële stof die in 1928 herontdekt werd door de Schotse arts-bacterioloog Alexander Fleming."
-  },
-  "In welk jaar zette de eerste mens voet op de maan?": {
-    "bron": "https://www.nasa.gov/mission/apollo-11/",
-    "uitleg": "Bestaande bron opgehaald; het antwoord staat op de pagina."
   },
   "In welk jaar zonk de Titanic?": {
     "bron": "https://nl.wikipedia.org/wiki/Titanic_%28schip%2C_1912%29",
@@ -5474,7 +5382,7 @@ window.NETTO_BRONNEN = {
   },
   "Wat is de gemiddelde afstand van de aarde tot de maan?": {
     "bron": "https://science.nasa.gov/moon/facts/",
-    "uitleg": "Bestaande bron opgehaald; het antwoord staat op de pagina."
+    "uitleg": "The Moon is an average of 238,855 miles (384,400 kilometers) away."
   },
   "Wat is de gemiddelde afstand van de aarde tot de zon?": {
     "bron": "https://en.wikipedia.org/wiki/Astronomical_unit",
@@ -5490,7 +5398,7 @@ window.NETTO_BRONNEN = {
   },
   "Wat is de geschatte temperatuur aan het oppervlak van de zon?": {
     "bron": "https://science.nasa.gov/sun/facts/",
-    "uitleg": "Bestaande bron opgehaald; het antwoord staat op de pagina."
+    "uitleg": "The part of the Sun we call its surface – the photosphere – is a relatively cool 10,000 °F (5,500 °C)."
   },
   "Wat is de hoogte van de Burj Khalifa in Dubai in meters?": {
     "bron": "https://nl.wikipedia.org/wiki/Burj_Khalifa",
@@ -5618,7 +5526,7 @@ window.NETTO_BRONNEN = {
   },
   "Welk percentage van het zoete water bevindt zich in grondwater?": {
     "bron": "https://www.usgs.gov/special-topics/water-science-school/science/where-earths-water",
-    "uitleg": "Bestaande bron opgehaald; het antwoord staat op de pagina."
+    "uitleg": "Another 30 percent of freshwater is in the ground."
   },
   "Welk percentage van het zoete water zit vast in ijs en gletsjers?": {
     "bron": "https://www.usgs.gov/special-topics/water-science-school/science/where-earths-water",
@@ -5634,6 +5542,6 @@ window.NETTO_BRONNEN = {
   },
   "Welke pH-waarde heeft zuiver water bij kamertemperatuur ongeveer?": {
     "bron": "https://www.usgs.gov/special-topics/water-science-school/science/ph-and-water",
-    "uitleg": "Bestaande bron opgehaald; het antwoord staat op de pagina."
+    "uitleg": "The range goes from 0 to 14, with 7 being neutral."
   }
 };

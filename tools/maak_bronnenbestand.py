@@ -37,6 +37,11 @@ def maak_bronnen(werkmap, puzzelbestand):
                 geldig = url.scheme in ('http', 'https') and bool(url.hostname) and not any(c.isspace() for c in bron)
             except ValueError:
                 geldig = False
+            # Een plaatshouder is geen bewijs. Hij stond wel in het paneel "Waar
+            # komt dit vandaan?", waar de speler dan las dat het antwoord ergens
+            # op de pagina staat. Liever geen paneel dan een lege belofte.
+            if 'bestaande bron opgehaald' in uitleg.casefold():
+                continue
             if not geldig or not uitleg:
                 continue
             vermelding = {'bron': bron, 'uitleg': uitleg}
