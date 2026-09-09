@@ -2,31 +2,37 @@
 # -*- coding: utf-8 -*-
 """Genereer Breinkrakers-puzzels: 4 vragen in één formule.
 
-Formule: a (× of ÷) b (+ of −) c = d  — standaard rekenvolgorde, dus
-(a op1 b) op2 c = d. Alle vier de vragen komen uit de vragenbank, zijn
-binnen één puzzel altijd verschillend en de formule klopt exact.
+Formule: a op1 b op2 c = d, gelezen VAN LINKS NAAR RECHTS. Niet de schoolregel
+dus: "2 + 3 × 4" is hier 20 en niet 14. Elke puzzel heeft precies één
+keer/deel- en één plus/min-bewerking, in wisselende volgorde:
+
+    MA   a × b + c = d   de vertrouwde vorm; hier valt de leesregel toevallig
+                         samen met de gewone rekenvolgorde
+    AM   a + b × c = d   hier niet, en dat is de bedoeling: de speler moet de
+                         som echt lezen in plaats van er een keersom in te zien
+
+Alle vier de vragen komen uit de geverifieerde vragenbank, zijn binnen één
+puzzel altijd verschillend en de formule klopt exact.
 
 Output:
-  1. breinkrakers.xlsx        — 100.000 puzzels (tabblad Breinkrakers + Overzicht)
-  2. data/netto_breinkrakers.js    — 200 uitgekozen speelpuzzels voor de frontend
-
-Theoretisch bestaan er ~475 miljoen combinaties; dit script schrijft een
-kwaliteitsselectie met een moeilijkheidsramp (kleine h1 → grote h1).
+  1. breinkrakers.xlsx          — 100.000 puzzels (tabblad Breinkrakers + Overzicht)
+  2. data/netto_breinkrakers.js — 200 uitgekozen speelpuzzels voor de frontend
 """
 
 from __future__ import annotations
 
 import json
 import math
-import sys
 import zipfile
 from collections import Counter, defaultdict
+from dataclasses import dataclass
 from pathlib import Path
 
-sys.path.insert(0, str(Path(__file__).resolve().parent))
-import maak_puzzels as m
+import pandas as pd
 
-INPUT = Path("vragen/1000+ vragen netjes gecategoriseerd.xlsx")
+# Dezelfde bron als de gewone puzzels: elke vraag hierin heeft een
+# gecontroleerde bron. De oude bank had die kolommen niet.
+INPUT = Path("vragen/vragen_review_compleet.xlsx")
 OUTPUT_XLSX = Path("puzzels/breinkrakers.xlsx")
 OUTPUT_JS = Path("data/netto_breinkrakers.js")  # frontend-asset, blijft in de projectroot
 TARGET_ROWS = 100_000
@@ -39,6 +45,11 @@ MAX_PLAY_VALUE = 1_000_000
 LEVEL_MIN_MAX_VALUE = {"Easy": 12, "Intermediate": 40, "Hard": 150, "Extremely Hard": 800}
 # Bij tekort aan kandidaten mag de vloer stapsgewijs omlaag, maar nooit volledig weg.
 FLOOR_RELAX_STEPS = [0, 0.5, 0.75]
+# Plafond per bewerkingspaar, als deler van het quotum: eerst streng (een
+# achtste, dus alle acht paren gelijk), daarna ruimer, ten slotte los.
+COMBI_RELAX_STEPS = [8, 7, 6]
+# Hoe vaak dezelfde halve som (a op1 b) in de speelbare lijst mag terugkomen.
+HALF_REUSE_CAP = 2
 
 BK_WEIGHTS = {"×": 14.0, "÷": 18.0, "+": 0.0, "−": 8.0}
 COL_LETTERS = [chr(65 + i) for i in range(18)]
@@ -53,6 +64,50 @@ HEADERS = [
 ]
 
 
+@dataclass(frozen=True)
+class Vraag:
+    text: str
+    category: str
+    answer: int
+
+
+def load_questions(path: Path) -> list[Vraag]:
+    blad = pd.read_excel(path, sheet_name="Vragen")
+    vragen = []
+    for _, rij in blad.iterrows():
+        try:
+            antwoord = int(rij["Antwoord"])
+        except (TypeError, ValueError):
+            continue
+        # 0 en 1 leveren lege bewerkingen op (b × 1 = b), dus die doen niet mee.
+        if antwoord < 2:
+            continue
+        vragen.append(Vraag(str(rij["Vraag NL"]), str(rij["Categorie"]), antwoord))
+    return vragen
+
+
+def pas(x: int, op: str, y: int) -> int:
+    """Eén stap in de formule. Delen is altijd exact: de tabellen laten geen
+    combinatie toe waar het niet opgaat."""
+    if op == "×":
+        return x * y
+    if op == "÷":
+        return x // y
+    if op == "+":
+        return x + y
+    return x - y
+
+
+def halfsleutel(a: int, op1: str, b: int) -> tuple:
+    if op1 in ("×", "+"):
+        return (min(a, b), op1, max(a, b))
+    return (a, op1, b)
+
+
+def familie(op1: str) -> str:
+    return "MA" if op1 in ("×", "÷") else "AM"
+
+
 def esc(text: str) -> str:
     return text.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
 
@@ -63,15 +118,21 @@ def bk_score(op1: str, op2: str, values) -> float:
         + sum(math.log10(abs(float(v)) + 1.0) * 10.0 for v in values), 2)
 
 
-def bk_level(score: float) -> str:
-    # Banden verschoven t.o.v. de oude grenzen (35/60/90): de verboden
-    # micro-operanden (+0/+1) en de waardevloeren duwen elke score omhoog,
-    # dus zonder nieuwere banden valt bijna alles in één hoge categorie.
-    if score < 42:
+def niveaugrenzen(scores: list[float]) -> list[float]:
+    """Vier even grote banden, afgeleid uit de scores die er echt zijn.
+
+    Vaste drempels liepen mis zodra de vragenbank veranderde: met de nieuwe,
+    grotere antwoorden viel 90 procent in één bak en bleef Easy leeg."""
+    geordend = sorted(scores)
+    return [geordend[int(len(geordend) * deel)] for deel in (0.25, 0.5, 0.75)]
+
+
+def bk_level(score: float, grenzen: list[float]) -> str:
+    if score < grenzen[0]:
         return "Easy"
-    if score < 72:
+    if score < grenzen[1]:
         return "Intermediate"
-    if score < 105:
+    if score < grenzen[2]:
         return "Hard"
     return "Extremely Hard"
 
@@ -214,31 +275,52 @@ def write_xlsx(path: Path, rows: list, stats: dict) -> None:
 
 def main() -> None:
     print(f"Inlezen: {INPUT}")
-    questions, skipped = m.load_questions(INPUT)
-    questions = [q for q in questions if q.answer.denominator == 1]
-    vals_all = [q.answer.numerator for q in questions]
-    cB = Counter(vals_all)
+    questions = load_questions(INPUT)
+    vals_all = [q.answer for q in questions]
     buckets: dict[int, list[int]] = defaultdict(list)
     for index, value in enumerate(vals_all):
         buckets[value].append(index)
-    V = sorted(buckets)
-    vset = set(V)
+    V = [v for v in sorted(buckets) if v <= MAX_PLAY_VALUE]
     n = len(V)
     print(f"Vragen: {len(questions)} | unieke waarden: {n}")
 
-    # 1. halve sommen: a op1 b = h1 (op1 in {×, ÷}), waarde-niveau
-    half_pairs: dict[int, list[tuple[int, int, str]]] = defaultdict(list)
-    for i, a in enumerate(V):
-        for j in range(i, n):
-            b = V[j]
-            if a > 0 and b > 0 and a != 1 and b != 1:
-                half_pairs[a * b].append((a, b, "×"))
+    # 1. De formule wordt van links naar rechts gelezen: (a op1 b) op2 c = d.
+    #    Twee families, allebei met een keer/deel- en een plus/min-bewerking:
+    #      MA  a × b + c   — de vertrouwde vorm, waar de rekenvolgorde toevallig
+    #                        hetzelfde uitkomt
+    #      AM  a + b × c   — hier niet, want links om rekenen geeft 20 en de
+    #                        schoolregel 14. Dat is precies de bedoeling.
+    #    tweede_map gaat als eerste omdat het de bereikbare tussenstanden h
+    #    aflijnt; daarna hoeven alleen halve sommen met zo'n h te worden bewaard.
+    tweede_map: dict[tuple[int, str], list[tuple[int, int, str]]] = defaultdict(list)
+    for d in V:
+        if d < 2:
+            continue
+        for c in V:
+            if c < 2:
+                continue
+            if d - c >= 2:
+                tweede_map[(d - c, "MA")].append((c, d, "+"))   # h + c = d
+            tweede_map[(d + c, "MA")].append((c, d, "−"))       # h − c = d
+            if d % c == 0 and d // c >= 2:
+                tweede_map[(d // c, "AM")].append((c, d, "×"))  # h × c = d
+            tweede_map[(d * c, "AM")].append((c, d, "÷"))       # h ÷ c = d
+
+    half_pairs: dict[tuple[int, str], list[tuple[int, int, str]]] = defaultdict(list)
     for a in V:
+        if a < 2:
+            continue
         for b in V:
-            if b > 0 and b != 1 and a % b == 0:
-                h = a // b
-                if h > 0 and h != 1:
-                    half_pairs[h].append((a, b, "÷"))
+            if b < 2:
+                continue
+            for sleutel, paar in (
+                ((a * b, "MA"), (a, b, "×")),
+                ((a // b, "MA") if a % b == 0 and a // b >= 2 else None, (a, b, "÷")),
+                ((a + b, "AM"), (a, b, "+")),
+                ((a - b, "AM") if a - b >= 2 else None, (a, b, "−")),
+            ):
+                if sleutel is not None and sleutel in tweede_map:
+                    half_pairs[sleutel].append(paar)
 
     cursors: dict[int, int] = defaultdict(int)
 
@@ -254,63 +336,62 @@ def main() -> None:
                 return qid
         return None
 
-    keys = sorted(half_pairs)
-    usable_keys = []
-    for h1 in keys:
-        if diffmap_pair_count(h1, V, vset) > 0 or summap_pair_count(h1, V, vset) > 0:
-            usable_keys.append(h1)
-    print(f"Bruikbare h1-sleutels: {len(usable_keys):,}")
+    usable_keys = sorted(half_pairs, key=lambda k: (k[0], k[1]))
+    print(f"Bruikbare tussenstanden: {len(usable_keys):,}")
     total_budget = TARGET_ROWS
     rows: list[tuple] = []
     seen_combo: set[tuple] = set()
     keys_zero = 0
-    combos_seen = 0
 
-    # Meerdere passes over de sleutels tot het budget op is: sleutels met
-    # veel combinaties leveren in latere passes nog extra rijen.
-    emitted_per_key: dict[int, int] = {}
-    used_combo_indices: dict[int, set[int]] = defaultdict(set)
-    key_data: dict[int, tuple] = {}
+    emitted_per_key: dict[tuple[int, str], int] = {}
+    used_combo_indices: dict[tuple[int, str], set[int]] = defaultdict(set)
+    key_data: dict[tuple[int, str], tuple] = {}
     combos_seen = 0
-    for h1 in usable_keys:
-        pl = half_pairs[h1]
-        plus_list = [(c, c + h1, "+") for c in V if c >= 2 and (c + h1) in vset]
-        minus_list = [(c, h1 - c, "−") for c in V if c < h1 and (h1 - c) in vset and (h1 - c) >= 2]
-        combos_total = len(pl) * (len(plus_list) + len(minus_list))
-        key_data[h1] = (pl, plus_list, minus_list, combos_total)
+    for sleutel in usable_keys:
+        pl = half_pairs[sleutel]
+        tweede = tweede_map[sleutel]
+        combos_total = len(pl) * len(tweede)
+        key_data[sleutel] = (pl, tweede, combos_total)
         combos_seen += combos_total
 
+    # Meerdere passes over de sleutels tot het budget op is: sleutels met veel
+    # combinaties leveren in latere passes nog extra rijen.
     pass_index = 0
     while total_budget > 0:
         pass_index += 1
         progress = 0
-        active_keys = [h1 for h1 in usable_keys if key_data[h1][3] - emitted_per_key.get(h1, 0) > 0]
-        for position, h1 in enumerate(active_keys):
+        active_keys = [k for k in usable_keys if key_data[k][2] - emitted_per_key.get(k, 0) > 0]
+        if not active_keys:
+            break
+        for position, sleutel in enumerate(active_keys):
             if total_budget <= 0:
                 break
-            pl, plus_list, minus_list, combos_total = key_data[h1]
-            already = emitted_per_key.get(h1, 0)
+            pl, tweede, combos_total = key_data[sleutel]
+            already = emitted_per_key.get(sleutel, 0)
             remaining_combos = combos_total - already
-            used = used_combo_indices[h1]
-            cap = min(remaining_combos, max(1, total_budget // max(1, len(active_keys) - position) + (1 if total_budget % max(1, len(active_keys) - position) else 0)))
+            used = used_combo_indices[sleutel]
+            resterend = max(1, len(active_keys) - position)
+            cap = min(remaining_combos,
+                      max(1, total_budget // resterend + (1 if total_budget % resterend else 0)))
             emitted = 0
             offset = (position + already) % combos_total  # rotatie voor variatie
+            # Met stappen van 1 pak je alleen de kop van de lijst, en daar
+            # staan de keersommen: elk paar (a, b) heeft een product, lang niet
+            # elk paar een heel quotient. Een stap die geen deler is van de
+            # lijstlengte loopt er in één ronde helemaal doorheen, dus de vier
+            # rijen per sleutel komen uit het hele rooster.
+            stap = next((k for k in (104729, 7919, 613, 97, 7, 3) if math.gcd(k, combos_total) == 1), 1)
             prev_ids: dict[tuple, tuple] = {}
             for step in range(combos_total):
                 if emitted >= cap or total_budget <= 0:
                     break
-                combo_index = (offset + step) % combos_total
+                combo_index = (offset + step * stap) % combos_total
                 if combo_index in used:
                     continue
-                pi = combo_index // (len(plus_list) + len(minus_list))
-                ci = combo_index % (len(plus_list) + len(minus_list))
-                a, b, op1 = pl[pi]
-                if ci < len(plus_list):
-                    c, d, op2 = plus_list[ci]
-                else:
-                    c, d, op2 = minus_list[ci - len(plus_list)]
+                a, b, op1 = pl[combo_index // len(tweede)]
+                c, d, op2 = tweede[combo_index % len(tweede)]
                 combo_key = (a, op1, b, op2, c)
-                ids = assign_ids(a, b, op1, c, d, buckets, take_id)
+                ids = assign_ids(a, b, c, d, buckets, take_id)
                 if ids is None:
                     continue
                 if ids == prev_ids.get(combo_key):
@@ -319,38 +400,37 @@ def main() -> None:
                 used.add(combo_index)
                 seen_combo.add(combo_key)
                 score = bk_score(op1, op2, (a, b, c, d))
-                rows.append((a, b, op1, c, op2, d, ids, score, bk_level(score)))
+                rows.append((a, b, op1, c, op2, d, ids, score))
                 emitted += 1
                 progress += 1
                 total_budget -= 1
-            emitted_per_key[h1] = already + emitted
+            emitted_per_key[sleutel] = already + emitted
             if emitted == 0 and already == 0:
                 keys_zero += 1
         print(f"  pass {pass_index}: +{progress:,} rijen | budget over: {total_budget:,}")
         if progress == 0:
             break
-    print(f"Waarde-combinaties gezien: {combos_seen:,} | sleutels zonder rij: {keys_zero:,} | budget over: {total_budget:,}")
+    print(f"Waarde-combinaties gezien: {combos_seen:,} | sleutels zonder rij: {keys_zero:,} "
+          f"| budget over: {total_budget:,}")
 
-    print(f"Geselecteerd: {len(rows):,} puzzels")
+    grenzen = niveaugrenzen([r[7] for r in rows])
+    rows = [r + (bk_level(r[7], grenzen),) for r in rows]
+    print(f"Geselecteerd: {len(rows):,} puzzels | scoregrenzen: "
+          + " / ".join(f"{g:.1f}" for g in grenzen))
     levels = Counter(r[8] for r in rows)
     for level in ("Easy", "Intermediate", "Hard", "Extremely Hard"):
         print(f"  {level}: {levels[level]:,}")
 
-    # 2. Excel schrijven (rijen zijn al op moeilijkheid gerampdoor h1 oplopend)
+    # 2. Excel schrijven
     esc_text = [esc(q.text) for q in questions]
     esc_cat = [esc(q.category) for q in questions]
     xlsx_rows = []
     for number, (a, b, op1, c, op2, d, ids, score, level) in enumerate(rows, start=1):
-        i1, i2, i3, i4 = ids
         formula = f"{a} {op1} {b} {op2} {c} = {d}"
         answers = (a, b, c, d)
-        cats = [esc_cat[ids[k]] for k in range(4)]
-        texts = [esc_text[ids[k]] for k in range(4)]
-        cells = [
-            ("n", number), ("s", formula), ("s", op1), ("s", op2),
-        ]
+        cells = [("n", number), ("s", formula), ("s", op1), ("s", op2)]
         for k in range(4):
-            cells += [("n", answers[k]), ("s", cats[k]), ("s", texts[k])]
+            cells += [("n", answers[k]), ("s", esc_cat[ids[k]]), ("s", esc_text[ids[k]])]
         cells += [("s", level), ("n", score)]
         xlsx_rows.append(cells)
 
@@ -360,32 +440,44 @@ def main() -> None:
         "Bronbestand": INPUT.name,
         "Vragen in bank": len(questions),
         "Puzzels in bestand": len(rows),
-        "Vermenigvuldig-helft (×)": op1_counts["×"],
-        "Deel-helft (÷)": op1_counts["÷"],
-        "Plus als tweede (+)": op2_counts["+"],
-        "Min als tweede (−)": op2_counts["−"],
+        "Leesregel": "van links naar rechts, dus (a op1 b) op2 c = d",
+        "Eerst keer (×)": op1_counts["×"],
+        "Eerst delen (÷)": op1_counts["÷"],
+        "Eerst plus (+)": op1_counts["+"],
+        "Eerst min (−)": op1_counts["−"],
+        "Daarna keer (×)": op2_counts["×"],
+        "Daarna delen (÷)": op2_counts["÷"],
+        "Daarna plus (+)": op2_counts["+"],
+        "Daarna min (−)": op2_counts["−"],
         "Easy": levels["Easy"],
         "Intermediate": levels["Intermediate"],
         "Hard": levels["Hard"],
         "Extremely Hard": levels["Extremely Hard"],
-        "Theoretisch totaal in ruimte": 475_432_273,
     }
     print(f"Schrijven: {OUTPUT_XLSX} ...")
     write_xlsx(OUTPUT_XLSX, xlsx_rows, stats)
 
-    # 3. Frontend-subset: 200 speelpuzzels met een bewuste niveau-mix
-    candidates = [r for r in rows if max(r[0], r[1], r[5], r[3]) <= MAX_PLAY_VALUE]
+    # 3. Frontend-subset: 200 speelpuzzels met een bewuste niveau-mix. Beide
+    #    families komen aan bod, want een lijst met alleen "a × b + c" is
+    #    precies de eentonigheid die we kwijt wilden.
+    candidates = [r for r in rows if max(r[0], r[1], r[3], r[5]) <= MAX_PLAY_VALUE]
     candidates.sort(key=lambda r: r[7])
     cat_spread = lambda r: len({questions[i].category for i in r[6]})
     quotas = {"Easy": 4, "Intermediate": 58, "Hard": 92, "Extremely Hard": 46}
     chosen: list[tuple] = []
     uses: Counter = Counter()
+    halven: Counter = Counter()
     front_seen: set[tuple] = set()
     for level in ("Easy", "Intermediate", "Hard", "Extremely Hard"):
         quota = quotas[level]
-        for relax in FLOOR_RELAX_STEPS:
+        for relax, deler in zip(FLOOR_RELAX_STEPS, COMBI_RELAX_STEPS):
             floor = LEVEL_MIN_MAX_VALUE[level] * (1.0 - relax)
             filled = sum(1 for r in chosen if r[8] == level)
+            # Zonder plafond per bewerkingspaar loopt de lijst vol met "+ dan
+            # delen": die combinatie heeft veruit de meeste kandidaten, terwijl
+            # juist "a + b x c" de vorm is die de leesregel laat zien.
+            combi_plafond = math.ceil(quota / deler) if deler else quota
+            per_combi = Counter((r[2], r[4]) for r in chosen if r[8] == level)
             for r in candidates:
                 if filled >= quota or len(chosen) >= FRONTEND_TARGET:
                     break
@@ -397,12 +489,22 @@ def main() -> None:
                     continue
                 if any(uses[i] >= FRONTEND_REUSE_CAP for i in ids):
                     continue
-                if max(r[0], r[1], r[5], r[3]) < floor:
+                if max(r[0], r[1], r[3], r[5]) < floor:
                     continue
                 if len(chosen) < FRONTEND_TARGET // 2 and cat_spread(r) < 2:
                     continue
+                if per_combi[(r[2], r[4])] >= combi_plafond:
+                    continue
+                # Dezelfde halve som twee keer leest als een herhaling:
+                # "8760 - 343 : 443" naast "8760 - 343 : 19". Bij keer en plus
+                # telt de volgorde niet mee, want 225 x 139 en 139 x 225 zien
+                # er voor de speler hetzelfde uit.
+                if halven[halfsleutel(r[0], r[2], r[1])] >= HALF_REUSE_CAP:
+                    continue
                 front_seen.add(key)
                 chosen.append(r)
+                halven[halfsleutel(r[0], r[2], r[1])] += 1
+                per_combi[(r[2], r[4])] += 1
                 uses.update(ids)
                 filled += 1
             if filled >= quota:
@@ -412,6 +514,8 @@ def main() -> None:
     front_levels = Counter(r[8] for r in chosen)
     for level in ("Easy", "Intermediate", "Hard", "Extremely Hard"):
         print(f"  frontend {level}: {front_levels[level]}")
+    front_fam = Counter(familie(r[2]) for r in chosen)
+    print(f"  eerst keer/delen: {front_fam['MA']} | eerst plus/min: {front_fam['AM']}")
 
     puzzles = []
     for number, (a, b, op1, c, op2, d, ids, score, level) in enumerate(chosen, start=1):
@@ -428,47 +532,26 @@ def main() -> None:
             "q3": {"label": questions[ids[2]].text, "answer": c, "category": questions[ids[2]].category},
             "q4": {"label": questions[ids[3]].text, "answer": d, "category": questions[ids[3]].category},
         })
-        # Rekenproef per puzzel
-        h1 = a * b if op1 == "×" else a // b
-        expected = h1 + c if op2 == "+" else h1 - c
-        assert expected == d, f"Rekenfout: {a} {op1} {b} {op2} {c} = {expected} != {d}"
+        # Rekenproef per puzzel, expliciet van links naar rechts
+        assert pas(pas(a, op1, b), op2, c) == d, f"Rekenfout in {a} {op1} {b} {op2} {c} = {d}"
     assert len({p["id"] for p in puzzles}) == len(puzzles)
 
     OUTPUT_JS.write_text(
         "// Netto Breinkrakers — gegenereerd door maak_breinkrakers.py\n"
-        "// Formule: a (× of ÷) b (+ of −) c = d — standaard rekenvolgorde.\n"
+        "// Formule: a op1 b op2 c = d, van links naar rechts gelezen.\n"
+        "// Elke puzzel heeft een keer/deel- en een plus/min-bewerking, in\n"
+        "// wisselende volgorde: 2 + 3 × 4 is hier 20 en niet 14.\n"
         "window.NETTO_BREINKRAKERS = "
         + json.dumps(puzzles, ensure_ascii=False, separators=(",", ":"))
         + ";\n",
         encoding="utf-8",
     )
     size_mb = OUTPUT_XLSX.stat().st_size / (1024 * 1024)
-    print(f"Klaar: {OUTPUT_XLSX} ({size_mb:.1f} MB, {len(rows):,} puzzels) + {OUTPUT_JS} ({len(puzzles)} speelpuzzels)")
+    print(f"Klaar: {OUTPUT_XLSX} ({size_mb:.1f} MB, {len(rows):,} puzzels) "
+          f"+ {OUTPUT_JS} ({len(puzzles)} speelpuzzels)")
 
 
-def _stride_positions(total: int, take: int) -> set[int]:
-    if take >= total:
-        return set(range(total))
-    return {(total * j) // take for j in range(take)}
-
-
-def diffmap_pair_count(h1: int, V: list, vset: set) -> int:
-    count = 0
-    for c in V:
-        if (c + h1) in vset and (c + h1) >= 2:
-            count += 1
-    return count
-
-
-def summap_pair_count(h1: int, V: list, vset: set) -> int:
-    count = 0
-    for c in V:
-        if c < h1 and (h1 - c) in vset and (h1 - c) >= 2:
-            count += 1
-    return count
-
-
-def assign_ids(a, b, op1, c, d, buckets, take_id):
+def assign_ids(a, b, c, d, buckets, take_id):
     used: set[int] = set()
     ids = []
     for value in (a, b, c, d):

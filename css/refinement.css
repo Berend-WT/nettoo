@@ -1456,3 +1456,10 @@ textarea:focus-visible,
   background: rgba(255, 190, 92, .12); color: #FFD79A;
   font: 13px/1.45 'Space Grotesk', sans-serif; max-width: 480px;
 }
+
+/* De formule wordt van links naar rechts gelezen, niet met de gewone
+   rekenvolgorde. Zonder deze regel lijkt "2 + 3 x 4 = 20" een rekenfout. */
+.bk-leesregel {
+  margin: -10px 0 22px; text-align: center; color: #AAB0DF;
+  font: 13px/1.5 'Space Grotesk', sans-serif;
+}

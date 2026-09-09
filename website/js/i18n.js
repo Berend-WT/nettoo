@@ -10,6 +10,7 @@
     'Hoeveel naamvallen heeft het Fins?': 'How many grammatical cases does Finnish have?',
     'Hoeveel naamvallen heeft het Duits?': 'How many grammatical cases does German have?',
     'Hoeveel naamvallen heeft het Latijn volgens de traditionele grammaticale indeling?': 'How many grammatical cases does Latin have in traditional grammar?',
+    'Reken van links naar rechts: 2 + 3 × 4 = 20.': 'Work from left to right: 2 + 3 × 4 = 20.',
     '↳ Antwoorden worden automatisch berekend als de berekening klopt.': '↳ The remaining answer is calculated automatically when possible.',
     '📏 De Getallenbalk': '📏 Your estimates',
     '🎯 Echt antwoord': '🎯 Correct answer',

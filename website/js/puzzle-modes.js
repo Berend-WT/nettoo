@@ -254,16 +254,37 @@
   function closeLibraryScreen() { document.getElementById('libraryScreen').classList.remove('active'); stopLibraryTimer(); showScreen('home'); }
   function closeLibrary() { closeLibraryScreen(); }
 
-  // ===== BREINKRAKERS — 4 vragen in één formule: A (× of ÷) B (+ of −) C = D =====
+  // ===== BREINKRAKERS — 4 vragen in één formule: A op1 B op2 C = D, van links naar rechts =====
   const BK_DATA = window.NETTO_BREINKRAKERS || [];
   const BK_PROGRESS_KEY = 'netto_breinkrakers_progress';
   let bkState = null;
   let bkActivePuzzle = null;
   let bkSubmitted = false;
 
-  function bkHalf(a, b, op1) {
-    if (op1 === '×' || op1 === '*') return a * b;
-    return b === 0 ? NaN : a / b;
+  // De formule wordt van links naar rechts gelezen: (a op1 b) op2 c = d. Bij
+  // "2 + 3 × 4" hoort dus 20 en niet 14. Daarom mag elke bewerking op elke
+  // plek staan en rekenen we nergens met de gewone voorrangsregels.
+  function bkPas(x, op, y) {
+    if (op === '×' || op === '*') return x * y;
+    if (op === '÷' || op === '/') return y === 0 ? NaN : x / y;
+    if (op === '+') return x + y;
+    return x - y;
+  }
+
+  // Los x op uit "x op y = uit".
+  function bkLinks(op, y, uit) {
+    if (op === '×' || op === '*') return y === 0 ? NaN : uit / y;
+    if (op === '÷' || op === '/') return uit * y;
+    if (op === '+') return uit - y;
+    return uit + y;
+  }
+
+  // Los y op uit "x op y = uit".
+  function bkRechts(op, x, uit) {
+    if (op === '×' || op === '*') return x === 0 ? NaN : uit / x;
+    if (op === '÷' || op === '/') return uit === 0 ? NaN : x / uit;
+    if (op === '+') return uit - x;
+    return x - uit;
   }
 
   function bkLoadProgress() {
@@ -400,29 +421,29 @@
     });
     const fresh = [0, 1, 2, 3].map(i => parseFormattedNumber(document.getElementById(`bkAnswer${i}`).value));
     const freshKnown = fresh.map(v => Number.isFinite(v) && v >= 0);
-    const h = (freshKnown[0] && freshKnown[1]) ? bkHalf(fresh[0], fresh[1], p.op1) : NaN;
+    const h = (freshKnown[0] && freshKnown[1]) ? bkPas(fresh[0], p.op1, fresh[1]) : NaN;
     // d uit a, b, c
     if (Number.isFinite(h) && freshKnown[2] && !freshKnown[3]) {
-      const d = p.op2 === '+' ? h + fresh[2] : h - fresh[2];
+      const d = bkPas(h, p.op2, fresh[2]);
       if (Number.isFinite(d)) setAutoInput('bkAnswer3', d);
     }
     // c uit a, b, d
     if (Number.isFinite(h) && freshKnown[3] && !freshKnown[2]) {
-      const c = p.op2 === '+' ? fresh[3] - h : h - fresh[3];
+      const c = bkRechts(p.op2, h, fresh[3]);
       if (Number.isFinite(c) && c >= 0) setAutoInput('bkAnswer2', c);
     }
     // a of b uit de rest (alleen bij exact geheel getal)
     if (freshKnown[1] && freshKnown[2] && freshKnown[3] && !freshKnown[0]) {
-      const h2 = p.op2 === '+' ? fresh[3] - fresh[2] : fresh[3] + fresh[2];
+      const h2 = bkLinks(p.op2, fresh[2], fresh[3]);
       if (Number.isFinite(h2) && h2 > 0) {
-        const a = p.op1 === '×' ? h2 / fresh[1] : h2 * fresh[1];
+        const a = bkLinks(p.op1, fresh[1], h2);
         if (Number.isFinite(a) && a > 0 && Math.abs(a - Math.round(a)) < 1e-9) setAutoInput('bkAnswer0', Math.round(a));
       }
     }
     if (freshKnown[0] && freshKnown[2] && freshKnown[3] && !freshKnown[1]) {
-      const h2 = p.op2 === '+' ? fresh[3] - fresh[2] : fresh[3] + fresh[2];
+      const h2 = bkLinks(p.op2, fresh[2], fresh[3]);
       if (Number.isFinite(h2) && h2 > 0) {
-        const b = p.op1 === '×' ? h2 / fresh[0] : fresh[0] / h2;
+        const b = bkRechts(p.op1, fresh[0], h2);
         if (Number.isFinite(b) && b > 0 && Math.abs(b - Math.round(b)) < 1e-9) setAutoInput('bkAnswer1', Math.round(b));
       }
     }
