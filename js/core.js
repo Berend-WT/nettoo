@@ -1642,7 +1642,20 @@
     ['dollars?', 'dollar']
   ];
 
+  // Het spel toont de vraag vertaald, dus de eenheid moet mee. Eerst de
+  // Engelse zin ontleden; lukt dat niet, dan het Nederlandse label vertalen.
   function eenheidUit(vraag) {
+    const nederlands = nederlandseEenheid(vraag);
+    if (window.NettoI18n?.language !== 'en') return nederlands;
+    const tekst = String(vraag || '');
+    const engels = window.NettoI18n.t(tekst);
+    // Zonder vertaling blijft de vraag Nederlands staan; dan hoort de
+    // Nederlandse eenheid erbij, anders verdwijnt hij helemaal.
+    if (engels === tekst) return nederlands;
+    return engelseEenheid(engels) || engelsLabel(nederlands);
+  }
+
+  function nederlandseEenheid(vraag) {
     const tekst = String(vraag || '').toLocaleLowerCase('nl-NL').replace(/\s+/g, ' ');
     const schaal = '(?:(duizend|miljoen|miljard) )?';
     // Een expliciete "in ..."-eenheid gaat voor een losse vermelding.
@@ -1666,7 +1679,7 @@
     'natuurlijke', 'zware', 'gewone', 'huidige', 'oorspronkelijke']);
   // Woorden die nooit een eenheid zijn; dan valt er niets zinnigs te tonen.
   const TEL_GEEN = new Set(['van', 'de', 'het', 'een', 'er', 'is', 'zijn', 'in', 'op', 'procent']);
-  const TEL_SCHAAL = { duizend: '\u00d7 1.000', miljoen: '\u00d7 1.000.000', miljard: '\u00d7 1.000.000.000' };
+  const TEL_SCHAAL = { duizend: '\u00d7 1.000', miljoen: '\u00d7 1.000.000', miljard: '\u00d7 1.000.000.000', biljoen: '× 1.000.000.000.000' };
 
   // Bij een telvraag is het getelde zelfstandig naamwoord de eenheid: "Hoeveel
   // liften heeft de Burj Khalifa" vraagt om liften. Dat dekt driekwart van de
@@ -1682,6 +1695,88 @@
     const woord = woorden[i];
     if (!woord || TEL_GEEN.has(woord)) return voorvoegsel.trim() || null;
     // Een heel lang woord verdringt het invoerveld; dan liever alleen de schaal.
+    if (woord.length > 14) return voorvoegsel.trim() || null;
+    return voorvoegsel + woord;
+  }
+
+  const EN_EENHEDEN = [
+    ['square kilomet(?:er|re)s?|km[\u00b22]', 'km\u00b2'],
+    ['square cent[ei]met(?:er|re)s?|cm[\u00b22]', 'cm\u00b2'],
+    ['square met(?:er|re)s?|m[\u00b22]', 'm\u00b2'],
+    ['cubic cent[ei]met(?:er|re)s?|cm[\u00b33]', 'cm\u00b3'],
+    ['cubic met(?:er|re)s?|m[\u00b33]', 'm\u00b3'],
+    ['kilomet(?:er|re)s? (?:an|per) hour|km/h', 'km/h'],
+    ['kilomet(?:er|re)s? per second|km/s', 'km/s'],
+    ['met(?:er|re)s? per second|m/s', 'm/s'],
+    ['degrees? celsius|\u00b0c', '\u00b0C'], ['degrees? fahrenheit|\u00b0f', '\u00b0F'],
+    ['millimet(?:er|re)s?|mm', 'mm'], ['cent[ei]met(?:er|re)s?|cm', 'cm'],
+    ['decimet(?:er|re)s?|dm', 'dm'], ['kilomet(?:er|re)s?|km', 'km'],
+    ['met(?:er|re)s?|m', 'm'], ['milligrams?|mg', 'mg'], ['kilograms?|kg', 'kg'],
+    ['grams?|g', 'g'], ['tons?|tonnes?', 'tons'], ['millilit(?:er|re)s?|ml', 'ml'],
+    ['centilit(?:er|re)s?|cl', 'cl'], ['lit(?:er|re)s?|l', 'liters'],
+    ['hectares?|ha', 'ha'], ['percent', '%'], ['degrees?', 'degrees'],
+    ['seconds?', 'sec'], ['minutes?', 'min'], ['hours?', 'hours'],
+    ['days?', 'days'], ['weeks?', 'weeks'], ['months?', 'months'],
+    ['years?', 'years'], ['centur(?:y|ies)', 'centuries'], ['euros?', 'euro'],
+    ['dollars?', 'dollar']
+  ];
+  const EN_SCHAAL = { thousand: '\u00d7 1,000', million: '\u00d7 1,000,000', billion: '\u00d7 1,000,000,000', trillion: '× 1,000,000,000,000' };
+  // Lidwoorden, voorzetsels en hulpwerkwoorden sluiten de naamwoordgroep af.
+  const EN_STOP = new Set(('do does did is are was were has have had can could will would ' +
+    'the a an there of in on at for by with to from as and or than that this these those ' +
+    'it its his her their our your my he she they we you i not no per each other more most ' +
+    'about approximately roughly around').split(' '));
+  // Nederlandse labels die in het Engels anders heten. Telwoorden zoals
+  // "liften" staan er niet in: die haalt engelseEenheid uit de vertaalde zin.
+  const NL_EN_LABEL = { 'km/u': 'km/h', biljoen: '× 1,000,000,000,000', liter: 'liters', ton: 'tons', graden: 'degrees',
+    uur: 'hours', dagen: 'days', weken: 'weeks', maanden: 'months', jaar: 'years',
+    eeuwen: 'centuries', duizend: '\u00d7 1,000', miljoen: '\u00d7 1,000,000',
+    miljard: '\u00d7 1,000,000,000' };
+  const EN_METEND = new Set(VRAAG_EENHEDEN.map(paar => paar[1]).concat(['jaar']));
+
+  // Alleen een meeteenheid laat zich zonder woordenboek vertalen; een geteld
+  // zelfstandig naamwoord niet, dus dat levert liever niets op dan Nederlands.
+  function engelsLabel(nederlands) {
+    if (!nederlands) return null;
+    const delen = String(nederlands).split(' ');
+    const label = delen.pop();
+    if (!EN_METEND.has(label)) return null;
+    const voorvoegsel = delen.map(deel => NL_EN_LABEL[deel] || deel);
+    return voorvoegsel.concat(NL_EN_LABEL[label] || label).join(' ');
+  }
+
+  function engelseEenheid(vraag) {
+    const tekst = String(vraag || '').toLocaleLowerCase('en').replace(/\s+/g, ' ');
+    const schaal = '(?:(thousand|million|billion) )?';
+    for (const begin of ['\\bin\\s+', '\\bhow\\s+(?:many|much)\\s+']) {
+      for (const [patroon, label] of EN_EENHEDEN) {
+        const treffer = tekst.match(new RegExp(begin + schaal + '(?:' + patroon + ')(?![\\p{L}\\p{N}/])', 'u'));
+        if (treffer) return (treffer[1] ? EN_SCHAAL[treffer[1]] + ' ' : '') + label;
+      }
+    }
+    if (/\bwhat percent(?:age)?\b/u.test(tekst)) return '%';
+    if (/^in (?:what|which) year\b/u.test(tekst)) return 'year';
+    return engelsTelwoord(tekst);
+  }
+
+  // In het Engels staat de kern achteraan de naamwoordgroep: "African
+  // countries" telt landen, niet Afrikanen. Het meervoud verraadt de kern,
+  // want een volgend werkwoord ("countries border") eindigt niet op een s.
+  function engelsTelwoord(tekst) {
+    const m = tekst.match(/\bhow (?:many|much) (.+)/u);
+    if (!m) return null;
+    const woorden = m[1].match(/[\p{L}'-]+/gu) || [];
+    let i = 0;
+    let voorvoegsel = '';
+    if (woorden[0] && EN_SCHAAL[woorden[0]]) { voorvoegsel = EN_SCHAAL[woorden[0]] + ' '; i = 1; }
+    const groep = [];
+    for (const woord of woorden.slice(i)) {
+      if (EN_STOP.has(woord) || EN_SCHAAL[woord] || groep.length >= 4) break;
+      groep.push(woord);
+    }
+    if (!groep.length) return voorvoegsel.trim() || null;
+    const meervoud = groep.filter(woord => woord.length > 2 && woord.endsWith('s'));
+    const woord = meervoud.length ? meervoud[meervoud.length - 1] : groep[0];
     if (woord.length > 14) return voorvoegsel.trim() || null;
     return voorvoegsel + woord;
   }
