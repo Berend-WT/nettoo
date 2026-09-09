@@ -48,6 +48,33 @@ def woorden(tekst):
     return set(re.findall(r'[a-z]{4,}', kaal))
 
 
+# Bestandsnamen die een beeld aankondigen dat je niet naast een schatvraag
+# wilt. De zoekronde vond bij een vraag over de Armeense genocide een foto van
+# een dood kind; historisch van waarde, maar niet als illustratie in een spel.
+#
+# De woorden staan als patroon met woordgrenzen, niet als losse tekst. Een
+# eerdere versie zocht op "dead" en gooide daarmee de Dode Zee weg
+# (Dead_sea_german.jpg). "dead" telt daarom alleen voor een dode iemand, en
+# "grave" alleen in een massagraf of een kerkhof.
+ONGESCHIKT = {'corpse', 'corpses', 'cadaver', 'massacre', 'atrocity', 'atrocities',
+              'execution', 'executed', 'hanged', 'lynching', 'mutilated', 'genocide',
+              'holocaust', 'autopsy', 'morgue', 'graveyard', 'wounded', 'killed',
+              'casualties', 'starving', 'lijk', 'lijken', 'slachtoffer', 'slachtoffers'}
+# "dead" telt alleen samen met een persoon: de Dode Zee en de Dead Sea Scrolls
+# moeten er gewoon doorheen kunnen.
+PERSOON = {'body', 'bodies', 'child', 'children', 'girl', 'boy', 'man', 'men',
+           'woman', 'women', 'soldier', 'soldiers', 'victim', 'victims', 'baby'}
+
+
+def geschikt_beeld(titel):
+    losse = set(re.findall(r'[a-z]+', str(titel or '').lower()))
+    if losse & ONGESCHIKT:
+        return False
+    if 'dead' in losse and (losse & PERSOON):
+        return False
+    return not ('mass' in losse and 'grave' in losse)
+
+
 def past_bij_onderwerp(titel, bron):
     """Deelt de bestandsnaam een woord met de titel van het bronartikel?
 
@@ -78,6 +105,7 @@ def lees(pad):
 
 def main():
     hoofd = lees(os.path.join(FOTOS, 'hoofdafbeeldingen.json'))
+    onderwerp = lees(os.path.join(FOTOS, 'onderwerpafbeeldingen.json'))
     oud = lees(os.path.join(FOTOS, 'kandidaten.json'))
 
     # Handmatige keuzes, als het blad al is ingevuld.
@@ -96,7 +124,7 @@ def main():
 
     d = pd.read_excel(REVIEW, sheet_name='Vragen')
     uit = {}
-    telling = {'keuze': 0, 'hoofdafbeelding': 0, 'oude kandidaat': 0,
+    telling = {'keuze': 0, 'hoofdafbeelding': 0, 'onderwerpartikel': 0, 'oude kandidaat': 0,
                'afgekeurd': 0, 'geen': 0}
 
     for _, r in d.iterrows():
@@ -105,9 +133,22 @@ def main():
         # De kandidatenlijst zoals die in het keuzeblad stond: hoofdafbeelding
         # vooraan, daarna wat de oudere ronde vond.
         beste = (hoofd.get(str(nr), {}).get('kandidaten') or [None])[0]
+        if beste and not geschikt_beeld(beste.get('titel', '')):
+            beste = None
+        bron_van_beste = 'hoofdafbeelding' if beste else None
+        # Staat het antwoord niet op een Wikipedia-artikel, dan is er geen
+        # infobox om uit te putten. Het onderwerp van de vraag heeft er meestal
+        # zelf wel een: "Coca-Cola" levert een fles, waar de tekstzoekronde met
+        # drie negentiende-eeuwse advertenties kwam.
+        if not beste:
+            beste = (onderwerp.get(str(nr), {}).get('kandidaten') or [None])[0]
+            if beste and not geschikt_beeld(beste.get('titel', '')):
+                beste = None
+            bron_van_beste = 'onderwerpartikel' if beste else None
         rest = [k for k in (oud.get(str(nr), {}).get('kandidaten') or [])
                 if (not beste or k.get('titel') != beste.get('titel'))
-                and past_bij_onderwerp(k.get('titel', ''), r['Bron (geverifieerd)'])]
+                and past_bij_onderwerp(k.get('titel', ''), r['Bron (geverifieerd)'])
+                and geschikt_beeld(k.get('titel', ''))]
         lijst = ([beste] if beste else []) + rest[:2]
 
         keuze = keuzes.get(nr)
@@ -117,7 +158,7 @@ def main():
         if keuze and 1 <= keuze <= len(lijst):
             gekozen, herkomst = lijst[keuze - 1], 'keuze'
         elif beste:
-            gekozen, herkomst = beste, 'hoofdafbeelding'
+            gekozen, herkomst = beste, bron_van_beste
         elif lijst:
             gekozen, herkomst = lijst[0], 'oude kandidaat'
         else:

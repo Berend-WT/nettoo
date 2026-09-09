@@ -1,0 +1,999 @@
+[
+ {
+  "nr": 4,
+  "vraag": "In welk jaar werd het eerste succesvolle vaccin ontwikkeld?",
+  "antwoord": 1796,
+  "bron": "https://www.who.int/news-room/spotlight/history-of-vaccination/history-of-smallpox-vaccination",
+  "zinnen": [
+   {
+    "zin": "It wasn’t until May 1796 that the world’s first vaccine was demonstrated, using the same principle as variolation but with a less dangerous viral source, cowpox.",
+    "raakvlak": 1
+   },
+   {
+    "zin": "Two months later, in July 1796, Jenner took matter from a human smallpox sore and inoculated Phipps with it to test his resistance.",
+    "raakvlak": 0
+   }
+  ],
+  "status": "gevonden"
+ },
+ {
+  "nr": 7,
+  "vraag": "Hoeveel kilo weegt een koningspinguin?",
+  "antwoord": 15,
+  "bron": "https://en.wikipedia.org/wiki/King_penguin",
+  "zinnen": [],
+  "status": "getal niet op de pagina"
+ },
+ {
+  "nr": 9,
+  "vraag": "Hoeveel kilometer per uur zwemt een dolfijn op zijn snelst?",
+  "antwoord": 32,
+  "bron": "https://www.ifaw.org/international/journal/fastest-whales-dolphins-ocean",
+  "zinnen": [
+   {
+    "zin": "Though they typically cruise at speeds around 8 kilometres per hour (5 miles per hour), they can accelerate to more than 32 kilometres per hour (20 miles per hour) .",
+    "raakvlak": 0
+   },
+   {
+    "zin": "These dives can reach speeds of 32 kilometres per hour (20 miles per hour), during which the whale holds its breath.",
+    "raakvlak": 0
+   }
+  ],
+  "status": "gevonden"
+ },
+ {
+  "nr": 10,
+  "vraag": "Hoeveel poten heeft een krab?",
+  "antwoord": 10,
+  "bron": "https://en.wikipedia.org/wiki/Crab",
+  "zinnen": [],
+  "status": "getal niet op de pagina"
+ },
+ {
+  "nr": 12,
+  "vraag": "Hoeveel gram suiker zit er in een blikje Coca-Cola van 330 ml?",
+  "antwoord": 35,
+  "bron": "https://www.coca-cola.com/ng/en/about-us/faq/how-much-sugar-is-in-cocacola-original-taste",
+  "zinnen": [
+   {
+    "zin": "35 g in a 330 ml can.",
+    "raakvlak": 0
+   },
+   {
+    "zin": "35 g of sugar amounts to about 7 teaspoons of sugar.",
+    "raakvlak": 0
+   }
+  ],
+  "status": "gevonden"
+ },
+ {
+  "nr": 24,
+  "vraag": "Hoeveel treden heeft het Empire State Building van straatniveau tot het observatiedek?",
+  "antwoord": 1860,
+  "bron": "https://www.esbnyc.com/about/facts-figures",
+  "zinnen": [
+   {
+    "zin": "The Empire State Building has 103 floors, with 1,860 steps from street level to the 102nd floor observation deck.",
+    "raakvlak": 3
+   }
+  ],
+  "status": "gevonden"
+ },
+ {
+  "nr": 38,
+  "vraag": "Hoeveel dagen duurde de reis van de Mayflower naar Noord-Amerika?",
+  "antwoord": 66,
+  "bron": "https://plimoth.org/learn/just-kids/homework-help/mayflower",
+  "zinnen": [
+   {
+    "zin": "The Journey Would you have liked to travel on a small ship with more than 100 other people, all of their belongings, and possibly some farm animals – for 66 days?",
+    "raakvlak": 0
+   },
+   {
+    "zin": "After more than two months (66 days) at sea, the Pilgrims finally arrived at Cape Cod on November 11, 1620.",
+    "raakvlak": 0
+   }
+  ],
+  "status": "gevonden"
+ },
+ {
+  "nr": 73,
+  "vraag": "Hoeveel protonen heeft een neutraal atoom van goud?",
+  "antwoord": 79,
+  "bron": "https://www.rsc.org/periodic-table/element/79/gold",
+  "zinnen": [
+   {
+    "zin": "Gold is element 79 and its symbol is Au.",
+    "raakvlak": 0
+   }
+  ],
+  "status": "gevonden"
+ },
+ {
+  "nr": 106,
+  "vraag": "Hoeveel bloedgroepen kent het ABO-systeem?",
+  "antwoord": 4,
+  "bron": "https://www.nhs.uk/conditions/blood-groups/",
+  "zinnen": [
+   {
+    "zin": "There are 4 main blood groups (types of blood) – A, B, AB and O.",
+    "raakvlak": 0
+   }
+  ],
+  "status": "gevonden"
+ },
+ {
+  "nr": 117,
+  "vraag": "Hoeveel melktanden heeft een kind in een compleet melkgebit?",
+  "antwoord": 20,
+  "bron": "https://www.mouthhealthy.org/all-topics-a-z/eruption-charts",
+  "zinnen": [
+   {
+    "zin": "At birth people usually have 20 baby (primary) teeth, which start to come in (erupt) at about 6 months of age.",
+    "raakvlak": 0
+   }
+  ],
+  "status": "gevonden"
+ },
+ {
+  "nr": 121,
+  "vraag": "Hoeveel smaakpapillen heeft een menselijke tong ongeveer?",
+  "antwoord": 10000,
+  "bron": "https://www.nidcd.nih.gov/health/taste-disorders",
+  "zinnen": [
+   {
+    "zin": "At birth, you have about 10,000 taste buds, but after age 50, you may start to lose them.",
+    "raakvlak": 0
+   }
+  ],
+  "status": "gevonden"
+ },
+ {
+  "nr": 127,
+  "vraag": "In welk jaar werd de eerste volledige sequentie van het menselijke genoom gepubliceerd?",
+  "antwoord": 2003,
+  "bron": "https://www.genome.gov/human-genome-project/Completion-FAQ",
+  "zinnen": [
+   {
+    "zin": "In 2003, the Human Genome Project produced a genome sequence that accounted for over 90% of the human genome.",
+    "raakvlak": 0
+   },
+   {
+    "zin": "Carried out from 1990–2003, it was one of the most ambitious and important scientific endeavors in human history.",
+    "raakvlak": 0
+   },
+   {
+    "zin": "In part due to a deliberate focus on technology development, the Human Genome Project ultimately exceeded its initial set of goals, doing so by 2003, two years ahead of its originally projected 2005 completion.",
+    "raakvlak": 0
+   },
+   {
+    "zin": "In April 2003, the consortium announced that it had generated an essentially complete human genome sequence, which was significantly improved from the draft sequence.",
+    "raakvlak": 0
+   }
+  ],
+  "status": "gevonden"
+ },
+ {
+  "nr": 149,
+  "vraag": "Hoeveel bulten heeft een dromedaris?",
+  "antwoord": 1,
+  "bron": "https://animals.sandiegozoo.org/animals/camel",
+  "zinnen": [
+   {
+    "zin": "Number of young: 1, rarely 2",
+    "raakvlak": 0
+   }
+  ],
+  "status": "gevonden"
+ },
+ {
+  "nr": 150,
+  "vraag": "Hoeveel bulten heeft een kameel?",
+  "antwoord": 2,
+  "bron": "https://animals.sandiegozoo.org/animals/camel",
+  "zinnen": [
+   {
+    "zin": "Number of young: 1, rarely 2",
+    "raakvlak": 0
+   }
+  ],
+  "status": "gevonden"
+ },
+ {
+  "nr": 172,
+  "vraag": "Hoeveel landen gebruiken de CFA-frank in West- en Centraal-Afrika samen?",
+  "antwoord": 14,
+  "bron": "https://www.bceao.int/en/content/west-african-cfa-franc",
+  "zinnen": [],
+  "status": "getal niet op de pagina"
+ },
+ {
+  "nr": 176,
+  "vraag": "Hoeveel leden heeft de G7?",
+  "antwoord": 7,
+  "bron": "https://www.g7italy.it/en/about-g7/",
+  "zinnen": [
+   {
+    "zin": "About the G7 | G7 Italia",
+    "raakvlak": 0
+   },
+   {
+    "zin": "The Group of Seven (G7) is an informal forum that brings together Italy, Canada, France, Germany, Japan, the United Kingdom, and the United States of America.",
+    "raakvlak": 0
+   },
+   {
+    "zin": "In 1976, with the admission of Canada, the G7 took its current configuration.",
+    "raakvlak": 0
+   },
+   {
+    "zin": "The EU does not hold the rotating presidency of the G7.",
+    "raakvlak": 0
+   }
+  ],
+  "status": "gevonden"
+ },
+ {
+  "nr": 218,
+  "vraag": "Hoeveel beelden staan er op de top van de Brandenburger Tor?",
+  "antwoord": 5,
+  "bron": "https://www.berlin.de/en/attractions-and-sights/3560266-3104050-brandenburg-gate.en.html",
+  "zinnen": [
+   {
+    "zin": "As an official tourist ticket, the Berlin WelcomeCard offers discounts for attractions in Berlin and for 48 hours, 72 hours or 5 days of free travel on public transport.",
+    "raakvlak": 0
+   },
+   {
+    "zin": "Last edited: 5 November 2024",
+    "raakvlak": 0
+   }
+  ],
+  "status": "gevonden"
+ },
+ {
+  "nr": 223,
+  "vraag": "Hoeveel jaar duurde de bouw van de Taj Mahal?",
+  "antwoord": 21,
+  "bron": "https://asi.nic.in/taj-mahal/",
+  "zinnen": [],
+  "status": "getal niet op de pagina"
+ },
+ {
+  "nr": 374,
+  "vraag": "Hoeveel procent van de extra warmte door klimaatverandering wordt door de oceanen opgenomen?",
+  "antwoord": 90,
+  "bron": "https://www.ipcc.ch/report/ar6/wg1/chapter/chapter-5/",
+  "zinnen": [
+   {
+    "zin": "The excess heat generated by radiative forcing from increasing concentration of atmospheric CO 2 and other GHGs is mostly taken up by the ocean (>90%) and the residual balance partitioned between atmospheric, terrestrial and ice melting (Cross-Chapter Box 9.2; Frölicher et al., 2015 ).",
+    "raakvlak": 0
+   },
+   {
+    "zin": "About 90% of these step increases occurred rapidly, possibly in less than 200 years ( Fischer et al., 2019 ).",
+    "raakvlak": 0
+   },
+   {
+    "zin": "The ensemble mean of DGVMs is bounded by the 1– σ inter-model spread in each large latitude band (North 30°N–90°N, Tropics 30°S–30°N, South 90°S–30°S) and the globe.",
+    "raakvlak": 0
+   },
+   {
+    "zin": "About 90% of the loss of atmospheric CH 4 occurs in the troposphere by reaction with hydroxyl radical (OH), 5% by bacterial soil oxidation, and the rest 5% by chemical reactions with OH, excited state oxygen (O 1 D), and atomic chlorine (Cl) in the stratosphere ( Saunois et al., 2020 ).",
+    "raakvlak": 0
+   }
+  ],
+  "status": "gevonden"
+ },
+ {
+  "nr": 379,
+  "vraag": "Welk percentage van het zoete water bevindt zich in grondwater?",
+  "antwoord": 30,
+  "bron": "https://www.usgs.gov/special-topics/water-science-school/science/where-earths-water",
+  "zinnen": [
+   {
+    "zin": "Another 30 percent of freshwater is in the ground.",
+    "raakvlak": 1
+   },
+   {
+    "zin": "This hot spring pool is about 30 m (about 100 ft) across and contains alkaline-Cl waters with a steam vent in the pool and mudpots outside the pool area (in the upper right part of this photo).",
+    "raakvlak": 1
+   },
+   {
+    "zin": "This hot spring pool is about 30 m (about 100 ft) across and contains alkaline-Cl waters with a steam vent in the pool and mudpots outside the pool area (in the upper right part of this photo).",
+    "raakvlak": 1
+   },
+   {
+    "zin": "Another 30 percent of freshwater is in the ground.",
+    "raakvlak": 1
+   }
+  ],
+  "status": "gevonden"
+ },
+ {
+  "nr": 398,
+  "vraag": "Hoeveel toetsen heeft een standaard piano?",
+  "antwoord": 88,
+  "bron": "https://www.yamaha.com/en/musical_instrument_guide/piano/structure/",
+  "zinnen": [],
+  "status": "HTTPError: HTTP Error 403: Forbidden"
+ },
+ {
+  "nr": 425,
+  "vraag": "Hoeveel artikelen bevat de Franse Verklaring van de Rechten van de Mens en de Burger?",
+  "antwoord": 17,
+  "bron": "https://www.conseil-constitutionnel.fr/en/declaration-of-human-and-civic-rights-of-26-august-1789",
+  "zinnen": [],
+  "status": "getal niet op de pagina"
+ },
+ {
+  "nr": 428,
+  "vraag": "Hoeveel landen zijn lid van de NAVO?",
+  "antwoord": 32,
+  "bron": "https://www.nato.int/cps/en/natohq/topics_52044.htm",
+  "zinnen": [
+   {
+    "zin": "At present, NATO has 32 member countries.",
+    "raakvlak": 0
+   },
+   {
+    "zin": "Sweden deposited its Instrument of Accession to the North Atlantic Treaty on 7 March 2024, becoming NATO's 32nd member country.&nbsp;</p>\\r\\n\"}}\" id=\"ca04-rich-text-d021923b37\">",
+    "raakvlak": 0
+   },
+   {
+    "zin": "Sweden deposited its Instrument of Accession to the North Atlantic Treaty on 7 March 2024, becoming NATO's 32nd member country.",
+    "raakvlak": 0
+   }
+  ],
+  "status": "gevonden"
+ },
+ {
+  "nr": 432,
+  "vraag": "Hoeveel oorspronkelijke leden had de NAVO bij de oprichting in 1949?",
+  "antwoord": 12,
+  "bron": "https://www.nato.int/cps/en/natolive/topics_52044.htm",
+  "zinnen": [
+   {
+    "zin": "The password must be at least&nbsp;<b>12 characters long, no spaces, include upper/lowercase letters, numbers and symbols.</b></p>\\r\\n\"}}\" id=\"text-937830746a\" class=\"cmp-text\">",
+    "raakvlak": 0
+   },
+   {
+    "zin": "The password must be at least 12 characters long, no spaces, include upper/lowercase letters, numbers and symbols.",
+    "raakvlak": 0
+   },
+   {
+    "zin": "\\r\\n<li>NATO was created by 12 countries from Europe and North America on 4 April 1949.</li>\\r\\n<li>Since then, 20 more countries have joined NATO through 10 rounds of enlargement (in 1952, 1955, 1982, 1999, 2004, 2009, 2017, 2020, 2023 and 2024).</li>\\r\\n<li>Article 10 of the North Atlantic Treaty sets out how countries can join the Alliance.",
+    "raakvlak": 0
+   },
+   {
+    "zin": "NATO was created by 12 countries from Europe and North America on 4 April 1949.",
+    "raakvlak": 0
+   }
+  ],
+  "status": "gevonden"
+ },
+ {
+  "nr": 462,
+  "vraag": "Hoeveel elektronen deelt een enkelvoudige covalente binding?",
+  "antwoord": 2,
+  "bron": "https://openstax.org/books/chemistry-2e/pages/7-2-covalent-bonding",
+  "zinnen": [
+   {
+    "zin": "7.2 Covalent Bonding - Chemistry 2e | OpenStax Skip to Content Go to accessibility page Keyboard shortcuts menu Chemistry 2e 7.2 Covalent Bonding Chemistry 2e 7.2 Covalent Bonding Contents Highlights Print Close 7.2",
+    "raakvlak": 0
+   },
+   {
+    "zin": "For example, two hydrogen atoms bond covalently to form an H 2 molecule; each hydrogen atom in the H 2 molecule has two electrons stabilizing it, giving each atom the same number of valence electrons as the noble gas He.",
+    "raakvlak": 0
+   },
+   {
+    "zin": "For example, the hydrogen molecule, H 2 , contains a covalent bond between its two hydrogen atoms.",
+    "raakvlak": 0
+   },
+   {
+    "zin": "In the case of H 2 , the covalent bond is very strong; a large amount of energy, 436 kJ, must be added to break the bonds in one mole of hydrogen molecules and cause the atoms to separate:",
+    "raakvlak": 0
+   }
+  ],
+  "status": "gevonden"
+ },
+ {
+  "nr": 463,
+  "vraag": "Hoeveel elektronen heeft een natriumion, Na⁺?",
+  "antwoord": 10,
+  "bron": "https://openstax.org/books/chemistry-2e/pages/2-3-atomic-structure-and-symbolism",
+  "zinnen": [
+   {
+    "zin": "The diameter of an atom is on the order of 10 −10 m, whereas the diameter of the nucleus is roughly 10 −15 m—about 100,000 times smaller.",
+    "raakvlak": 0
+   },
+   {
+    "zin": "For example, a carbon atom weighs less than 2 × × 10 −23 g, and an electron has a charge of less than 2 × × 10 −19 C (coulomb).",
+    "raakvlak": 0
+   },
+   {
+    "zin": "The unified atomic mass unit is defined as exactly 1/12 of the mass of a single atom of the carbon-12 isotope (more on isotopes is provided later in this section) and is equal to 1.6605 × × 10 −24 g.",
+    "raakvlak": 0
+   },
+   {
+    "zin": "The fundamental unit of charge (also called the elementary charge) equals the magnitude of the charge of an electron (e) with e = 1.602 × × 10 −19 C.",
+    "raakvlak": 0
+   }
+  ],
+  "status": "gevonden"
+ },
+ {
+  "nr": 466,
+  "vraag": "Hoeveel elementen bevat koolstofdioxide?",
+  "antwoord": 2,
+  "bron": "https://pubchem.ncbi.nlm.nih.gov/compound/Carbon-dioxide",
+  "zinnen": [
+   {
+    "zin": "Carbon Dioxide | CO2 | CID 280 - PubChem",
+    "raakvlak": 0
+   }
+  ],
+  "status": "gevonden"
+ },
+ {
+  "nr": 471,
+  "vraag": "Hoeveel perioden heeft het moderne periodiek systeem?",
+  "antwoord": 7,
+  "bron": "https://iupac.org/what-we-do/periodic-table-of-elements/",
+  "zinnen": [],
+  "status": "getal niet op de pagina"
+ },
+ {
+  "nr": 472,
+  "vraag": "Hoeveel procent azijnzuur bevat gewone huishoudazijn ongeveer?",
+  "antwoord": 5,
+  "bron": "https://www.ecfr.gov/current/title-21/chapter-I/subchapter-B/part-169",
+  "zinnen": [],
+  "status": "getal niet op de pagina"
+ },
+ {
+  "nr": 473,
+  "vraag": "Hoeveel protonen heeft een neutraal atoom van uranium?",
+  "antwoord": 92,
+  "bron": "https://www.rsc.org/periodic-table/element/92/uranium",
+  "zinnen": [],
+  "status": "getal niet op de pagina"
+ },
+ {
+  "nr": 474,
+  "vraag": "Hoeveel protonen heeft een neutraal atoom van wolfraam?",
+  "antwoord": 74,
+  "bron": "https://www.rsc.org/periodic-table/element/74/tungsten",
+  "zinnen": [
+   {
+    "zin": "Take for example the case of element 74 - or as we call it in English - tungsten.",
+    "raakvlak": 0
+   },
+   {
+    "zin": "I'm glad, though, that the birth of chemistry in the activity of those ancient metallurgists and mineralogists is still celebrated by the use of the symbol W for element 74.",
+    "raakvlak": 0
+   }
+  ],
+  "status": "gevonden"
+ },
+ {
+  "nr": 476,
+  "vraag": "Welke pH-waarde heeft zuiver water bij kamertemperatuur ongeveer?",
+  "antwoord": 7,
+  "bron": "https://www.usgs.gov/special-topics/water-science-school/science/ph-and-water",
+  "zinnen": [
+   {
+    "zin": "The range goes from 0 to 14, with 7 being neutral.",
+    "raakvlak": 0
+   },
+   {
+    "zin": "pHs of less than 7 indicate acidity, whereas a pH of greater than 7 indicates a base.",
+    "raakvlak": 0
+   },
+   {
+    "zin": "The range goes from 0 to 14, with 7 being neutral.",
+    "raakvlak": 0
+   },
+   {
+    "zin": "pHs of less than 7 indicate acidity, whereas a pH of greater than 7 indicates a base.",
+    "raakvlak": 0
+   }
+  ],
+  "status": "gevonden"
+ },
+ {
+  "nr": 490,
+  "vraag": "Hoeveel stukken heeft iedere speler bij de start van schaken?",
+  "antwoord": 16,
+  "bron": "https://handbook.fide.com/chapter/E012023",
+  "zinnen": [
+   {
+    "zin": "2.2 At the beginning of the game White has 16 light-coloured pieces (the ‘white’ pieces); Black has 16 dark-coloured pieces (the ‘black’ pieces).",
+    "raakvlak": 0
+   },
+   {
+    "zin": "There are 16 dark-coloured pieces and 32 squares called black.",
+    "raakvlak": 0
+   },
+   {
+    "zin": "There are 16 light-coloured pieces and 32 squares called white.",
+    "raakvlak": 0
+   },
+   {
+    "zin": "FIDE World Youth U14, U16 & U18 Championships 07.",
+    "raakvlak": 0
+   }
+  ],
+  "status": "gevonden"
+ },
+ {
+  "nr": 499,
+  "vraag": "Hoeveel punten levert een safety op bij American football?",
+  "antwoord": 2,
+  "bron": "https://operations.nfl.com/the-rules/nfl-rulebook/",
+  "zinnen": [
+   {
+    "zin": "19-2 Permits League personnel to consult with on-field officials when considering the potential disqualification of a player for both flagrant football and non-football acts, even if not called on the field.",
+    "raakvlak": 1
+   },
+   {
+    "zin": "On fields used primarily by the NFL, the professional inbounds hash marks should be 4 inches wide by 2 feet long.",
+    "raakvlak": 0
+   }
+  ],
+  "status": "gevonden"
+ },
+ {
+  "nr": 503,
+  "vraag": "Hoeveel spelers staan er per voetbalteam op het veld?",
+  "antwoord": 11,
+  "bron": "https://www.theifab.com/laws/latest/the-players/",
+  "zinnen": [],
+  "status": "getal niet op de pagina"
+ },
+ {
+  "nr": 509,
+  "vraag": "Hoeveel aardse dagen duurt een jaar op Jupiter ongeveer?",
+  "antwoord": 4333,
+  "bron": "https://science.nasa.gov/jupiter/facts/",
+  "zinnen": [
+   {
+    "zin": "One day on Jupiter takes 9.9 hours (the time it takes for Jupiter to rotate or spin around once), and Jupiter makes a complete orbit around the Sun (a year in Jovian time) in about 12 Earth years (4,333 Earth days).",
+    "raakvlak": 1
+   }
+  ],
+  "status": "gevonden"
+ },
+ {
+  "nr": 510,
+  "vraag": "Hoeveel aardse dagen duurt een jaar op Venus ongeveer?",
+  "antwoord": 225,
+  "bron": "https://science.nasa.gov/venus/venus-facts/",
+  "zinnen": [
+   {
+    "zin": "For one thing, your “day” would be 243 Earth days long — longer even than a Venus year (one trip around the Sun), which takes only 225 Earth days.",
+    "raakvlak": 1
+   }
+  ],
+  "status": "gevonden"
+ },
+ {
+  "nr": 511,
+  "vraag": "Hoeveel aardse jaren duurt een jaar op Neptunus ongeveer?",
+  "antwoord": 165,
+  "bron": "https://science.nasa.gov/neptune/facts/",
+  "zinnen": [
+   {
+    "zin": "In 2011 Neptune completed its first 165-year orbit since its discovery in 1846.",
+    "raakvlak": 0
+   },
+   {
+    "zin": "And Neptune makes a complete orbit around the Sun (a year in Neptunian time) in about 165 Earth years (60,190 Earth days).",
+    "raakvlak": 0
+   }
+  ],
+  "status": "gevonden"
+ },
+ {
+  "nr": 535,
+  "vraag": "Wat is de gemiddelde afstand van de aarde tot de maan?",
+  "antwoord": 384400,
+  "bron": "https://science.nasa.gov/moon/facts/",
+  "zinnen": [
+   {
+    "zin": "The Moon is an average of 238,855 miles (384,400 kilometers) away.",
+    "raakvlak": 0
+   }
+  ],
+  "status": "gevonden"
+ },
+ {
+  "nr": 573,
+  "vraag": "Hoeveel lijnen heeft de metro van Londen volgens de klassieke Underground-indeling?",
+  "antwoord": 11,
+  "bron": "https://tfl.gov.uk/corporate/about-tfl/what-we-do/london-underground",
+  "zinnen": [],
+  "status": "TimeoutError: The read operation timed out"
+ },
+ {
+  "nr": 574,
+  "vraag": "Hoeveel meter lang is een Airbus A380 ongeveer?",
+  "antwoord": 73,
+  "bron": "https://www.airbus.com/en/products-services/commercial-aircraft/passenger-aircraft/a380",
+  "zinnen": [
+   {
+    "zin": "The Airbus A380 is the largest passenger plane ever built , measuring 73 metres long with a wingspan of nearly 80 metres.",
+    "raakvlak": 1
+   },
+   {
+    "zin": "The Airbus A380 is 73 metres long and 24 metres high, with a wingspan of 79.8 metres.",
+    "raakvlak": 1
+   }
+  ],
+  "status": "gevonden"
+ },
+ {
+  "nr": 608,
+  "vraag": "Hoeveel paar hersenzenuwen heeft een mens?",
+  "antwoord": 12,
+  "bron": "https://www.ncbi.nlm.nih.gov/books/NBK470353/",
+  "zinnen": [
+   {
+    "zin": "In this section, we first outline the 12 cranial nerves in their anatomical order, followed by a brief overview of their functional groupings (see Image.",
+    "raakvlak": 0
+   },
+   {
+    "zin": "Ventral view of the human brain depicting the canonical organization of the 12 pairs of cranial nerves (CN) as described in the classical medical nomenclature (A).",
+    "raakvlak": 0
+   },
+   {
+    "zin": "2017; 12 (10):e0186741.",
+    "raakvlak": 0
+   },
+   {
+    "zin": "2004 Feb; 18 (1):5-12.",
+    "raakvlak": 0
+   }
+  ],
+  "status": "gevonden"
+ },
+ {
+  "nr": 609,
+  "vraag": "Hoeveel procent van het menselijk lichaam bestaat ongeveer uit water?",
+  "antwoord": 60,
+  "bron": "https://www.usgs.gov/special-topics/water-science-school/science/water-you-water-and-human-body",
+  "zinnen": [
+   {
+    "zin": "Up to 60% of the human adult body is water.",
+    "raakvlak": 1
+   },
+   {
+    "zin": "In adult men, about 60% of their bodies are water.",
+    "raakvlak": 1
+   },
+   {
+    "zin": "Up to 60% of the human adult body is water.",
+    "raakvlak": 1
+   },
+   {
+    "zin": "In adult men, about 60% of their bodies are water.",
+    "raakvlak": 1
+   }
+  ],
+  "status": "gevonden"
+ },
+ {
+  "nr": 641,
+  "vraag": "Hoeveel jaar kan een reuzenschildpad ongeveer oud worden?",
+  "antwoord": 150,
+  "bron": "https://nationalzoo.si.edu/animals/aldabra-tortoise",
+  "zinnen": [
+   {
+    "zin": "One of the world's largest land tortoises, Aldabra tortoises can reach sizes of up to 550 pounds and ages of up to 150 years old.",
+    "raakvlak": 0
+   },
+   {
+    "zin": "Chyna weighs between 150 and 175 pounds.",
+    "raakvlak": 0
+   },
+   {
+    "zin": "Aldabra tortoises can reach ages of over 150 years.",
+    "raakvlak": 0
+   }
+  ],
+  "status": "gevonden"
+ },
+ {
+  "nr": 666,
+  "vraag": "Hoeveel paar chromosomen heeft een fruitvlieg Drosophila melanogaster?",
+  "antwoord": 4,
+  "bron": "https://flybase.org/",
+  "zinnen": [],
+  "status": "HTTPError: HTTP Error 503: Service Temporarily Unavailable"
+ },
+ {
+  "nr": 670,
+  "vraag": "Hoeveel poten heeft een kreeft?",
+  "antwoord": 10,
+  "bron": "https://www.fisheries.noaa.gov/species/american-lobster",
+  "zinnen": [
+   {
+    "zin": "American lobster is a crustacean with a large shrimp-like body and 10 legs, two of which are large, strong claws.",
+    "raakvlak": 0
+   },
+   {
+    "zin": "With each transfer transaction, there is a 10% conservation tax to the buyer, further removing effort from the fishery.",
+    "raakvlak": 0
+   },
+   {
+    "zin": "With the 10-percent conservation tax, the buyer receives 180 Area 2 and Area 3 traps, making his final allocation 780 traps for Area 2 and 180 traps for Area 3.",
+    "raakvlak": 0
+   },
+   {
+    "zin": "NOAA Fisheries published a final rule on November 10, 2015, changing the timing of the Area 4 seasonal closure from February 1 to March 31 to April 30 to May 31.",
+    "raakvlak": 0
+   }
+  ],
+  "status": "gevonden"
+ },
+ {
+  "nr": 867,
+  "vraag": "Hoeveel kilometer lang is de evenaar ongeveer?",
+  "antwoord": 40075,
+  "bron": "https://education.nationalgeographic.org/resource/equator/",
+  "zinnen": [
+   {
+    "zin": "The distance around Earth at the Equator, its circumference , is 40,075 kilometers (24,901 miles).",
+    "raakvlak": 1
+   }
+  ],
+  "status": "gevonden"
+ },
+ {
+  "nr": 1077,
+  "vraag": "Hoeveel procent van de wereldwijde landbouwgrond wordt geïrrigeerd?",
+  "antwoord": 20,
+  "bron": "https://www.fao.org/aquastat/en/overview/methodology/water-use",
+  "zinnen": [
+   {
+    "zin": "The chart below shows the water withdrawal ratios by continent, where the agricultural part varies from more than 80 percent in Africa and Asia to just over 20 percent in Europe.",
+    "raakvlak": 0
+   }
+  ],
+  "status": "gevonden"
+ },
+ {
+  "nr": 1267,
+  "vraag": "Hoeveel landen ondertekenden oorspronkelijk het Handvest van de Verenigde Naties?",
+  "antwoord": 50,
+  "bron": "https://www.un.org/en/about-us/history-of-the-un",
+  "zinnen": [
+   {
+    "zin": "Representatives of 50 countries gathered at the United Nations Conference on International Organization in San Francisco, California from 25 April to 26 June 1945.",
+    "raakvlak": 0
+   }
+  ],
+  "status": "gevonden"
+ },
+ {
+  "nr": 1320,
+  "vraag": "Hoeveel elektronen heeft een chloride-ion, Cl⁻?",
+  "antwoord": 18,
+  "bron": "https://openstax.org/books/chemistry-2e/pages/2-3-atomic-structure-and-symbolism",
+  "zinnen": [
+   {
+    "zin": "Visit this site to make mixtures of the main isotopes of the first 18 elements, gain experience with average atomic mass, and check naturally occurring isotope ratios using the Isotopes and Atomic Mass simulation.",
+    "raakvlak": 0
+   },
+   {
+    "zin": "Let's consider just one natural, stable isotope: Oxygen-18, which is noted in the table above and is referred to as one of the environmental isotopes.",
+    "raakvlak": 0
+   },
+   {
+    "zin": "It is important in paleoclimatology, for example, because scientists can use the ratio between Oxygen-18 and Oxygen-16 in an ice core to determine the temperature of precipitation over time.",
+    "raakvlak": 0
+   },
+   {
+    "zin": "Oxygen-18 was also critical to the discovery of metabolic pathways and the mechanisms of enzymes.",
+    "raakvlak": 0
+   }
+  ],
+  "status": "gevonden"
+ },
+ {
+  "nr": 1322,
+  "vraag": "Hoeveel elektronenparen deelt een stikstofatoom in het molecuul N₂?",
+  "antwoord": 3,
+  "bron": "https://openstax.org/books/chemistry-2e/pages/7-2-covalent-bonding",
+  "zinnen": [
+   {
+    "zin": "For example, the H and F atoms in HF have an electronegativity difference of 1.9, and the N and H atoms in NH 3 a difference of 0.9, yet both of these compounds form bonds that are considered polar covalent.",
+    "raakvlak": 0
+   },
+   {
+    "zin": "The atoms in polyatomic ions, such as OH – , NO 3 − , NO 3 − , and NH 4 + , NH 4 + , are held together by polar covalent bonds.",
+    "raakvlak": 0
+   },
+   {
+    "zin": "For example, potassium nitrate, KNO 3 , contains the K + cation and the polyatomic NO 3 − NO 3 − anion.",
+    "raakvlak": 0
+   },
+   {
+    "zin": "Thus, bonding in potassium nitrate is ionic, resulting from the electrostatic attraction between the ions K + and NO 3 − , NO 3 − , as well as covalent between the nitrogen and oxygen atoms in NO 3 − .",
+    "raakvlak": 0
+   }
+  ],
+  "status": "gevonden"
+ },
+ {
+  "nr": 1338,
+  "vraag": "Hoeveel speelvelden heeft een standaard schaakbord?",
+  "antwoord": 64,
+  "bron": "https://handbook.fide.com/chapter/E012023",
+  "zinnen": [
+   {
+    "zin": "2.1 The chessboard is composed of an 8 x 8 grid of 64 equal squares alternately light (the ‘white’ squares) and dark (the ‘black’ squares).",
+    "raakvlak": 0
+   }
+  ],
+  "status": "gevonden"
+ },
+ {
+  "nr": 1349,
+  "vraag": "Hoeveel holes heeft een standaard golfbaan?",
+  "antwoord": 18,
+  "bron": "https://www.randa.org/en/rog/the-rules-of-golf",
+  "zinnen": [
+   {
+    "zin": "Read more 18 Stroke-and-Distance Relief, Ball Lost or Out of Bounds, Provisional Ball Purpose of Rule: Rule 18 covers taking relief under penalty of stroke and distance.",
+    "raakvlak": 0
+   },
+   {
+    "zin": "Read more 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25",
+    "raakvlak": 0
+   }
+  ],
+  "status": "gevonden"
+ },
+ {
+  "nr": 1351,
+  "vraag": "Hoeveel holes telt een standaard ronde op een professionele golfbaan?",
+  "antwoord": 18,
+  "bron": "https://www.randa.org/en/rog/the-rules-of-golf",
+  "zinnen": [
+   {
+    "zin": "Read more 18 Stroke-and-Distance Relief, Ball Lost or Out of Bounds, Provisional Ball Purpose of Rule: Rule 18 covers taking relief under penalty of stroke and distance.",
+    "raakvlak": 0
+   },
+   {
+    "zin": "Read more 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25",
+    "raakvlak": 0
+   }
+  ],
+  "status": "gevonden"
+ },
+ {
+  "nr": 1378,
+  "vraag": "Hoeveel meter breed mag een internationaal voetbalveld maximaal zijn?",
+  "antwoord": 90,
+  "bron": "https://www.theifab.com/laws/latest/the-field-of-play/",
+  "zinnen": [
+   {
+    "zin": "Length (touchline): minimum 90 m (100 yds) maximum 120 m (130 yds)",
+    "raakvlak": 0
+   },
+   {
+    "zin": "Length (goal line): minimum 45 m (50 yds) maximum 90 m (100 yds)",
+    "raakvlak": 0
+   }
+  ],
+  "status": "gevonden"
+ },
+ {
+  "nr": 1382,
+  "vraag": "Hoeveel meter lang mag een internationaal voetbalveld maximaal zijn?",
+  "antwoord": 120,
+  "bron": "https://www.theifab.com/laws/latest/the-field-of-play/",
+  "zinnen": [
+   {
+    "zin": "Length (touchline): minimum 90 m (100 yds) maximum 120 m (130 yds)",
+    "raakvlak": 0
+   },
+   {
+    "zin": "Length (touchline): minimum 100 m (110 yds) maximum 110 m (120 yds)",
+    "raakvlak": 0
+   }
+  ],
+  "status": "gevonden"
+ },
+ {
+  "nr": 1387,
+  "vraag": "Hoeveel minuten officiële speeltijd heeft een Americanfootballwedstrijd in de NFL?",
+  "antwoord": 60,
+  "bron": "https://operations.nfl.com/the-rules/nfl-rulebook/",
+  "zinnen": [
+   {
+    "zin": "The location of the inbounds hash marks is 70’ 9” for professional football, 60’ for college football, measured to the inbound edge of the hash.",
+    "raakvlak": 0
+   }
+  ],
+  "status": "gevonden"
+ },
+ {
+  "nr": 1425,
+  "vraag": "Hoeveel erkende planeten telt ons zonnestelsel?",
+  "antwoord": 8,
+  "bron": "https://science.nasa.gov/solar-system/planets/",
+  "zinnen": [],
+  "status": "getal niet op de pagina"
+ },
+ {
+  "nr": 1438,
+  "vraag": "In welk jaar zette de eerste mens voet op de maan?",
+  "antwoord": 1969,
+  "bron": "https://www.nasa.gov/mission/apollo-11/",
+  "zinnen": [
+   {
+    "zin": "flag during the Apollo 11 mission in July 1969.",
+    "raakvlak": 0
+   },
+   {
+    "zin": "S69-31743 (July 1969) — Astronaut Edwin E.",
+    "raakvlak": 0
+   },
+   {
+    "zin": "Watch highlights from the Apollo 11 mission including the launch on July 16, 1969, the landing of the lunar module, Neil Armstrong’s first steps on the Moon, splashdown, and more.",
+    "raakvlak": 0
+   },
+   {
+    "zin": "20 July 1969—Astronaut Edwin E.",
+    "raakvlak": 0
+   }
+  ],
+  "status": "gevonden"
+ },
+ {
+  "nr": 1445,
+  "vraag": "Wat is de geschatte temperatuur aan het oppervlak van de zon?",
+  "antwoord": 5500,
+  "bron": "https://science.nasa.gov/sun/facts/",
+  "zinnen": [
+   {
+    "zin": "The part of the Sun we call its surface – the photosphere – is a relatively cool 10,000 °F (5,500 °C).",
+    "raakvlak": 0
+   },
+   {
+    "zin": "It's about 250 miles thick, with temperatures reaching about 10,000 degrees Fahrenheit (5,500 degrees Celsius).",
+    "raakvlak": 0
+   },
+   {
+    "zin": "Surface temperature : (Photosphere) 10,000 degrees Fahrenheit (5,500 degrees Celsius)",
+    "raakvlak": 0
+   }
+  ],
+  "status": "gevonden"
+ },
+ {
+  "nr": 1477,
+  "vraag": "In welk jaar werd de eerste floppy disk geïntroduceerd?",
+  "antwoord": 1971,
+  "bron": "https://www.ibm.com/history/floppy-disk",
+  "zinnen": [
+   {
+    "zin": "IBM began selling floppy disk drives in 1971 and received US patents for the drive and floppy disk in 1972.",
+    "raakvlak": 2
+   }
+  ],
+  "status": "gevonden"
+ },
+ {
+  "nr": 1508,
+  "vraag": "Hoeveel positieve delers heeft het getal 360?",
+  "antwoord": 24,
+  "bron": "https://mathworld.wolfram.com/Divisor.html",
+  "zinnen": [
+   {
+    "zin": "divisors (other than 1) are 1, 2, 4, 6, 16, 12, 64, 24, 36, ...",
+    "raakvlak": 0
+   }
+  ],
+  "status": "gevonden"
+ }
+]
