@@ -941,8 +941,6 @@
   .bk-overview-button:hover { background:rgba(255,255,255,.16); border-color:rgba(255,255,255,.48); }
   .bk-card-grid { grid-template-rows:none; grid-auto-rows:145px; padding-bottom:20px; }
   .bk-card-grid .library-flip-front { overflow:hidden; }
-  .bk-card-grid .library-flip-front::after { content:'A × B ± C = D'; color:#A5A9CA; font:600 9px 'JetBrains Mono',monospace; letter-spacing:.04em; }
-  .bk-card-grid .library-flip-front.played::after { color:rgba(255,255,255,.78); }
   .bk-play-panel { max-width:760px; margin-left:auto; margin-right:auto; }
   .bk-overview-button { display:block; margin:14px auto 0; }
   .bk-rating { margin-top:8px; font:700 15px 'Space Grotesk',sans-serif; }

@@ -227,6 +227,7 @@ function renderLibraryStats() {
   // naar verwezen wordt.
   function openLeaderboardModal() {
     closeMenu();
+    resetLeaderboardDag();
     showScreen('leaderboard');
     renderLeaderboard();
   }
@@ -288,6 +289,7 @@ function renderLibraryStats() {
   window.handleAuthSubmit = handleAuthSubmit;
   window.handleLogout = handleLogout;
   window.switchLbTab = switchLbTab;
+  window.veranderLeaderboardDag = veranderLeaderboardDag;
   window.changeArchiveMonth = changeArchiveMonth;
   window.showDailyResults = showDailyResults;
   window.showDailyQuestions = showDailyQuestions;

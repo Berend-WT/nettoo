@@ -462,6 +462,8 @@
   let authMode = 'login'; // 'login' of 'register'
   let currentUser = null;
   let currentLbTab = 'today';
+  let leaderboardSelectedDate = TODAY_STR;
+  let leaderboardRequestId = 0;
   let streakCalendarDate = new Date(new Date().getFullYear(), new Date().getMonth(), 1);
   // De Daily Archive gebruikt dezelfde kaart als de puzzel, maar wisselt na
   // indienen naar een aparte resultatenstaat. Zo blijven vragen en review
@@ -2478,9 +2480,100 @@
   // security-definer functies: de policies laten een speler alleen zijn eigen
   // rijen zien en dat blijft zo — die functies geven uitsluitend een naam en
   // een score terug, geen e-mailadressen of andermans schattingen.
+  function leaderboardDagen() {
+    return DAILY_PUZZLES.filter(puzzel => puzzel.date && puzzel.date <= TODAY_STR)
+      .slice().sort((a, b) => a.date.localeCompare(b.date));
+  }
+
+  function leaderboardStandaarddag() {
+    const dagen = leaderboardDagen();
+    return dagen.find(puzzel => puzzel.date === TODAY_STR)?.date || dagen.at(-1)?.date || TODAY_STR;
+  }
+
+  function leaderboardDatumTekst(datum, kort = false) {
+    const taal = window.NettoI18n?.language === 'en' ? 'en-GB' : 'nl-NL';
+    return new Intl.DateTimeFormat(taal, kort
+      ? { day: 'numeric', month: 'short' }
+      : { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' }
+    ).format(new Date(datum + 'T12:00:00'));
+  }
+
+  function werkLeaderboardDagkopBij() {
+    const dagen = leaderboardDagen();
+    const index = dagen.findIndex(puzzel => puzzel.date === leaderboardSelectedDate);
+    const puzzel = dagen[index];
+    const dagNavigatie = document.getElementById('leaderboardDayNav');
+    const vandaagTab = document.getElementById('tabTodayBtn');
+    const subtitel = document.getElementById('leaderboardSubtitle');
+    const isDag = currentLbTab === 'today';
+    document.getElementById('leaderboardScoreHeading').textContent = isDag ? statsCopy('Gem. factor', 'Avg. factor') : statsCopy('Dagen', 'Days');
+    document.getElementById('leaderboardVoetnoot').textContent = isDag
+      ? statsCopy('De 50 beste scores. Een lagere factor is beter; 1,00× is exact.', 'The top 50 scores. A lower factor is better; 1.00× is exact.')
+      : statsCopy('Streaks worden berekend uit werkelijk gespeelde dagen.', 'Streaks are calculated from days actually played.');
+    document.getElementById('tabTodayBtn').setAttribute('aria-pressed', String(isDag));
+    document.getElementById('tabStreaksBtn').setAttribute('aria-pressed', String(!isDag));
+    if (dagNavigatie) dagNavigatie.hidden = !isDag;
+    if (!isDag) {
+      if (subtitel) subtitel.textContent = statsCopy('De langste actieve reeksen.', 'The longest active streaks.');
+      return;
+    }
+    const isVandaag = leaderboardSelectedDate === TODAY_STR;
+    if (vandaagTab) vandaagTab.textContent = statsCopy(
+      `Dagpuzzel · ${isVandaag ? 'vandaag' : leaderboardDatumTekst(leaderboardSelectedDate, true)}`,
+      `Daily · ${isVandaag ? 'today' : leaderboardDatumTekst(leaderboardSelectedDate, true)}`
+    );
+    if (subtitel) subtitel.textContent = statsCopy('Wie schat het scherpst? Bekijk de scores per Daily.', 'Who comes closest? Explore the scores for each Daily.');
+    const label = document.getElementById('leaderboardDayLabel');
+    if (label) label.textContent = puzzel
+      ? `Daily #${puzzel.number}${isVandaag ? statsCopy(' · Vandaag', ' · Today') : ''}`
+      : leaderboardDatumTekst(leaderboardSelectedDate);
+    const keuze = document.getElementById('leaderboardDateSelect');
+    keuze.replaceChildren(...dagen.slice().reverse().map(dag => {
+      const optie = document.createElement('option');
+      optie.value = dag.date;
+      optie.textContent = new Intl.DateTimeFormat(window.NettoI18n?.language === 'en' ? 'en-GB' : 'nl-NL', {
+        day: 'numeric', month: 'long', year: 'numeric'
+      }).format(new Date(dag.date + 'T12:00:00'));
+      optie.selected = dag.date === leaderboardSelectedDate;
+      return optie;
+    }));
+    keuze.disabled = !dagen.length;
+    const nieuwste = document.getElementById('leaderboardLatestDay');
+    nieuwste.hidden = leaderboardSelectedDate === leaderboardStandaarddag();
+    nieuwste.textContent = leaderboardStandaarddag() === TODAY_STR
+      ? statsCopy('Terug naar vandaag', 'Back to today')
+      : statsCopy('Nieuwste Daily', 'Latest Daily');
+    const vorige = document.getElementById('leaderboardPreviousDay');
+    const volgende = document.getElementById('leaderboardNextDay');
+    if (vorige) vorige.disabled = index <= 0;
+    if (volgende) volgende.disabled = index < 0 || index >= dagen.length - 1;
+  }
+
+  function veranderLeaderboardDag(richting) {
+    const dagen = leaderboardDagen();
+    const index = dagen.findIndex(puzzel => puzzel.date === leaderboardSelectedDate);
+    const volgende = Math.max(0, Math.min(dagen.length - 1, index + richting));
+    if (!dagen[volgende] || volgende === index) return;
+    leaderboardSelectedDate = dagen[volgende].date;
+    renderLeaderboard();
+  }
+
+  function resetLeaderboardDag() {
+    leaderboardSelectedDate = leaderboardStandaarddag();
+  }
+
+  function kiesLeaderboardDag(datum) {
+    if (!leaderboardDagen().some(puzzel => puzzel.date === datum)) return;
+    leaderboardSelectedDate = datum;
+    renderLeaderboard();
+  }
+
   async function renderLeaderboard() {
     const list = document.getElementById('leaderboardList');
     if (!list) return;
+    const requestId = ++leaderboardRequestId;
+    list.setAttribute('aria-busy', 'true');
+    werkLeaderboardDagkopBij();
     list.innerHTML = '';
     const melding = tekst => {
       const div = document.createElement('div');
@@ -2496,11 +2589,15 @@
     try {
       if (!supabaseClient) throw new Error('geen verbinding');
       const { data, error } = currentLbTab === 'today'
-        ? await supabaseClient.rpc('leaderboard_dag', { p_datum: TODAY_STR })
+        ? await supabaseClient.rpc('leaderboard_dag', { p_datum: leaderboardSelectedDate })
         : await supabaseClient.rpc('leaderboard_streaks', { p_datum: TODAY_STR });
       if (error) throw error;
+      if (requestId !== leaderboardRequestId) return;
+      list.setAttribute('aria-busy', 'false');
       rijen = data || [];
     } catch (err) {
+      if (requestId !== leaderboardRequestId) return;
+      list.setAttribute('aria-busy', 'false');
       console.warn('Leaderboard niet opgehaald:', err.message || err);
       melding(statsCopy('Het leaderboard is even niet bereikbaar.',
                         'The leaderboard is unavailable right now.'));
@@ -2508,9 +2605,14 @@
     }
 
     if (!rijen.length) {
+      const isVandaag = leaderboardSelectedDate === TODAY_STR;
       melding(currentLbTab === 'today'
-        ? statsCopy('Nog niemand heeft de daily van vandaag gespeeld. Wees de eerste.',
-                    'Nobody has played today\u2019s daily yet. Be the first.')
+        ? statsCopy(isVandaag
+            ? 'Nog niemand heeft de daily van vandaag gespeeld. Wees de eerste.'
+            : `Voor ${leaderboardDatumTekst(leaderboardSelectedDate)} zijn geen scores ingediend.`,
+          isVandaag
+            ? 'Nobody has played today\u2019s daily yet. Be the first.'
+            : `No scores were submitted for ${leaderboardDatumTekst(leaderboardSelectedDate)}.`)
         : statsCopy('Nog geen streaks. Speel twee dagen op rij om te beginnen.',
                     'No streaks yet. Play two days in a row to get started.'));
       return;
@@ -2530,7 +2632,7 @@
       const naam = document.createElement('div');
       naam.className = 'lb-name';
       // textContent, geen innerHTML: spelersnamen komen van andere gebruikers.
-      naam.textContent = rij.naam + (ikZelf ? ' \u{1F448}' : '');
+      naam.textContent = rij.naam + (ikZelf ? statsCopy(' · jij', ' · you') : '');
       links.append(rang, naam);
 
       const score = document.createElement('span');
@@ -2551,6 +2653,7 @@
     currentLbTab = tab;
     document.getElementById('tabTodayBtn').classList.toggle('active', tab === 'today');
     document.getElementById('tabStreaksBtn').classList.toggle('active', tab === 'streaks');
+    werkLeaderboardDagkopBij();
     renderLeaderboard();
   }
 

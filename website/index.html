@@ -26,9 +26,9 @@
 <script src="data/netto_race_pool.js?v=36"></script>
 <script src="data/netto_breinkrakers.js?v=28"></script>
 <script src="data/netto_translations_en.js?v=37"></script>
-<script src="js/i18n.js?v=53"></script>
-<link rel="stylesheet" href="css/styles.css?v=50">
-<link rel="stylesheet" href="css/refinement.css?v=76">
+<script src="js/i18n.js?v=55"></script>
+<link rel="stylesheet" href="css/styles.css?v=51">
+<link rel="stylesheet" href="css/refinement.css?v=78">
 
 </head>
 <body>
@@ -344,6 +344,7 @@
             <button onclick="openAuthModal()">Log in / Registreer</button>
           </div>
           <button type="button" class="daily-home-button" onclick="goHome()"><svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="m3 10 9-7 9 7M5 9v12h5v-7h4v7h5V9"/></svg>Home</button>
+          <button type="button" class="daily-home-button" onclick="openDailyPuzzles()">← Terug naar Daily Archive</button>
         </div>
 
       </div>
@@ -431,6 +432,7 @@
         <div class="library-equation" id="libraryEquation"></div>
         <div class="library-question-list" id="libraryQuestionList"></div>
         <div class="library-actions"><button onclick="libraryMove(-1)">← Vorige</button><button onclick="libraryMove(1)">Volgende →</button></div>
+        <button class="bk-overview-button" type="button" onclick="openPuzzles()">← Alle puzzels</button>
       </div>
     </div>
   </main>
@@ -888,11 +890,24 @@
       <p class="library-page-subtitle" id="leaderboardSubtitle">Wie zat er vandaag het dichtst op de waarheid?</p>
 
       <div class="library-filters lb-tabs">
-        <button class="active" id="tabTodayBtn" type="button" onclick="switchLbTab('today')">Vandaag</button>
+        <button class="active" id="tabTodayBtn" type="button" onclick="switchLbTab('today')">Dagpuzzel · vandaag</button>
         <button id="tabStreaksBtn" type="button" onclick="switchLbTab('streaks')">Top streaks</button>
       </div>
 
-      <div class="leaderboard-list" id="leaderboardList"></div>
+      <nav class="leaderboard-day-nav" id="leaderboardDayNav" aria-label="Kies een dagpuzzel">
+        <button id="leaderboardPreviousDay" type="button" onclick="veranderLeaderboardDag(-1)" aria-label="Vorige dagpuzzel">←</button>
+        <div class="lb-day-center">
+          <label for="leaderboardDateSelect" id="leaderboardDayLabel"></label>
+          <select id="leaderboardDateSelect" onchange="kiesLeaderboardDag(this.value)"></select>
+          <button type="button" class="lb-latest" id="leaderboardLatestDay" onclick="kiesLeaderboardDag(leaderboardStandaarddag())">Terug naar vandaag</button>
+        </div>
+        <button id="leaderboardNextDay" type="button" onclick="veranderLeaderboardDag(1)" aria-label="Volgende dagpuzzel">→</button>
+      </nav>
+
+      <section class="lb-board" aria-label="Ranglijst">
+        <div class="lb-board-heading"><span>Speler</span><span id="leaderboardScoreHeading">Gem. factor</span></div>
+        <div class="leaderboard-list" id="leaderboardList" aria-live="polite" aria-busy="false"></div>
+      </section>
 
       <p class="lb-voetnoot" id="leaderboardVoetnoot">Streaks worden berekend uit werkelijk gespeelde dagen.</p>
     </div>
@@ -984,11 +999,11 @@
 <!-- De volgorde is bewust: modules delen de bestaande classic-script scope. -->
 <script src="js/photo-credits.js?v=2"></script>
 <script src="js/daily-photos.js?v=2"></script>
-<script src="js/core.js?v=84"></script>
-<script src="js/puzzle-modes.js?v=47"></script>
+<script src="js/core.js?v=86"></script>
+<script src="js/puzzle-modes.js?v=48"></script>
 <script src="js/race.js?v=52"></script>
 <script src="js/submissions.js?v=39"></script>
-<script src="js/library.js?v=47"></script>
+<script src="js/library.js?v=48"></script>
 <script src="js/app.js?v=34"></script>
 
 </body>

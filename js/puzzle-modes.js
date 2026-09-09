@@ -385,6 +385,12 @@
     document.getElementById('bkQuestionList').innerHTML = [p.q1, p.q2, p.q3, p.q4].map((q, i) => `
       <div class="q-block"><div class="q-label">${q.label || 'Vraag niet beschikbaar'}</div><div class="input-wrapper"><input type="text" class="library-answer-input daily-style-input" id="bkAnswer${i}" name="netto-brein-${i}" inputmode="numeric" placeholder="Jouw schatting" autocomplete="off" autocorrect="off" spellcheck="false" data-lpignore="true"></div></div>
       ${i < 3 ? `<div class="connector"><div class="connector-line"></div><div class="connector-badge ${i === 2 ? 'eq' : ''}">${[p.op1, p.op2, '='][i]}</div><div class="connector-line"></div></div>` : ''}`).join('') + note;
+    werkVraagDetailsBij({
+      q1_label: p.q1.label,
+      q2_label: p.q2.label,
+      q3_label: p.q3.label,
+      q4_label: p.q4.label,
+    }, [...document.querySelectorAll('#bkQuestionList > .q-block')], false);
     if (note) localStorage.setItem('netto_auto_calc_note_seen', 'true');
     [0, 1, 2, 3].forEach(i => {
       const input = document.getElementById(`bkAnswer${i}`);

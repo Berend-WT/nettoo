@@ -26,9 +26,9 @@
 <script src="data/netto_race_pool.js?v=36"></script>
 <script src="data/netto_breinkrakers.js?v=28"></script>
 <script src="data/netto_translations_en.js?v=37"></script>
-<script src="js/i18n.js?v=54"></script>
-<link rel="stylesheet" href="css/styles.css?v=50">
-<link rel="stylesheet" href="css/refinement.css?v=77">
+<script src="js/i18n.js?v=55"></script>
+<link rel="stylesheet" href="css/styles.css?v=51">
+<link rel="stylesheet" href="css/refinement.css?v=78">
 
 </head>
 <body>
@@ -614,6 +614,7 @@
       <section class="bk-play-panel" id="bkPlay" style="display:none;">
         <div class="eyebrow"><span>Netto</span> · <span>Breinkrakers</span> · <span id="bkCounter">1 / 199</span></div>
         <h1 class="headline" id="bkPuzzleLabel">Puzzel 1</h1>
+        <p class="bk-leesregel">Reken van links naar rechts: 2 + 3 × 4 = 20.</p>
         <div class="card race-question-card bk-question-card">
           <div class="race-question-list" id="bkQuestionList"></div>
           <div class="race-feedback" id="bkFeedback" role="status" aria-live="polite"></div>
@@ -895,11 +896,18 @@
 
       <nav class="leaderboard-day-nav" id="leaderboardDayNav" aria-label="Kies een dagpuzzel">
         <button id="leaderboardPreviousDay" type="button" onclick="veranderLeaderboardDag(-1)" aria-label="Vorige dagpuzzel">←</button>
-        <strong id="leaderboardDayLabel"></strong>
+        <div class="lb-day-center">
+          <label for="leaderboardDateSelect" id="leaderboardDayLabel"></label>
+          <select id="leaderboardDateSelect" onchange="kiesLeaderboardDag(this.value)"></select>
+          <button type="button" class="lb-latest" id="leaderboardLatestDay" onclick="kiesLeaderboardDag(leaderboardStandaarddag())">Terug naar vandaag</button>
+        </div>
         <button id="leaderboardNextDay" type="button" onclick="veranderLeaderboardDag(1)" aria-label="Volgende dagpuzzel">→</button>
       </nav>
 
-      <div class="leaderboard-list" id="leaderboardList"></div>
+      <section class="lb-board" aria-label="Ranglijst">
+        <div class="lb-board-heading"><span>Speler</span><span id="leaderboardScoreHeading">Gem. factor</span></div>
+        <div class="leaderboard-list" id="leaderboardList" aria-live="polite" aria-busy="false"></div>
+      </section>
 
       <p class="lb-voetnoot" id="leaderboardVoetnoot">Streaks worden berekend uit werkelijk gespeelde dagen.</p>
     </div>
@@ -991,7 +999,7 @@
 <!-- De volgorde is bewust: modules delen de bestaande classic-script scope. -->
 <script src="js/photo-credits.js?v=2"></script>
 <script src="js/daily-photos.js?v=2"></script>
-<script src="js/core.js?v=85"></script>
+<script src="js/core.js?v=86"></script>
 <script src="js/puzzle-modes.js?v=48"></script>
 <script src="js/race.js?v=52"></script>
 <script src="js/submissions.js?v=39"></script>
