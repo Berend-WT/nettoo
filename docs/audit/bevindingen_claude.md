@@ -9,6 +9,43 @@ Nummering `C-###`, oplopend, nooit hergebruikt.
 
 ## Open
 
+### C-006 · middel · Supabase (policies) · open
+Acht policies staan live die uit geen enkel SQL-bestand in deze repo komen; ze
+zijn ooit via het dashboard gemaakt en wat ze toestaan weet niemand meer.
+
+  admin_users 1 van 2 · library_puzzles 1 van 1 · puzzles 1 van 2 ·
+  question_submissions 3 van 7 · scores 2 van 2
+
+Dat is niet los te zien van hoe Postgres policies combineert: **permissive
+policies worden met OR samengevoegd.** Eén policy die `using (true)` zegt maakt
+elke zorgvuldige policy ernaast betekenisloos, en in een telling zie je dat
+verschil niet — twee is twee. Op `scores` en `library_puzzles` heeft ook `anon`
+SELECT, dus daar telt het voor iedere bezoeker.
+
+Zo te zien: `supabase/toon_policies.sql`, deel 1. Dat zet alles-toestaan en
+alles-voor-anon bovenaan.
+
+Nog niet beoordeeld: de uitvoer van dat script is er nog niet.
+
+### C-007 · laag · Supabase (grants) · open
+Op elke tabel staan TRUNCATE, REFERENCES en TRIGGER voor zowel `anon` als
+`authenticated`. Dat komt uit de standaard-grant waarmee een Supabase-project
+begint, niet uit onze eigen SQL.
+
+Dit is de enige categorie die row level security níét afdekt: policies werken
+per rij, TRUNCATE werkt op de hele tabel en gaat er langs. Een policy die
+"alleen je eigen rijen" zegt houdt een TRUNCATE niet tegen.
+
+Praktisch risico nu: klein. PostgREST, waar de anon key op uitkomt, heeft geen
+route die TRUNCATE uitvoert — er is geen verzoek dat je kunt sturen. Het is een
+recht dat niemand nodig heeft en dat RLS niet dekt, en dat is genoeg om het weg
+te halen.
+
+Zo te zien: `supabase/toon_policies.sql`, deel 3.
+
+Oplossing staat in datzelfde bestand, deel 2, bewust uitgecommentarieerd: niet
+tegen deze databank uitgeprobeerd.
+
 ### C-002 · middel · data/netto_frontend_puzzles.js, data/netto_race_pool.js · open
 39 puzzels (22 in bibliotheek + daily, 17 in de racepool) hebben alle drie hun
 vragen met een foto, terwijl de generator er hooguit twee toestaat
