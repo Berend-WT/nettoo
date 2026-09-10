@@ -532,16 +532,27 @@ textarea:focus-visible,
 .library-flip-front strong { font-size: 20px; letter-spacing: -.04em; }
 .library-flip-front span { font-size: 10px; line-height: 1.4; }
 
-/* De score blijft herkenbaar zonder dat een gespeelde kaart de hele pagina kleurt. */
+/* Het kleurenraster is de beloning: in één blik zie je hoe je hele set ervoor
+   staat. Daarom vult de scorekleur de kaart en niet alleen een randje.
+
+   Wat er wél mis was: de tekst stond altijd in wit, en scoreColor levert overal
+   dezelfde HSL-lichtheid van 45 procent. In HSL is dat één getal, voor het oog
+   niet: geel op 45 procent is veel feller dan rood of groen op 45 procent. Op de
+   gele kaarten was wit daardoor nauwelijks te lezen. library.js rekent nu de
+   echte helderheid uit en zet --score-ink op donker of wit, afhankelijk van
+   welke van de twee meer contrast geeft. */
 .library-flip-front.played {
-  background: var(--surface);
-  color: var(--ink);
+  background: var(--score-accent, var(--surface));
+  color: var(--score-ink, #fff);
   border-bottom: 3px solid var(--score-accent, var(--surface-border));
 }
-.library-flip-front.played span { color: var(--ink); }
+.library-flip-front.played span,
+.library-flip-front.played strong { color: var(--score-ink, #fff); }
 .library-flip-front.played strong::after { content: ' ✓'; font-size: 13px; }
 .library-flip-card:focus-visible { outline: 3px solid var(--yellow); outline-offset: 4px; border-radius: 11px; }
-[data-theme="dark"] .library-flip-front span,
+/* Niet op een gespeelde kaart: die heeft een eigen scorekleur als achtergrond,
+   en dit lichtgrijs erop geeft een contrast van 1,4 op 1. Onleesbaar. */
+[data-theme="dark"] .library-flip-front:not(.played) span,
 [data-theme="dark"] .library-stat span { color: #C7CEEF; }
 [data-theme="dark"] .library-difficulties button:not(.active) { background: var(--surface); color: var(--ink); }
 [data-theme="dark"] .library-difficulties button span { color: #C7CEEF; }
