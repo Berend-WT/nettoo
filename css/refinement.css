@@ -532,6 +532,20 @@ textarea:focus-visible,
 .library-flip-front strong { font-size: 20px; letter-spacing: -.04em; }
 .library-flip-front span { font-size: 10px; line-height: 1.4; }
 
+/* De score blijft herkenbaar zonder dat een gespeelde kaart de hele pagina kleurt. */
+.library-flip-front.played {
+  background: var(--surface);
+  color: var(--ink);
+  border-bottom: 3px solid var(--score-accent, var(--surface-border));
+}
+.library-flip-front.played span { color: var(--ink); }
+.library-flip-front.played strong::after { content: ' ✓'; font-size: 13px; }
+.library-flip-card:focus-visible { outline: 3px solid var(--yellow); outline-offset: 4px; border-radius: 11px; }
+[data-theme="dark"] .library-flip-front span,
+[data-theme="dark"] .library-stat span { color: #C7CEEF; }
+[data-theme="dark"] .library-difficulties button:not(.active) { background: var(--surface); color: var(--ink); }
+[data-theme="dark"] .library-difficulties button span { color: #C7CEEF; }
+
 .daily-archive-list { border-radius: var(--ui-radius-md); }
 .daily-archive-row { min-height: 70px; padding: 16px 20px; }
 .daily-archive-row:hover { background: #F5F6FF; }
@@ -541,11 +555,15 @@ textarea:focus-visible,
 .month-nav button { border-radius: 9px; }
 
 .library-puzzle-view {
+  scroll-margin-top: 100px;
   max-width: 680px;
   border: 1px solid var(--surface-border);
   border-radius: var(--ui-radius-lg);
   box-shadow: var(--ui-shadow);
 }
+
+/* De cataloguskop is alleen nuttig tijdens het kiezen, niet tijdens het spelen. */
+#libraryScreen:has(#libraryPuzzleView[style*="display: block"]) :is(#libraryTitle, #librarySubtitle, #libraryStats) { display: none !important; }
 
 .library-puzzle-view .daily-style-input,
 .race-question-card .daily-style-input {
@@ -760,6 +778,17 @@ body:has(#screen-puzzle.active, #libraryScreen.active, #breinkrakersScreen.activ
 :is(#dailyQuestionView, #libraryQuestionList, #premiumQuestionList, #raceQuestionList, #bkQuestionList) .q-block .q-label { color: var(--ink); font-size: 15px; line-height: 1.5; }
 :is(#dailyQuestionView, #libraryQuestionList, #premiumQuestionList, #raceQuestionList, #bkQuestionList) .input-wrapper input { min-height: 52px; }
 #bkQuestionList .q-block { padding: 14px 0; }
+
+/* Een gedeeld ritme maakt ook langere puzzels met vier vragen overzichtelijk. */
+:is(#dailyQuestionView, #libraryQuestionList, #premiumQuestionList, #raceQuestionList, #bkQuestionList) .connector { margin: 10px 0; }
+:is(#dailyQuestionView, #libraryQuestionList, #premiumQuestionList, #raceQuestionList, #bkQuestionList) .connector-line { height: 1px; background: var(--surface-border); }
+:is(#dailyQuestionView, #libraryQuestionList, #premiumQuestionList, #raceQuestionList, #bkQuestionList) input::placeholder { color: var(--text-muted); opacity: 1; font: 400 15px 'Space Grotesk', sans-serif; }
+[data-theme="dark"] :is(#dailyQuestionView, #libraryQuestionList, #premiumQuestionList, #raceQuestionList, #bkQuestionList) input::placeholder { color: #BBC3E5; }
+:is(#dailyQuestionView, #libraryQuestionList, #premiumQuestionList, #raceQuestionList, #bkQuestionList) input:focus-visible { outline: 2px solid var(--ink); outline-offset: 3px; }
+@media (prefers-reduced-motion: reduce) {
+  .library-flip-front { transition: none; }
+  .library-flip-card.is-open:hover .library-flip-front { transform: none; }
+}
 #bkQuestionList .connector { margin: 8px 0; }
 .settings-section { margin-top: 0; padding: 22px 0; border-top: 1px solid var(--border-color); }
 .settings-section:first-of-type { border-top: 0; }

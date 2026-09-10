@@ -31,7 +31,7 @@ function renderLibraryStats() {
       const number = libraryPuzzleNumber(selectedDifficulty, i);
       const play = libraryPlayFor(p);
       const color = play ? scoreColor(play.factor) : '';
-      const frontStyle = play ? `background:${color};` : '';
+      const frontStyle = play ? `--score-accent:${color};` : '';
       const label = play ? `Score ${play.factor.toFixed(2)}×` : 'Open puzzle →';
       return `<article class="library-flip-card is-open" role="button" tabindex="0" aria-label="Open puzzel ${number}" onclick="playLibraryCard('${p.id}')" onkeydown="if(event.key==='Enter'||event.key===' ') { event.preventDefault(); playLibraryCard('${p.id}'); }"><div class="library-flip-card-inner"><div class="library-flip-front ${play ? 'played' : ''}" style="${frontStyle}"><strong>#${number}</strong><span>${label}</span></div></div></article>`;
     }).join('');
@@ -122,6 +122,8 @@ function renderLibraryStats() {
   }
 
   function renderLibraryPuzzle() {
+    // Begin bij de vraag, ook als de speler ver door de catalogus was gescrold.
+    requestAnimationFrame(() => document.getElementById('libraryPuzzleView').scrollIntoView({ block: 'start' }));
     const p = libraryPuzzles.filter(x => x.difficulty === selectedDifficulty)[libraryIndex]; if (!p) return;
     renderPuzzleView('library', p, `Puzzel ${libraryPuzzleNumber(selectedDifficulty, libraryIndex)}`);
   }
