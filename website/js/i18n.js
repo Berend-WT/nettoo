@@ -10,6 +10,8 @@
     'Hoeveel deelstaten (Bundesländer) telt Duitsland?': 'How many federal states (Bundesländer) does Germany have?',
     'Hoeveel jaar duurden de Punische oorlogen samen?': 'How many years did the Punic Wars last in total?',
     'Taal, uiterlijk en weergave': 'Language and appearance',
+    'Over ons': 'About us',
+    'Het idee achter het spel': 'The idea behind the game',
     'Elke dagpuzzel sinds dag één. Speel ze opnieuw.': 'Every Daily since day one. Play them again.',
     'dagpuzzels': 'daily puzzles',
     'Los zoveel mogelijk puzzels op voordat de tijd om is. Kies je tijd en hoe precies je moet schatten.': 'Solve as many puzzles as you can before time runs out. Choose your time and how close your estimates need to be.',
