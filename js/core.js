@@ -83,6 +83,28 @@
   // Let op: Supabase accepteert alleen adressen die in de projectinstellingen
   // bij Redirect URLs staan. Wat daar niet in staat wordt genegeerd, dus een
   // nieuw adres moet daar één keer worden toegevoegd.
+  // Het adres dat in gedeelde scores terechtkomt.
+  //
+  // Hier stond hard "https://netto.game". Dat is niet waar het spel draait, dus
+  // iedereen die zijn score deelde stuurde zijn vrienden naar een adres dat
+  // niets teruggeeft. Nu volgt de link waar je op dat moment speelt, zodat hij
+  // meeverhuist als het spel ooit een eigen domein krijgt.
+  //
+  // Speel je lokaal, dan heeft je vriend niets aan http://127.0.0.1; in dat
+  // geval valt hij terug op het gepubliceerde adres.
+  const GEPUBLICEERD = 'https://berend-wt.github.io/nettoo/';
+  function speelAdres() {
+    try {
+      const u = new URL(window.location.href);
+      const lokaal = u.protocol === 'file:'
+        || u.hostname === 'localhost' || u.hostname === '127.0.0.1'
+        || u.hostname === '0.0.0.0' || u.hostname === '[::1]';
+      return lokaal ? GEPUBLICEERD : u.origin + u.pathname;
+    } catch (_) {
+      return GEPUBLICEERD;
+    }
+  }
+
   function eigenAdres() {
     try {
       const u = new URL(window.location.href);
@@ -1141,7 +1163,7 @@
       ...(statsMode === 'daily' ? [`🔥 ${snapshot.currentStreak} ${streakWord} streak`] : []),
       `🎯 ${snapshot.entries.filter(r => r.exact === undefined ? r.factor === 1 : r.exact === true).length} spot-on`,
       `📈 ${snapshot.averageAccuracy}% ${statsCopy('gemiddelde nauwkeurigheid', 'average accuracy')}`,
-      'https://netto.game'
+      speelAdres()
     ].join('\n');
 
     if (typeof navigator !== 'undefined' && navigator.clipboard?.writeText) {
@@ -2279,7 +2301,7 @@
     const r2 = getFactorRating(s2);
     const r3 = getFactorRating(s3);
 
-    const text = `Netto #${PUZZLE_DATA.number} · Score: ${acc}% 🎯 (${play.factor.toFixed(2)}×)\n1️⃣ ${formatLine(r1.emoji, play.g1, echt.a1, s1)}\n2️⃣ ${formatLine(r2.emoji, play.g2, echt.a2, s2)}\n3️⃣ ${formatLine(r3.emoji, play.g3, echt.a3, s3)}\n🔥 Streak: ${streak} ${streak === 1 ? 'dag' : 'dagen'}\nhttps://netto.game`;
+    const text = `Netto #${PUZZLE_DATA.number} · Score: ${acc}% 🎯 (${play.factor.toFixed(2)}×)\n1️⃣ ${formatLine(r1.emoji, play.g1, echt.a1, s1)}\n2️⃣ ${formatLine(r2.emoji, play.g2, echt.a2, s2)}\n3️⃣ ${formatLine(r3.emoji, play.g3, echt.a3, s3)}\n🔥 Streak: ${streak} ${streak === 1 ? 'dag' : 'dagen'}\n${speelAdres()}`;
 
     if (navigator.clipboard) {
       navigator.clipboard.writeText(text).then(() => {
@@ -2778,7 +2800,11 @@
         score.textContent = Number(rij.factor).toFixed(2) + '\u00d7';
       } else {
         score.classList.add('lb-score-streak');
-        score.textContent = statsCopy(rij.streak + ' dagen', rij.streak + ' days');
+        // Er stond "1 days", en in het Nederlands zou er "1 dagen" staan.
+        // Elders in dit bestand wordt enkelvoud wel afgevangen, hier niet.
+        const enkel = Number(rij.streak) === 1;
+        score.textContent = rij.streak + ' ' + statsCopy(enkel ? 'dag' : 'dagen',
+                                                        enkel ? 'day' : 'days');
       }
 
       div.append(links, score);

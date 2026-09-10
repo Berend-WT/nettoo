@@ -11,11 +11,16 @@
 <meta property="og:type" content="website">
 <meta property="og:title" content="Netto · dagelijkse schatting">
 <meta property="og:description" content="Drie vragen. Eén verband. Elke dag een nieuwe puzzel.">
-<meta property="og:url" content="https://netto.game/">
-<meta property="og:image" content="https://netto.game/og-image.png">
+<!-- netto.game is niet het adres waar dit spel staat; die twee tags wezen dus
+     naar een pagina die niets teruggeeft, en naar een afbeelding die niet
+     bestond. Verhuist het spel ooit naar een eigen domein, dan moeten deze twee
+     regels mee (de deel-link in js/core.js past zich vanzelf aan). -->
+<meta property="og:url" content="https://berend-wt.github.io/nettoo/">
+<meta property="og:image" content="https://berend-wt.github.io/nettoo/og-image.png">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Netto · dagelijkse schatting">
 <meta name="twitter:description" content="Drie vragen. Eén verband. Elke dag een nieuwe puzzel.">
+<meta name="twitter:image" content="https://berend-wt.github.io/nettoo/og-image.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Caveat:wght@600;700&family=JetBrains+Mono:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
 <!-- Supabase Client CDN (defer om te voorkomen dat de pagina blokkeert) -->
@@ -1006,7 +1011,7 @@
 <!-- De volgorde is bewust: modules delen de bestaande classic-script scope. -->
 <script src="js/photo-credits.js?v=3"></script>
 <script src="js/daily-photos.js?v=2"></script>
-<script src="js/core.js?v=94"></script>
+<script src="js/core.js?v=95"></script>
 <script src="js/puzzle-modes.js?v=49"></script>
 <script src="js/race.js?v=55"></script>
 <script src="js/submissions.js?v=40"></script>
