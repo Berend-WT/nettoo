@@ -24,7 +24,11 @@
     --bg-dark: #141B45;
     --accent: #F4B860;
     --accent-blue-light: #A9B3E6;
-    --text-muted: #8B93C4;
+    /* Was #8B93C4. Dat gaf 3,92 tegen --surface, net onder de ondergrens van
+       4,5 — en dit token draagt vrijwel alle bijtekst in het spel: de labels
+       op het scorebord, de uitleg onder de knoppen, de aftelklok. Nu 4,96 op
+       de kaart en 5,84 op de achtergrond, met nauwelijks zichtbaar verschil. */
+    --text-muted: #A9B0D8;
     --surface: #2A3567;
     --surface-2: #323E74;
     --surface-border: #3A477F;
@@ -267,7 +271,11 @@
   .home-mode-body { min-width:0; }
   .home-mode-body b { display:block; font:700 16px 'Space Grotesk',sans-serif; }
   .home-mode-body small { display:block; color:var(--text-muted); font-size:12px; line-height:1.35; margin-top:3px; }
-  .home-mode-arrow { position:absolute; top:22px; right:20px; font:500 16px 'JetBrains Mono',monospace; color:#A3A8C8; }
+  /* Was #A3A8C8: 2,34 op wit. Een pijl is klein en dun, dus juist die moet
+     genoeg contrast hebben om op te vallen als aanwijzing.
+     Een vaste kleur werkt hier niet: wat op de witte kaart leest, verdwijnt op
+     de donkere. Vandaar het token, dat met het thema meebeweegt. */
+  .home-mode-arrow { position:absolute; top:22px; right:20px; font:500 16px 'JetBrains Mono',monospace; color:var(--text-muted); }
 
   /* -- Scherm 1: Home -- */
   .hero-inner { max-width:620px; text-align:center; }
@@ -482,7 +490,8 @@
   .library-stats { display:grid; grid-template-columns:repeat(3,1fr); gap:12px; margin-bottom:28px; }
   .library-stat { background:var(--surface); color:var(--ink); border:1px solid var(--surface-border); border-radius:13px; padding:18px; }
   .library-stat b { display:block; font:700 28px 'JetBrains Mono',monospace; }
-  .library-stat span { color:#777B84; font:600 10px 'JetBrains Mono',monospace; text-transform:uppercase; letter-spacing:.1em; }
+  /* Was #777B84: 4,24 op wit, net onder de ondergrens. */
+  .library-stat span { color:#5B6172; font:600 10px 'JetBrains Mono',monospace; text-transform:uppercase; letter-spacing:.1em; }
   .library-filters { display:flex; gap:8px; margin-bottom:18px; }
   .library-filters button { border:0; border-radius:99px; padding:12px 18px; background:var(--surface); color:var(--ink); cursor:pointer; font:700 12px 'JetBrains Mono',monospace; text-transform:uppercase; }
   .library-filters button.active { background:var(--bg-dark); color:#fff; }
@@ -543,7 +552,8 @@
   @media(max-width:700px){.catalogus-library-toolbar{grid-template-columns:1fr 1fr}.catalogus-library-toolbar input{grid-column:span 2}}
   .library-difficulties button, .library-actions button { border:1px solid var(--surface-border); border-radius:10px; background:var(--surface-2); color:var(--bg-dark); padding:13px 14px; text-align:left; font:700 14px 'Space Grotesk',sans-serif; cursor:pointer; }
   .library-difficulties button:hover, .library-actions button:hover { border-color:var(--bg-main); background:#EEF2FF; }
-  .library-difficulties span { display:block; margin-top:5px; color:#6B7280; font:500 10px 'JetBrains Mono',monospace; }
+  /* Was #6B7280: 4,43 op de lichtgrijze knop, net te weinig. */
+  .library-difficulties span { display:block; margin-top:5px; color:#5B6172; font:500 10px 'JetBrains Mono',monospace; }
   .daily-archive-list { background:var(--surface); color:var(--ink); border:1px solid var(--surface-border); border-radius:13px; overflow:hidden; }
   .daily-archive-row { display:grid; grid-template-columns:70px 1fr 120px 125px; gap:16px; align-items:center; padding:18px 22px; border-bottom:1px solid #E4E2DA; cursor:pointer; }
   .daily-archive-row:last-child { border-bottom:0; }
@@ -567,7 +577,7 @@
   .library-question-list { display:grid; gap:8px; }
   .library-difficulties button, .library-actions button { border:1px solid var(--surface-border); border-radius:10px; background:var(--surface-2); color:var(--bg-dark); padding:13px 14px; text-align:left; font:700 14px 'Space Grotesk',sans-serif; cursor:pointer; }
   .library-difficulties button:hover, .library-actions button:hover { border-color:var(--bg-main); background:#EEF2FF; }
-  .library-difficulties span { float:right; color:#6B7280; font:500 11px 'JetBrains Mono',monospace; }
+  .library-difficulties span { float:right; color:#5B6172; font:500 11px 'JetBrains Mono',monospace; }
   .library-progress { color:#6B7280; font:600 11px 'JetBrains Mono',monospace; text-transform:uppercase; margin-bottom:12px; }
   .library-timer { display:flex; align-items:center; gap:8px; font:600 12px 'JetBrains Mono',monospace; color:#6B7280; margin-bottom:12px; }
   .library-timer .timer-ring { width:10px; height:10px; border-radius:99px; background:var(--green); transition:background-color .5s ease; }
@@ -801,7 +811,9 @@
 
   /* ===== Race mode-tabs + lobby ===== */
   .race-mode-tabs { display:flex; gap:6px; background:var(--surface-2); border:1px solid var(--border-color); border-radius:14px; padding:5px; margin-bottom:20px; }
-  .race-mode-tab { flex:1; border:0; background:transparent; border-radius:10px; padding:11px 8px; cursor:pointer; font:700 13px 'Space Grotesk',sans-serif; color:#6B7280; transition:background .15s ease,color .15s ease; }
+  /* Was #6B7280: een grijs uit het lichte thema, dat op de donkere kaart op
+     2,09 uitkwam. --text-muted beweegt met het thema mee. */
+  .race-mode-tab { flex:1; border:0; background:transparent; border-radius:10px; padding:11px 8px; cursor:pointer; font:700 13px 'Space Grotesk',sans-serif; color:var(--text-muted); transition:background .15s ease,color .15s ease; }
   .race-mode-tab:hover { color:var(--bg-dark); }
   .race-mode-tab.active { background:var(--bg-main); color:#fff; box-shadow:0 4px 12px rgba(37,47,182,.25); }
   .race-mode-heading { font:700 26px 'Archivo Black',sans-serif; margin:4px 0 8px; letter-spacing:-.02em; }
@@ -814,10 +826,14 @@
   .race-duration-options { display:flex; gap:6px; }
   .race-duration-options button { flex:1; border:2px solid var(--border-color); background:var(--surface); border-radius:10px; padding:9px 4px; cursor:pointer; text-align:center; transition:border-color .15s ease,background .15s ease; }
   .race-duration-options button b { display:block; font:700 13px 'Space Grotesk',sans-serif; color:var(--bg-dark); }
-  .race-duration-options button span { display:block; color:#9CA3AF; font:600 10px 'JetBrains Mono',monospace; text-transform:uppercase; letter-spacing:.06em; margin-top:2px; }
+  /* Was #9CA3AF: 2,54 op wit, onder de ondergrens van 4,5. */
+  .race-duration-options button span { display:block; color:var(--text-muted); font:600 10px 'JetBrains Mono',monospace; text-transform:uppercase; letter-spacing:.06em; margin-top:2px; }
   .race-duration-options button:hover { border-color:#B6BCF0; }
   .race-duration-options button.active { border-color:var(--bg-main); background:#EEF2FF; }
-  .race-duration-options button.active span { color:var(--bg-main); }
+  /* --bg-main is een achtergrondkleur. Als tekst op de aangevinkte kaart gaf
+     dat in het donkere thema 1,35 — "Bullet" en "Fast" waren daar onleesbaar.
+     Dezelfde fout als bij de score op het scorebord. */
+  .race-duration-options button.active span { color:var(--ink); }
   /* De vijf rasterlabels volgen de duimposities, ook op smalle schermen. */
   .race-tolerance-options { width:100%; min-width:0; color:var(--ink); }
   .race-tolerance-options input[type="range"] {

@@ -1088,7 +1088,8 @@ body:has(#screen-puzzle.active, #libraryScreen.active, #breinkrakersScreen.activ
 }
 
 .sidebar-footer span:first-child { font: 700 13px 'Space Grotesk', sans-serif; }
-.sidebar-footer small { color: #747BB6; font-size: 10px; }
+/* Was #747BB6: 4,35 in licht en 4,13 in donker, allebei net te weinig. */
+.sidebar-footer small { color: #8D94CE; font-size: 10px; }
 .sidebar-footer .arrow { grid-column: 2; grid-row: 1 / span 2; color: var(--accent); font-size: 14px; }
 .sidebar-footer:hover b { text-decoration: none; }
 
