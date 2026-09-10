@@ -229,6 +229,8 @@ function renderLibraryStats() {
   // naar verwezen wordt.
   function openLeaderboardModal() {
     closeMenu();
+    // De ranglijst is accountgebonden; vrij spelen blijft zonder account mogelijk.
+    if (!currentUser) { openAuthModal(); return; }
     resetLeaderboardDag();
     showScreen('leaderboard');
     renderLeaderboard();

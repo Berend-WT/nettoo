@@ -6,6 +6,8 @@
 
   function openSubmitQuestion() {
     closeMenu();
+    // Voorkom dat een gast eerst een heel formulier invult voordat inloggen nodig blijkt.
+    if (!currentUser) { openAuthModal(); return; }
     showScreen('submit');
     document.getElementById('submitScreen').classList.add('active');
     switchSubmitMode(submitMode);
