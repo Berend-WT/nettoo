@@ -38,7 +38,13 @@ jobs:
       - name: Controleer of website/ gelijk is aan de frontend
         run: python tools/sync_website.py --check
 
+      # enablement zet Pages zelf aan als dat nog niet gebeurd is. Zonder deze
+      # regel faalt de stap met "Get Pages site failed - Not Found", en die
+      # tekst zegt niet dat je een schakelaar in de repo-instellingen moet
+      # omzetten. Acht runs zijn daar op stukgelopen.
       - uses: actions/configure-pages@v5
+        with:
+          enablement: true
 
       - uses: actions/upload-pages-artifact@v3
         with:
