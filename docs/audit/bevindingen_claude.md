@@ -9,7 +9,7 @@ Nummering `C-###`, oplopend, nooit hergebruikt.
 
 ## Open
 
-### C-008 · hoog (te bevestigen) · Supabase (puzzles_public) · open
+### C-008 · hoog (deels bevestigd) · Supabase (puzzles_public) · open
 Er staat een view `puzzles_public` in de databank met SELECT voor `anon`. Hij
 komt in geen enkel bestand van deze repo voor, en hij stond niet in het
 RLS-rapport omdat dat op gewone tabellen filterde.
@@ -23,12 +23,65 @@ Leest deze view uit `puzzles` zonder filter op status of datum, dan kan iedere
 bezoeker de ingeplande dagpuzzels ophalen — de vragen én de antwoorden van
 morgen. Bij een schatspel is dat het hele spel.
 
-Zo te zien: `supabase/toon_views.sql`. Dat geeft de definitie, de
-security_invoker-instelling, en wat een uitgelogde bezoeker echt terugkrijgt.
+**Bevestigd door de Supabase security advisor** (ERROR, `security_definer_view`):
+de view is SECURITY DEFINER, dus de RLS van `puzzles` geldt niet voor de lezer.
+En de proef met `set role anon` gaf rijen terug met `status = 'scheduled'`, dus
+de view filtert ook niet op status. Antwoorden zitten er niet in, vraagteksten
+wel.
 
-Nog niet bevestigd: de uitvoer is er nog niet. Kan ook onschuldig zijn — een
-view die alleen gepubliceerde puzzels toont is precies wat de frontend nodig
-heeft.
+Nog niet bevestigd, en het is het enige dat telt: komen er ook rijen met een
+datum ná vandaag? Er staan dertig dagpuzzels vooruit ingepland.
+
+Zo te zien: `supabase/lekt_de_toekomst.sql`, deel 1.
+
+### C-009 · te onderzoeken · Supabase (rls_auto_enable) · open
+Er bestaat een functie `public.rls_auto_enable()` die in geen enkel bestand van
+deze repo voorkomt. Hij is SECURITY DEFINER en uitvoerbaar door `anon`, dus door
+iedereen die het adres van het project kent, zonder in te loggen
+(`/rest/v1/rpc/rls_auto_enable`).
+
+De naam suggereert dat hij row level security aanzet. Wat hij werkelijk doet
+weet niemand, en dat is precies het probleem: een functie die als eigenaar
+draait en door iedereen aangeroepen kan worden verdient het om gelezen te zijn.
+
+Zo te zien: `supabase/lekt_de_toekomst.sql`, deel 2.
+
+### C-010 · middel · Supabase (opslag) · open
+De publieke bucket `daily-images` heeft een brede SELECT-policy op
+`storage.objects` ("Iedereen mag daily afbeeldingen bekijken"), waardoor
+bezoekers de hele bucket kunnen **oplijsten**. Voor het tonen van een afbeelding
+is dat niet nodig — een publieke bucket serveert zijn bestanden ook zonder
+listing-rechten.
+
+Zelfde thema als C-008: staan hier afbeeldingen voor dagpuzzels die nog moeten
+komen, dan zijn die vooraf op te vragen.
+
+Gemeld door de security advisor (WARN, `public_bucket_allows_listing`).
+
+### C-011 · laag · Supabase (functierechten) · open
+Zes SECURITY DEFINER-functies zijn aanroepbaar door `anon`. Nagelopen:
+
+- `admin_review_submission` — **geen gat.** De functie begint met
+  `if not public.is_admin() then raise exception`, en `is_admin()` toetst
+  `auth.uid()` tegen `admin_users`. Voor een uitgelogde beller is `auth.uid()`
+  null, dus die vliegt er meteen uit. De advisor kijkt alleen naar wie hem mag
+  aanroepen, niet naar wat hij als eerste doet.
+- `is_admin`, `username_beschikbaar`, `leaderboard_dag`, `leaderboard_streaks` —
+  bedoeld zo. De eerste zegt alleen iets over jezelf, de tweede geeft ja of nee
+  op een naam, de laatste twee voeden het scorebord.
+- `handle_new_user` — een triggerfunctie die per ongeluk ook los aanroepbaar is.
+  Zonder trigger-context loopt hij stuk op `new`, dus hij is niet te misbruiken,
+  maar het EXECUTE-recht hoort er niet te staan.
+
+Netjes zou zijn: EXECUTE intrekken bij `handle_new_user` en `rls_auto_enable`
+(die laatste pas als C-009 duidelijk is). Geen haast.
+
+### C-012 · laag · Supabase (auth) · open
+Leaked password protection staat uit. Supabase kan een wachtwoord toetsen tegen
+HaveIBeenPwned. Nu de minimale lengte op zes staat is dat juist wel iets waard:
+het weert de wachtwoorden die in bestaande lekken staan.
+
+Eén schakelaar: Authentication -> Password.
 
 ### C-006 · middel · Supabase (policies) · open
 Acht policies staan live die uit geen enkel SQL-bestand in deze repo komen; ze
