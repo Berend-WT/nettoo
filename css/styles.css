@@ -562,7 +562,10 @@
   .archive-status { border-radius:99px; padding:9px 12px; background:var(--bg-dark); color:#fff; text-align:center; font:700 11px 'JetBrains Mono',monospace; }
   .archive-status.complete { background:#10B981; }
   @media(max-width:700px){.library-difficulties{grid-template-columns:repeat(2,1fr)}.library-stats{grid-template-columns:1fr}.daily-archive-row{grid-template-columns:45px 1fr 85px}.archive-date{display:none}.archive-status{grid-column:3}}
-  .library-puzzle-view { max-width:620px; margin:24px auto 0; background:var(--surface); color:var(--ink); border-radius:24px; padding:32px 28px; box-shadow:var(--card-glow); }
+  /* De witte kaart zit een niveau dieper dan het paneel, zodat de terugknop
+     eronder op de achtergrond van het scherm staat — net als bij Breinkrakers. */
+  .library-puzzle-view { max-width:620px; margin:24px auto 0; }
+  .library-puzzle-card { background:var(--surface); color:var(--ink); border-radius:24px; padding:32px 28px; box-shadow:var(--card-glow); }
   .library-puzzle-view .q-label { color:#4C4F86; font-size:14px; font-weight:500; margin-bottom:8px; line-height:1.4; }
   .library-puzzle-view .daily-style-input { width:100%; border:2px solid var(--border-color); border-radius:12px; padding:13px 16px; font-family:'JetBrains Mono',monospace; font-size:18px; font-weight:600; color:var(--bg-dark); background:#FAFAFD; }
   .library-puzzle-view .daily-style-input:focus { outline:none; border-color:var(--bg-main); background:var(--surface); box-shadow:0 0 0 4px rgba(37,47,182,.1); }

@@ -576,6 +576,9 @@ textarea:focus-visible,
 .library-puzzle-view {
   scroll-margin-top: 100px;
   max-width: 680px;
+}
+
+.library-puzzle-card {
   border: 1px solid var(--surface-border);
   border-radius: var(--ui-radius-lg);
   box-shadow: var(--ui-shadow);
@@ -751,6 +754,18 @@ textarea:focus-visible,
 .bk-overview-button {
   min-height: 40px;
   border-radius: 8px;
+}
+
+/* "Alle puzzels" krijgt precies dezelfde knop als "Alle Breinkrakers".
+   Hij had een eigen oppervlak van --surface-2 met --ink erop. In het lichte
+   thema werd dat een witte pil, maar in het donkere thema is --surface-2
+   (#323E74) bijna dezelfde kleur als de achtergrond eronder (#1E2A5A) en de
+   rand ook, dus verdween de knop. De doorzichtige witte variant hieronder
+   staat op elke achtergrond van het spel, want die leent contrast van wat er
+   toevallig achter ligt in plaats van er een eigen kleur naast te zetten. */
+.bk-overview-button:focus-visible {
+  outline: 2px solid #fff;
+  outline-offset: 3px;
 }
 
 .bk-card-grid .library-flip-front::after {
