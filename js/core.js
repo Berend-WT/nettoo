@@ -1627,11 +1627,13 @@
     document.getElementById('dailyPhotoCaption').textContent = gekoppeld
       ? statsCopy('Bij vraag ' + gekoppeld.vraag + ' ↗', 'With question ' + gekoppeld.vraag + ' ↗')
       : statsCopy('Voorbeeldfoto ↗', 'Sample photo ↗');
-    // Bij een sfeerfoto klopt "geen hint"; bij een gekoppelde foto niet, want
-    // die gaat juist over het onderwerp van de vraag.
+    // "Het antwoord staat er niet op" stond hier, en dat was niet waar: bij een
+    // vraag over de hoogte van een toren helpt een foto van die toren je wel
+    // degelijk schatten. Dat is ook precies de bedoeling. Beloof dus niet iets
+    // wat het beeld niet waarmaakt, en zeg gewoon waar de foto bij hoort.
     document.getElementById('dailyPhotoDisclaimer').textContent = gekoppeld
-      ? statsCopy('Hoort bij vraag ' + gekoppeld.vraag + '. Het antwoord staat er niet op.',
-                  'Belongs to question ' + gekoppeld.vraag + '. The answer is not in the photo.')
+      ? statsCopy('Hoort bij vraag ' + gekoppeld.vraag + '.',
+                  'Belongs to question ' + gekoppeld.vraag + '.')
       : statsCopy('Ontwerpvoorbeeld — deze foto is geen hint.', 'Design preview — this photo is not a clue.');
   }
 
