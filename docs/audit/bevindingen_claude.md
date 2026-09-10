@@ -9,31 +9,6 @@ Nummering `C-###`, oplopend, nooit hergebruikt.
 
 ## Open
 
-### C-008 · hoog (deels bevestigd) · Supabase (puzzles_public) · open
-Er staat een view `puzzles_public` in de databank met SELECT voor `anon`. Hij
-komt in geen enkel bestand van deze repo voor, en hij stond niet in het
-RLS-rapport omdat dat op gewone tabellen filterde.
-
-Bij een view is dit beslissend: **een view draait standaard met de rechten van
-zijn eigenaar, niet van de lezer.** De row level security op `puzzles` geldt dan
-niet voor wie de view opvraagt. Alleen met `security_invoker = true` wordt de
-RLS van de lezer toegepast.
-
-Leest deze view uit `puzzles` zonder filter op status of datum, dan kan iedere
-bezoeker de ingeplande dagpuzzels ophalen — de vragen én de antwoorden van
-morgen. Bij een schatspel is dat het hele spel.
-
-**Bevestigd door de Supabase security advisor** (ERROR, `security_definer_view`):
-de view is SECURITY DEFINER, dus de RLS van `puzzles` geldt niet voor de lezer.
-En de proef met `set role anon` gaf rijen terug met `status = 'scheduled'`, dus
-de view filtert ook niet op status. Antwoorden zitten er niet in, vraagteksten
-wel.
-
-Nog niet bevestigd, en het is het enige dat telt: komen er ook rijen met een
-datum ná vandaag? Er staan dertig dagpuzzels vooruit ingepland.
-
-Zo te zien: `supabase/lekt_de_toekomst.sql`, deel 1.
-
 ### C-009 · te onderzoeken · Supabase (rls_auto_enable) · open
 Er bestaat een functie `public.rls_auto_enable()` die in geen enkel bestand van
 deze repo voorkomt. Hij is SECURITY DEFINER en uitvoerbaar door `anon`, dus door
@@ -167,6 +142,24 @@ ermee.
 ---
 
 ## Afgehandeld
+
+### C-008 · vervalt (geen lek) · Supabase (puzzles_public) · afgehandeld 10 sept
+De view bleek precies te doen wat hij moet doen:
+
+    select id, question_1, question_2, operator, scheduled_date, status
+    from puzzles
+    where status = 'scheduled' and scheduled_date <= CURRENT_DATE;
+
+Het datumfilter sluit de toekomst uit, er zitten geen antwoorden in en zelfs
+`question_3` niet. De SECURITY DEFINER die de advisor als ERROR meldt is hier
+juist het punt: daardoor kan een uitgelogde bezoeker de dagpuzzel van vandaag
+lezen zonder dat de RLS op `puzzles` hem tegenhoudt.
+
+Waarom deze bevinding blijft staan: het vermoeden was redelijk — een view die
+niemand kende, leesbaar voor anon, met SECURITY DEFINER en zonder statusfilter
+in de steekproef. Wat ontbrak was de definitie. Dat is het verschil tussen een
+vermoeden en een bevinding, en het hoort opgeschreven te worden als het de
+verkeerde kant op valt.
 
 ### C-001 · hoog · supabase/fix_rls_plays.sql · opgelost (eigenaar draaide controleer_rls.sql, 10 sept)
 Op `library_plays` staat row level security nergens aan, terwijl er wel policies
