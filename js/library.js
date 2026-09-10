@@ -31,7 +31,7 @@ function renderLibraryStats() {
       const number = libraryPuzzleNumber(selectedDifficulty, i);
       const play = libraryPlayFor(p);
       const color = play ? scoreColor(play.factor) : '';
-      const frontStyle = play ? `--score-accent:${color};--score-ink:${scoreInk(color)};` : '';
+      const frontStyle = play ? `--score-accent:${color};` : '';
       const label = play ? `Score ${play.factor.toFixed(2)}×` : 'Open puzzle →';
       return `<article class="library-flip-card is-open" role="button" tabindex="0" aria-label="Open puzzel ${number}" onclick="playLibraryCard('${p.id}')" onkeydown="if(event.key==='Enter'||event.key===' ') { event.preventDefault(); playLibraryCard('${p.id}'); }"><div class="library-flip-card-inner"><div class="library-flip-front ${play ? 'played' : ''}" style="${frontStyle}"><strong>#${number}</strong><span>${label}</span></div></div></article>`;
     }).join('');
@@ -89,30 +89,6 @@ function renderLibraryStats() {
     else if (f <= 2) h = H_YELLOW + (H_RED - H_YELLOW) * ((f - 1.5) / 0.5);
     else h = H_RED;
     return `hsl(${Math.round(h)}, 74%, 45%)`;
-  }
-
-  // Welke tekstkleur leesbaar is op zo'n scorekleur.
-  //
-  // scoreColor geeft alles dezelfde HSL-lichtheid van 45 procent, maar dat is
-  // een rekenkundig getal en geen waarneming: geel op 45 procent is voor het oog
-  // veel feller dan rood of groen op 45 procent. Witte tekst op de gele kaarten
-  // was daardoor bijna niet te lezen. Daarom hier de echte relatieve luminantie,
-  // en dan de kleur die volgens WCAG het meeste contrast geeft. Het omslagpunt
-  // ligt bij 0,22 — daar zijn wit en donker precies even leesbaar.
-  function scoreInk(kleur) {
-    const m = /hsl\((\d+),\s*(\d+)%,\s*(\d+)%\)/.exec(kleur);
-    if (!m) return '#fff';
-    const h = +m[1], s = +m[2] / 100, l = +m[3] / 100;
-    const c = (1 - Math.abs(2 * l - 1)) * s;
-    const x = c * (1 - Math.abs(((h / 60) % 2) - 1));
-    const rgb = h < 60 ? [c, x, 0] : h < 120 ? [x, c, 0] : h < 180 ? [0, c, x]
-      : h < 240 ? [0, x, c] : h < 300 ? [x, 0, c] : [c, 0, x];
-    const recht = v => {
-      const n = v + l - c / 2;
-      return n <= 0.03928 ? n / 12.92 : ((n + 0.055) / 1.055) ** 2.4;
-    };
-    const L = 0.2126 * recht(rgb[0]) + 0.7152 * recht(rgb[1]) + 0.0722 * recht(rgb[2]);
-    return L > 0.22 ? '#141B4D' : '#FFFFFF';
   }
 
   function getPuzzleDifficulty(p) {

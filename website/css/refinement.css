@@ -543,11 +543,19 @@ textarea:focus-visible,
    welke van de twee meer contrast geeft. */
 .library-flip-front.played {
   background: var(--score-accent, var(--surface));
-  color: var(--score-ink, #fff);
+  color: #fff;
   border-bottom: 3px solid var(--score-accent, var(--surface-border));
 }
 .library-flip-front.played span,
-.library-flip-front.played strong { color: var(--score-ink, #fff); }
+.library-flip-front.played strong {
+  color: #fff;
+  /* Wit op een felgele kaart haalt maar 2,4 op 1. Donkere tekst zou dat
+     oplossen maar maakt het raster vlak, en de kleuren verlagen tot wit overal
+     werkt vraagt 30 procent lichtheid: dan wordt alles modderig. Een schaduw
+     houdt de kleur en de witte tekst, en zet er genoeg donker onder om de
+     letters van de achtergrond te scheiden. */
+  text-shadow: 0 1px 2px rgba(0, 0, 0, .55), 0 0 1px rgba(0, 0, 0, .4);
+}
 .library-flip-front.played strong::after { content: ' ✓'; font-size: 13px; }
 .library-flip-card:focus-visible { outline: 3px solid var(--yellow); outline-offset: 4px; border-radius: 11px; }
 /* Niet op een gespeelde kaart: die heeft een eigen scorekleur als achtergrond,
