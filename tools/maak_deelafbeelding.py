@@ -75,6 +75,33 @@ def main():
         afb.save(pad, 'PNG', optimize=True)
         print(f'-> {os.path.relpath(pad, WORTEL)} ({os.path.getsize(pad) // 1024} kB)')
 
+    maak_touch_icon()
+
+
+def maak_touch_icon():
+    """Het pictogram voor het beginscherm van een telefoon.
+
+    iOS negeert een SVG-favicon volledig. Zet iemand het spel op zijn
+    beginscherm, dan pakt Safari een schermafdruk van de pagina of laat het
+    vakje grijs. Daarom hetzelfde beeldmerk als favicon.svg, maar als PNG van
+    180x180 - de maat die Apple vraagt.
+
+    Dit lost meteen een van de twee 404's op die elke paginalading in de console
+    zette: de browser vraagt apple-touch-icon.png uit zichzelf op.
+    """
+    n = 180
+    icoon = Image.new('RGB', (n, n), (20, 22, 59))
+    tk = ImageDraw.Draw(icoon)
+    # De N uit favicon.svg, op schaal: dezelfde vorm, dezelfde kleur.
+    schaal = n / 64
+    punten = [(18, 46), (18, 18), (25.5, 18), (38.5, 36.5), (38.5, 18),
+              (46, 18), (46, 46), (38.5, 46), (25.5, 27.5), (25.5, 46)]
+    tk.polygon([(x * schaal, y * schaal) for x, y in punten], fill=(255, 212, 59))
+    for map_ in (WORTEL, os.path.join(WORTEL, 'website')):
+        pad = os.path.join(map_, 'apple-touch-icon.png')
+        icoon.save(pad, 'PNG', optimize=True)
+        print(f'-> {os.path.relpath(pad, WORTEL)} ({os.path.getsize(pad) // 1024} kB)')
+
 
 if __name__ == '__main__':
     main()

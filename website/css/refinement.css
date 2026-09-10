@@ -1567,6 +1567,14 @@ body:has(#screen-puzzle.active, #libraryScreen.active, #breinkrakersScreen.activ
   flex: 0 0 auto; font: 600 16px 'JetBrains Mono', monospace;
   font-variant-numeric: tabular-nums;
 }
+/* De factor staat op --bg-main (zie styles.css). In het lichte thema is dat
+   een stevig blauw op een witte kaart: prima. In het donkere thema is het
+   #1E2A5A op een kaart van #2A3567 — contrastverhouding 1,18, waar 4,5 de
+   ondergrens is. Het belangrijkste getal op een scorebord was daar dus
+   praktisch onzichtbaar.
+   De streak-variant hieronder had zijn donkere correctie al; deze ontbrak. */
+[data-theme="dark"] #leaderboardScreen .lb-score { color: var(--accent); }
+
 #leaderboardScreen .lb-score-streak { color: #B45309; }
 [data-theme="dark"] #leaderboardScreen .lb-score-streak { color: #FCD34D; }
 .lb-leeg {
