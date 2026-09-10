@@ -95,24 +95,6 @@ Zo te zien: `supabase/toon_policies.sql`, deel 3.
 Oplossing staat in datzelfde bestand, deel 2, bewust uitgecommentarieerd: niet
 tegen deze databank uitgeprobeerd.
 
-### C-002 · middel · data/netto_frontend_puzzles.js, data/netto_race_pool.js · open
-39 puzzels (22 in bibliotheek + daily, 17 in de racepool) hebben alle drie hun
-vragen met een foto, terwijl de generator er hooguit twee toestaat
-(`MAX_FOTOS_PER_PUZZEL`). Daardoor staat `tools/controleer_puzzels.py` op rood.
-
-Dit is drift, geen generatiefout: de puzzels zijn gebouwd toen de fotobank 238
-foto's had, en die is daarna naar 638 gegroeid. De speler ziet er niets van —
-er komt één foto per puzzel in beeld.
-
-Zo te zien: `python tools/controleer_puzzels.py`, regel "FOUT meer dan twee
-fotos".
-
-Opties, geen van beide gratis: opnieuw genereren husselt alle puzzels door
-elkaar (en breekt de `source_library_id` van de dailies in de databank), of de
-regel wordt verlaagd tot een waarschuwing omdat hij alleen over generatie gaat
-en niet over wat de speler ziet. Neig naar het tweede, maar niet vlak voor
-release doorvoeren zonder dat de eigenaar meekijkt.
-
 ### C-003 · middel · Supabase (dagpuzzels) · open
 De dagpuzzels zijn gepland tot 2026-10-09. Daarna heeft het spel geen puzzel van
 de dag, en dat is het eerste wat een bezoeker ziet. Ongeveer dertig dagen vanaf
@@ -142,6 +124,25 @@ ermee.
 ---
 
 ## Afgehandeld
+
+### C-002 · middel · tools/controleer_puzzels.py · opgelost 10 sept (ook X-003)
+39 puzzels (22 in daily+bibliotheek, 17 in de racepool) hebben alle drie hun
+vragen met een foto, terwijl de generator er hooguit twee toestaat. Daardoor
+stond `controleer_puzzels.py` op rood — en dat is de gedeelde commitpoort, dus
+Codex kon zijn frontendreparaties niet wegschrijven (zie X-003).
+
+Het is drift, geen fout: de puzzels zijn gebouwd toen de fotobank 238 foto's
+had, en die staat nu op 638. De speler merkt er niets van, want er komt hoe dan
+ook één foto per puzzel in beeld.
+
+Repareren kan alleen door opnieuw te genereren, en dat husselt alle puzzels door
+elkaar — inclusief de `source_library_id` waarmee de dagpuzzels in de databank
+naar een library-id verwijzen. Dat wil je niet vlak voor release.
+
+Dus is de regel een waarschuwing geworden in plaats van een fout, met de reden
+erbij in het bestand zelf. Niet om de poort groen te praten: een poort die rood
+staat om iets wat niemand van plan is te repareren, is geen poort meer — dan
+went het rood, en de volgende echte fout valt niet meer op.
 
 ### C-008 · vervalt (geen lek) · Supabase (puzzles_public) · afgehandeld 10 sept
 De view bleek precies te doen wat hij moet doen:

@@ -90,6 +90,7 @@ def main():
     alles_goed = True
     for naam, ps in sets:
         fouten = Counter()
+        waarschuwingen = Counter()
         gezien = set()
         for p in ps:
             a, b, c = p['q1_answer'], p['q2_answer'], p['q3_answer']
@@ -113,7 +114,22 @@ def main():
                 fouten['dubbel icoon'] += 1
             n = sum(1 for l in labels if l in fotos)
             if n > 2:
-                fouten['meer dan twee fotos'] += 1
+                # Waarschuwing, geen fout. MAX_FOTOS_PER_PUZZEL is een voorkeur
+                # van de generator, niet iets wat de speler merkt: er komt hoe
+                # dan ook een foto per puzzel in beeld. Deze puzzels zijn
+                # gebouwd toen de fotobank 238 foto's had; die staat nu op 638,
+                # dus vragen die toen geen foto hadden, hebben er nu wel een.
+                #
+                # Waarom dit niet gewoon "opgelost" wordt: dat kan alleen door
+                # opnieuw te genereren, en dat husselt alle puzzels door elkaar.
+                # De dagpuzzels in de databank verwijzen met source_library_id
+                # naar een library-id, dus die verwijzingen breken dan.
+                #
+                # En waarom het dan geen fout meer is: een poort die rood staat
+                # om iets wat niemand van plan is te repareren, is geen poort.
+                # Codex kon zijn frontendreparaties niet committen omdat deze
+                # regel de gedeelde commitpoort blokkeerde.
+                waarschuwingen['meer dan twee fotovragen'] += 1
             if n and not p.get('photo'):
                 fouten['fotovraag zonder foto'] += 1
             if p.get('photo') and not n:
@@ -132,6 +148,8 @@ def main():
                 print(f'    FOUT {k}: {v}')
         else:
             print('    alle voorwaarden gehaald')
+        for k, v in waarschuwingen.items():
+            print(f'    let op: {k}: {v} (geen fout, zie de toelichting in dit bestand)')
         print()
 
     # Delen daily en bibliotheek echt een set?
