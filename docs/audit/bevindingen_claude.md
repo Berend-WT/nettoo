@@ -9,6 +9,27 @@ Nummering `C-###`, oplopend, nooit hergebruikt.
 
 ## Open
 
+### C-008 · hoog (te bevestigen) · Supabase (puzzles_public) · open
+Er staat een view `puzzles_public` in de databank met SELECT voor `anon`. Hij
+komt in geen enkel bestand van deze repo voor, en hij stond niet in het
+RLS-rapport omdat dat op gewone tabellen filterde.
+
+Bij een view is dit beslissend: **een view draait standaard met de rechten van
+zijn eigenaar, niet van de lezer.** De row level security op `puzzles` geldt dan
+niet voor wie de view opvraagt. Alleen met `security_invoker = true` wordt de
+RLS van de lezer toegepast.
+
+Leest deze view uit `puzzles` zonder filter op status of datum, dan kan iedere
+bezoeker de ingeplande dagpuzzels ophalen — de vragen én de antwoorden van
+morgen. Bij een schatspel is dat het hele spel.
+
+Zo te zien: `supabase/toon_views.sql`. Dat geeft de definitie, de
+security_invoker-instelling, en wat een uitgelogde bezoeker echt terugkrijgt.
+
+Nog niet bevestigd: de uitvoer is er nog niet. Kan ook onschuldig zijn — een
+view die alleen gepubliceerde puzzels toont is precies wat de frontend nodig
+heeft.
+
 ### C-006 · middel · Supabase (policies) · open
 Acht policies staan live die uit geen enkel SQL-bestand in deze repo komen; ze
 zijn ooit via het dashboard gemaakt en wat ze toestaan weet niemand meer.
