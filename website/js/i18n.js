@@ -349,6 +349,8 @@
     'Rekenmachine display': 'Calculator display',
     'NETTO · LIBRARY': 'NETTO · LIBRARY',
     'Waar komt dit vandaan?': 'Where does this come from?',
+    'Je kijkt mee zonder account. Maak er een om zelf tussen de scores te komen.': 'You are watching without an account. Create one to appear among the scores yourself.',
+    'Meedoen': 'Join in',
     'Zichtbaar op het leaderboard': 'Visible on the leaderboard',
     'Aan = je spelersnaam staat tussen de scores. Uit = je speelt gewoon door, maar niemand ziet je staan. Alleen je spelersnaam komt er ooit op, nooit je e-mailadres.': 'On = your player name appears among the scores. Off = you keep playing, but nobody sees you there. Only your player name ever shows, never your email address.',
     'Log in om dit te kunnen instellen.': 'Log in to change this.',

@@ -229,8 +229,14 @@ function renderLibraryStats() {
   // naar verwezen wordt.
   function openLeaderboardModal() {
     closeMenu();
-    // De ranglijst is accountgebonden; vrij spelen blijft zonder account mogelijk.
-    if (!currentUser) { openAuthModal(); return; }
+    // Kijken mag zonder account. Codex zette hier een inlogmuur (X-001) omdat
+    // het scorebord accountgebonden is, maar dat gaat over MEEDOEN, niet over
+    // KIJKEN. De knop op het resultatenscherm liep er ook op stuk: die opende
+    // het inlogscherm in plaats van het bord.
+    //
+    // Meedoen vraagt nog steeds een account — daarvoor staat onderaan de lijst
+    // een uitnodiging als je uitgelogd bent. Insturen en duelleren blijven wel
+    // achter een login, want die schrijven iets weg onder jouw naam.
     resetLeaderboardDag();
     showScreen('leaderboard');
     renderLeaderboard();

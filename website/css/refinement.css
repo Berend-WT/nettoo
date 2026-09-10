@@ -1575,10 +1575,19 @@ body:has(#screen-puzzle.active, #libraryScreen.active, #breinkrakersScreen.activ
   font: 14px/1.5 'Space Grotesk', sans-serif; text-align: center;
 }
 #leaderboardScreen .lb-leeg { display: grid; place-content: center; min-height: 180px; padding: 30px; border: 0; border-radius: 0; line-height: 1.7; }
-/* Uitgelogd: uitleg plus een knop, in plaats van een lege lijst. */
-.lb-inloggen { display: grid; gap: 16px; justify-items: center; }
-.lb-inloggen p { margin: 0; max-width: 380px; }
-.lb-inloggen .hero-cta { font-size: 14px; padding: 13px 22px; }
+/* Uitgelogd: onder de lijst een uitnodiging om mee te doen. Kijken mag zonder
+   account, dus dit staat er onder en niet voor. */
+.lb-uitnodiging {
+  display: grid; gap: 14px; justify-items: center; text-align: center;
+  margin-top: 18px; padding: 22px 18px;
+  /* Deze uitnodiging staat binnen de witte scorekaart, niet op de blauwe
+     pagina. Vandaar --text-muted en --surface-border en niet de lichte kleuren
+     die elders op deze pagina werken: die zijn wit-op-wit. */
+  border-top: 1px solid var(--surface-border);
+  color: var(--text-muted); font: 14px/1.55 'Space Grotesk', sans-serif;
+}
+.lb-uitnodiging p { margin: 0; max-width: 400px; }
+.lb-uitnodiging .hero-cta { font-size: 14px; padding: 12px 26px; }
 
 .lb-voetnoot { margin-top: 16px; color: #AAB0DF; font-size: 12px; }
 .results-leaderboard-hint { margin: 8px 0 0; color: var(--text-muted); font-size: 12px; text-align: center; }

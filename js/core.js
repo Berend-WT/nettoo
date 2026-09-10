@@ -2680,6 +2680,26 @@
     renderLeaderboard();
   }
 
+  // Uitgelogd mag je het bord gewoon zien; meedoen is wat een account vraagt.
+  // Deze uitnodiging komt ONDER de lijst te staan, niet ervoor: eerst laten
+  // zien waar het over gaat, dan pas vragen om mee te doen.
+  function leaderboardUitnodiging(list) {
+    if (currentUser) return;
+    const blok = document.createElement('div');
+    blok.className = 'lb-uitnodiging';
+    const tekst = document.createElement('p');
+    tekst.textContent = statsCopy(
+      'Je kijkt mee zonder account. Maak er een om zelf tussen de scores te komen.',
+      'You are watching without an account. Create one to appear among the scores yourself.');
+    const knop = document.createElement('button');
+    knop.type = 'button';
+    knop.className = 'hero-cta';
+    knop.textContent = statsCopy('Meedoen', 'Join in');
+    knop.onclick = () => openAuthModal();
+    blok.append(tekst, knop);
+    list.appendChild(blok);
+  }
+
   async function renderLeaderboard() {
     const list = document.getElementById('leaderboardList');
     if (!list) return;
@@ -2694,30 +2714,6 @@
       list.innerHTML = '';
       list.appendChild(div);
     };
-    // Spelen kan zonder account; het leaderboard niet. Een scorebord bestaat
-    // bij de gratie van een naam die morgen nog dezelfde persoon is, en die
-    // heeft een uitgelogde speler niet. In plaats van een lege lijst of een
-    // grijze knop krijgt hij hier de reden te zien en een knop om het meteen
-    // te regelen.
-    if (!currentUser) {
-      list.setAttribute('aria-busy', 'false');
-      list.innerHTML = '';
-      const blok = document.createElement('div');
-      blok.className = 'lb-leeg lb-inloggen';
-      const tekst = document.createElement('p');
-      tekst.textContent = statsCopy(
-        'Maak een account om op het leaderboard te komen. Spelen kan gewoon zonder.',
-        'Create an account to appear on the leaderboard. You can play without one.');
-      const knop = document.createElement('button');
-      knop.type = 'button';
-      knop.className = 'hero-cta';
-      knop.textContent = statsCopy('Inloggen of registreren', 'Log in or sign up');
-      knop.onclick = () => openAuthModal();
-      blok.append(tekst, knop);
-      list.appendChild(blok);
-      return;
-    }
-
     melding(statsCopy('Laden…', 'Loading…'));
 
     // Alleen de spelersnaam. Stond hier "username || email", en dan kon een
@@ -2755,6 +2751,7 @@
             : `No scores were submitted for ${leaderboardDatumTekst(leaderboardSelectedDate)}.`)
         : statsCopy('Nog geen streaks. Speel twee dagen op rij om te beginnen.',
                     'No streaks yet. Play two days in a row to get started.'));
+      leaderboardUitnodiging(list);
       return;
     }
 
@@ -2787,6 +2784,7 @@
       div.append(links, score);
       list.appendChild(div);
     });
+    leaderboardUitnodiging(list);
   }
 
   function switchLbTab(tab) {
