@@ -23,7 +23,8 @@
 .puzzelfoto-lijst .q-block { position: relative; }
 .foto-credits-inner { width: min(100%, 1000px); }
 .foto-credits-inner > h1 { margin: 28px 0 14px; }
-.foto-credits-inner > p { color: var(--text-muted); line-height: 1.6; }
+.foto-credits-inner > p { color: #D9DDF9; line-height: 1.6; }
+.foto-credits-inner > h1 { color: #fff; font: 700 clamp(32px, 5vw, 48px) 'Archivo Black', sans-serif; }
 .foto-credits-inner > .daily-home-button { width: auto; color: inherit; }
 .foto-credits-lijst { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 290px), 1fr)); gap: 16px; margin-top: 28px; }
 .foto-credit-kaart { padding: 18px; border-radius: 12px; background: var(--surface); color: var(--ink); border: 1px solid var(--surface-border); overflow-wrap: anywhere; }
@@ -50,8 +51,10 @@
 /* Smalle schermen: zwevend rechts, zodat de vraagtekst ernaast loopt in plaats
    van eronder. Naast de kaart hangen kan hier niet, want dat zou horizontaal
    scrollen veroorzaken. */
-#dailyQuestionView > .daily-photo { float: right; margin: 2px 0 8px 14px; }
-#dailyQuestionView > .daily-photo + .q-block .input-wrapper { clear: both; }
+#dailyQuestionView > .q-block { position: relative; }
+#dailyQuestionView .q-block > .daily-photo { float: right; margin: 2px 0 12px 16px; }
+#dailyQuestionView .has-photo .input-wrapper { clear: both; }
+#dailyQuestionView .has-photo::after { content: ''; display: block; clear: both; }
 .daily-photo { display: block; width: 132px; margin: 0 0 18px auto; padding: 6px 6px 0; background: #fff; border: 1px solid #E3E4F7; border-radius: 6px; box-shadow: 0 6px 16px rgba(20,22,59,.12); transform: rotate(2deg); cursor: zoom-in; transition: transform .15s; }
 .daily-photo:hover { transform: rotate(0); }
 .daily-photo img { display: block; width: 100%; height: 104px; object-fit: cover; border-radius: 2px; }
@@ -61,7 +64,7 @@
    met een stukje dat over de rand op de achtergrond hangt. */
 @media (min-width: 1000px) {
   #screen-puzzle .card { overflow: visible; }
-  #screen-puzzle .daily-photo {
+  #screen-puzzle #dailyQuestionView .q-block > .daily-photo {
     position: absolute;
     top: 20px;
     right: -34px;
@@ -74,7 +77,7 @@
   #screen-puzzle .daily-photo:hover { transform: rotate(0) scale(1.03); }
   #screen-puzzle .daily-photo img { height: 108px; }
   /* Ruimte vrijhouden in de eerste vraag, anders loopt tekst/invoer onder de foto. */
-  #dailyPhotoQuestion.has-photo { padding-right: 128px; }
+  #dailyQuestionView .q-block.has-photo { padding-right: 152px; min-height: 150px; overflow: visible; }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -89,8 +92,7 @@
 .daily-photo-credit a { color: inherit; }
 .photo-close { position: absolute; right: 18px; top: 18px; width: 40px; height: 40px; border: 1px solid #E3E4F7; border-radius: 50%; background: #fff; color: #14163B; font-size: 26px; cursor: pointer; }
 @media(max-width:560px) {
-  #dailyPhotoQuestion.has-photo .q-label { padding-right: 118px; }
-  #dailyPhotoQuestion.has-photo .daily-photo { width: 104px; }
+  #dailyQuestionView .q-block > .daily-photo { width: 104px; margin-left: 12px; }
   .daily-photo img { height: 82px; }
   .daily-photo span { font-size: 8px; padding: 7px 0; }
 }
@@ -600,7 +602,6 @@ textarea:focus-visible,
     padding-top: 12px; padding-bottom: 12px;
   }
 }
-}
 #screen-puzzle .headline { margin-bottom: 24px; }
 #screen-puzzle .card { padding: 34px; }
 .q-label { color: #373C72; font-size: 15px; line-height: 1.45; }
@@ -625,12 +626,26 @@ textarea:focus-visible,
   box-shadow: var(--ui-shadow);
 }
 
-.race-start-panel { padding: 30px; }
+.race-start-panel { padding: 26px; }
+#raceStart .race-kicker { display: none; }
+#raceStart .race-title { font-size: clamp(32px, 5vw, 44px); }
+#raceStart .race-title .script { color: var(--ink); }
+#raceStart .race-intro { margin: 12px 0 20px; color: var(--text-muted); line-height: 1.55; max-width: 62ch; }
+#raceStart .race-config-card { padding: 14px 0; border: 0; border-top: 1px solid var(--surface-border); border-radius: 0; background: transparent; }
+#raceStart .race-config-grid { gap: 24px; margin-bottom: 8px; }
+#raceStart .race-duration-options button.active { box-shadow: none; border-color: var(--ink); background: var(--surface-2); }
+#raceStart .race-duration-options button b, #raceStart .race-open-games-heading h3 { color: var(--ink); }
+#raceStart .race-config-label, #raceStart .race-config-card small, #raceStart .race-open-games-empty { color: var(--text-muted); }
+#raceStart .race-tolerance-note { min-height: 3em; margin-top: 12px; font-size: 12px; line-height: 1.5; }
+#raceStart .race-tolerance-labels .active { background: var(--surface-2); border-radius: 6px; color: var(--ink); }
+#raceStart .race-open-games { background: var(--surface-2); border-color: var(--surface-border); }
+#raceStart .race-best { margin: 10px 0; font-size: 11px; color: var(--text-muted); }
+#raceStart .race-start-button { min-height: 48px; padding: 12px 22px; font-size: 16px; }
 
 .race-mode-tabs {
   width: fit-content;
   min-width: 280px;
-  margin: 0 0 30px;
+  margin: 0 0 20px;
   padding: 4px;
   border-radius: 10px;
 }
@@ -706,14 +721,7 @@ textarea:focus-visible,
   font-size: 10px;
 }
 
-.bk-card-grid .library-flip-front strong::before {
-  content: 'A  ×  B  ±  C  =  D';
-  display: block;
-  margin-bottom: 12px;
-  color: #777DAA;
-  font: 600 9px 'JetBrains Mono', monospace;
-  letter-spacing: .03em;
-}
+.bk-card-grid .library-flip-front strong::before { content: none; }
 
 .bk-card-grid .library-flip-front::after { content: none; }
 
@@ -731,6 +739,28 @@ textarea:focus-visible,
 
 /* Settings and submission */
 .settings-panel { max-width: 820px; padding: 34px; }
+#settingsScreen .settings-panel { background: var(--surface); color: var(--ink); border: 1px solid var(--surface-border); margin: 20px auto 0; }
+#settingsScreen .race-kicker { display: none; }
+#settingsScreen .race-title { color: var(--ink); font-size: clamp(30px, 5vw, 44px); margin: 0 0 22px; }
+#settingsScreen .settings-row-text span { color: var(--text-muted); }
+#settingsScreen .settings-section { border-color: var(--surface-border); }
+#settingsScreen .settings-row-text { min-width: 0; }
+#settingsScreen .settings-toggle { flex-shrink: 0; }
+#settingsScreen .settings-toggle:focus-visible { outline: 3px solid var(--accent); outline-offset: 4px; }
+[data-theme="dark"] #settingsScreen .settings-row-text span { color: #C7CEEF; }
+[data-theme="dark"] #settingsScreen .language-selector button { color: #D9DDF9; }
+
+/* Op hulppagina's is geen losse rekenknop nodig. Tijdens het spelen blijft
+   de knop compact, zodat hij zo weinig mogelijk van de vragen bedekt. */
+body:has(#settingsScreen.active, #fotoCreditsScreen.active, #leaderboardScreen.active, #submitScreen.active) > .calculator-toggle { display: none; }
+body:has(#screen-puzzle.active, #libraryScreen.active, #breinkrakersScreen.active, #raceScreen.active) > .calculator-toggle { width: 44px; min-width: 44px; height: 44px; padding: 10px; }
+body:has(#screen-puzzle.active, #libraryScreen.active, #breinkrakersScreen.active, #raceScreen.active) .calculator-toggle-label { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+
+/* Vraag en invoer hebben in elke spelmodus dezelfde leesmaat. */
+:is(#dailyQuestionView, #libraryQuestionList, #premiumQuestionList, #raceQuestionList, #bkQuestionList) .q-block .q-label { color: var(--ink); font-size: 15px; line-height: 1.5; }
+:is(#dailyQuestionView, #libraryQuestionList, #premiumQuestionList, #raceQuestionList, #bkQuestionList) .input-wrapper input { min-height: 52px; }
+#bkQuestionList .q-block { padding: 14px 0; }
+#bkQuestionList .connector { margin: 8px 0; }
 .settings-section { margin-top: 0; padding: 22px 0; border-top: 1px solid var(--border-color); }
 .settings-section:first-of-type { border-top: 0; }
 .settings-heading { margin-bottom: 12px; font-size: 16px; }
@@ -1502,7 +1532,7 @@ textarea:focus-visible,
 /* Deze korte uitleg voorkomt dat de formule als de gewone rekenvolgorde wordt
    gelezen; Breinkrakers rekent bewust steeds van links naar rechts. */
 .bk-leesregel {
-  margin: -10px 0 22px; text-align: center; color: #AAB0DF;
+  margin: -10px 0 22px; text-align: center; color: #D9DDF9;
   font: 13px/1.5 'Space Grotesk', sans-serif;
 }
 

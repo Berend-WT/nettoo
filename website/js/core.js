@@ -1590,7 +1590,17 @@
     const assigned = PUZZLE_DATA?.image_path;
     const gekoppeld = assigned ? null : gekoppeldeFoto();
     const rotatie = assigned || gekoppeld ? null : pickDailyPhoto(getActivePuzzleKey());
+    const kaarten = [...document.querySelectorAll('#dailyQuestionView > .q-block')];
+    kaarten.forEach(kaart => kaart.classList.remove('has-photo'));
     if (!assigned && !gekoppeld && !rotatie) { photo.hidden = true; return; }
+
+    // De foto blijft bij de bijbehorende vraag, ook na wisselen van Daily.
+    const vraagnummer = gekoppeld?.vraag >= 1 && gekoppeld.vraag <= 3 ? gekoppeld.vraag : 1;
+    const fotokaart = kaarten[vraagnummer - 1];
+    if (fotokaart) {
+      fotokaart.prepend(photo);
+      fotokaart.classList.add('has-photo');
+    }
 
     const src = assigned || gekoppeld?.src || (DAILY_PHOTO_DIR + rotatie.file);
     if (image.getAttribute('src') !== src) {
@@ -1609,10 +1619,11 @@
       : { image_credit: rotatie.credit, image_source_url: rotatie.source });
     photo.hidden = false;
     // Alleen ruimte reserveren in de vraag als er ook echt een foto staat.
-    document.getElementById('dailyPhotoQuestion')?.classList.add('has-photo');
     // Decoratief beeld: de knop draagt het label, de img blijft leeg zodat
     // schermlezers het niet dubbel voorlezen.
-    photo.setAttribute('aria-label', statsCopy('Vergroot de voorbeeldfoto', 'Enlarge sample photo'));
+    photo.setAttribute('aria-label', gekoppeld
+      ? statsCopy('Vergroot de foto bij vraag ' + vraagnummer, 'Enlarge the photo for question ' + vraagnummer)
+      : statsCopy('Vergroot de voorbeeldfoto', 'Enlarge sample photo'));
     document.getElementById('dailyPhotoCaption').textContent = gekoppeld
       ? statsCopy('Bij vraag ' + gekoppeld.vraag + ' ↗', 'With question ' + gekoppeld.vraag + ' ↗')
       : statsCopy('Voorbeeldfoto ↗', 'Sample photo ↗');

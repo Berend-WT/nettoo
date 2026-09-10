@@ -276,7 +276,7 @@
     const meta = raceTolerantieMeta(config.toleranceKey);
     if (schuif) {
       schuif.value = String(index);
-      schuif.setAttribute('aria-valuetext', meta.label + ' ' + meta.name);
+      schuif.setAttribute('aria-valuetext', window.NettoI18n?.t(meta.label + ' ' + meta.name) || meta.label + ' ' + meta.name);
       schuif.style.setProperty('--speling-voortgang', (index * 25) + '%');
     }
     container.querySelectorAll('[data-tolerance]').forEach(label => {
@@ -284,7 +284,10 @@
     });
     const uitleg = document.getElementById(
       `race${mode[0].toUpperCase() + mode.slice(1)}ToleranceNote`);
-    if (uitleg) uitleg.textContent = raceTolerantieMeta(config.toleranceKey).uitleg;
+    if (uitleg) {
+      const factor = RACE_TOLERANTIES[config.toleranceKey].toLocaleString(nettoNumberLocale(), { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+      uitleg.textContent = statsCopy(`Een puzzel telt bij een gemiddelde factor van maximaal ${factor}×.`, `A puzzle counts with an average factor of ${factor}× or lower.`);
+    }
   }
 
   function selectRaceTolerantie(mode, key) {

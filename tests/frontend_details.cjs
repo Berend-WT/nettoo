@@ -13,7 +13,8 @@ function veld(id) {
   if (!velden.has(id)) velden.set(id, {value:'',textContent:'',attributen:{},style:{setProperty(){}},setAttribute(k,v){this.attributen[k]=v;},querySelector(){return veld(id+'Range');},querySelectorAll(){return [];}});
   return velden.get(id);
 }
-const context = vm.createContext({Intl, Date,
+const context = vm.createContext({Intl, Date, window: {},
+  nettoNumberLocale: () => 'nl-NL', statsCopy: (nl, en) => nl,
   localStorage:{getItem:k=>opslag.get(k)??null,setItem:(k,v)=>opslag.set(k,v)},
   document:{getElementById:veld}
 });
@@ -23,12 +24,12 @@ vm.runInContext(race.slice(race.indexOf('  const RACE_TOTAL_SECONDS'),race.index
 vm.runInContext(race.slice(race.indexOf('  function getRaceModeConfig'),race.indexOf('  function raceDurationMeta')),context);
 vm.runInContext(race.slice(race.indexOf('  function renderRaceTolerantieOptions'),race.indexOf('  function renderRaceModeControls')),context);
 for (const [vraag, verwacht] of [
-  ['Hoeveel duizend inwoners heeft Rotterdam?', '× 1.000'],
-  ['Hoeveel miljoen inwoners heeft Mexico?', '× 1.000.000'],
-  ['Hoeveel miljard mensen zijn er?', '× 1.000.000.000'],
+  ['Hoeveel duizend inwoners heeft Rotterdam?', '× 1.000 inwoners'],
+  ['Hoeveel miljoen inwoners heeft Mexico?', '× 1.000.000 inwoners'],
+  ['Hoeveel miljard mensen zijn er?', '× 1.000.000.000 mensen'],
   ['Hoeveel miljard kilometer legt licht af?', 'miljard km'],
-  ['Hoeveel poten heeft een krab?', null],
-  ['Hoeveel bezoekers komen er per jaar?', null],
+  ['Hoeveel poten heeft een krab?', 'poten'],
+  ['Hoeveel bezoekers komen er per jaar?', 'bezoekers'],
   ['Wat is de afstand in km?', 'km'],
   ['Wat is de snelheid in km/u?', 'km/u'],
   ['Wat is de oppervlakte in km²?', 'km²'],
@@ -48,7 +49,8 @@ for(const mode of ['solo','online']) {
     assert.equal(veld('race'+naam+'TolerancesRange').value,String(index));
     const meta=context.raceTolerantieMeta(key);
     assert.equal(veld('race'+naam+'TolerancesRange').attributen['aria-valuetext'],meta.label+' '+meta.name);
-    assert.equal(veld('race'+naam+'ToleranceNote').textContent,meta.uitleg);
+    const factor=vm.runInContext('RACE_TOLERANTIES["'+key+'"]',context).toLocaleString('nl-NL',{minimumFractionDigits:2,maximumFractionDigits:2});
+    assert.equal(veld('race'+naam+'ToleranceNote').textContent,`Een puzzel telt bij een gemiddelde factor van maximaal ${factor}×.`);
   });
 }
 assert.ok(opslag.has('netto_race_mode_config'));
