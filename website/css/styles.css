@@ -526,28 +526,21 @@
   .library-flip-card.ok .library-flip-front { background:var(--orange); color:#fff; }
   .library-flip-card.bad .library-flip-front { background:var(--red); color:#fff; }
   .library-flip-card.good .library-flip-front span,.library-flip-card.ok .library-flip-front span,.library-flip-card.bad .library-flip-front span { color:#fff; }
-  .library-flip-card .premium-source-badge-row { display:flex; justify-content:flex-start; }
+  .library-flip-card .catalogus-source-badge-row { display:flex; justify-content:flex-start; }
   .library-difficulties button.active span { color:#C7CCFF; }
   .library-difficulties { display:grid; grid-template-columns:repeat(4,1fr); gap:10px; margin-top:18px; }
   @media(max-width:900px){.library-card-grid{grid-template-columns:repeat(4,minmax(0,1fr));grid-template-rows:repeat(6,145px)}}
   @media(max-width:560px){.library-card-grid{grid-template-columns:repeat(2,minmax(0,1fr));grid-template-rows:none}}
-  .premium-library-panel { margin-top:20px; }
-  .premium-lock { max-width:560px; margin:0 auto; background:var(--surface); color:var(--ink); border:1px solid var(--surface-border); border-radius:16px; padding:42px 28px; text-align:center; box-shadow:var(--card-glow); }
-  .premium-lock h2 { font:700 34px 'Archivo Black',sans-serif; margin:8px 0; }
-  .premium-lock p { color:#596070; margin:0 auto 18px; max-width:390px; line-height:1.5; }
-  .premium-lock strong { display:block; font:700 24px 'JetBrains Mono',monospace; margin-bottom:20px; }
-  .premium-lock .hero-cta { font-size:14px; padding:14px 22px; }
-  .premium-lock small { display:block; color:#92959D; margin-top:14px; font-size:11px; }
-  .premium-icon { color:var(--accent); font-size:38px; }
-  .premium-library-toolbar { display:grid; grid-template-columns:2fr 1fr 1fr 1.4fr; gap:10px; margin-bottom:12px; }
-  .premium-library-toolbar input,.premium-library-toolbar select { border:0; border-radius:10px; padding:13px 14px; font:600 13px 'Space Grotesk',sans-serif; color:var(--bg-dark); background:var(--surface); min-width:0; }
-  .premium-result-count { color:#D7DAFF; font:600 11px 'JetBrains Mono',monospace; margin:10px 0; }
-  .premium-results { display:grid; grid-template-columns:repeat(auto-fill,minmax(260px,1fr)); gap:10px; }
-  .premium-result-card { background:var(--surface); color:var(--ink); border-radius:14px; padding:16px; }
-  .premium-result-card header { display:flex; justify-content:space-between; gap:8px; margin-bottom:10px; font:700 11px 'JetBrains Mono',monospace; text-transform:uppercase; color:#6B7280; }
-  .premium-result-card .premium-equation { background:#FFF4B8; border-radius:8px; padding:8px; margin-bottom:10px; font:700 13px 'JetBrains Mono',monospace; text-align:center; }
-  .premium-result-card p { font-size:12px; line-height:1.45; margin-top:5px; }
-  @media(max-width:700px){.premium-library-toolbar{grid-template-columns:1fr 1fr}.premium-library-toolbar input{grid-column:span 2}}
+  .catalogus-library-panel { margin-top:20px; }
+  .catalogus-library-toolbar { display:grid; grid-template-columns:2fr 1fr 1fr 1.4fr; gap:10px; margin-bottom:12px; }
+  .catalogus-library-toolbar input,.catalogus-library-toolbar select { border:0; border-radius:10px; padding:13px 14px; font:600 13px 'Space Grotesk',sans-serif; color:var(--bg-dark); background:var(--surface); min-width:0; }
+  .catalogus-result-count { color:#D7DAFF; font:600 11px 'JetBrains Mono',monospace; margin:10px 0; }
+  .catalogus-results { display:grid; grid-template-columns:repeat(auto-fill,minmax(260px,1fr)); gap:10px; }
+  .catalogus-result-card { background:var(--surface); color:var(--ink); border-radius:14px; padding:16px; }
+  .catalogus-result-card header { display:flex; justify-content:space-between; gap:8px; margin-bottom:10px; font:700 11px 'JetBrains Mono',monospace; text-transform:uppercase; color:#6B7280; }
+  .catalogus-result-card .catalogus-equation { background:#FFF4B8; border-radius:8px; padding:8px; margin-bottom:10px; font:700 13px 'JetBrains Mono',monospace; text-align:center; }
+  .catalogus-result-card p { font-size:12px; line-height:1.45; margin-top:5px; }
+  @media(max-width:700px){.catalogus-library-toolbar{grid-template-columns:1fr 1fr}.catalogus-library-toolbar input{grid-column:span 2}}
   .library-difficulties button, .library-actions button { border:1px solid var(--surface-border); border-radius:10px; background:var(--surface-2); color:var(--bg-dark); padding:13px 14px; text-align:left; font:700 14px 'Space Grotesk',sans-serif; cursor:pointer; }
   .library-difficulties button:hover, .library-actions button:hover { border-color:var(--bg-main); background:#EEF2FF; }
   .library-difficulties span { display:block; margin-top:5px; color:#6B7280; font:500 10px 'JetBrains Mono',monospace; }
@@ -588,13 +581,13 @@
 
   .library-difficulties button.active { background:var(--bg-dark); color:#fff; border-color:var(--bg-dark); }
   .library-difficulties button.active span { color:#C7CCFF; }
-  .premium-card-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(150px,1fr)); gap:10px; margin-top:18px; }
-  .premium-card-grid .library-flip-card { height:150px; min-height:150px; }
-  .premium-card-grid .library-flip-card-inner { height:150px; min-height:150px; }
+  .catalogus-card-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(150px,1fr)); gap:10px; margin-top:18px; }
+  .catalogus-card-grid .library-flip-card { height:150px; min-height:150px; }
+  .catalogus-card-grid .library-flip-card-inner { height:150px; min-height:150px; }
   .vraag-flip-front { position:absolute; inset:0; border-radius:11px; padding:14px; background:var(--surface); color:var(--ink); box-shadow:none; border:1px solid var(--surface-border); backface-visibility:hidden; display:flex; flex-direction:column; justify-content:space-between; overflow:hidden; }
   .vraag-flip-front .vraag-tekst { font-weight:700; font-size:13px; line-height:1.35; display:-webkit-box; -webkit-line-clamp:4; -webkit-box-orient:vertical; overflow:hidden; }
   .vraag-flip-front .vraag-meta { display:flex; justify-content:space-between; gap:6px; font:600 10px 'JetBrains Mono',monospace; text-transform:uppercase; color:#6B7280; }
-  .premium-source-badge { display:inline-block; border-radius:99px; padding:2px 8px; background:rgba(255,255,255,.22); font:700 9px 'JetBrains Mono',monospace; text-transform:uppercase; letter-spacing:.06em; }
+  .catalogus-source-badge { display:inline-block; border-radius:99px; padding:2px 8px; background:rgba(255,255,255,.22); font:700 9px 'JetBrains Mono',monospace; text-transform:uppercase; letter-spacing:.06em; }
   .library-progress-block { min-width:0; aspect-ratio:1; border-radius:4px; background:var(--surface); border:1px solid #D7DAE8; color:#697080; cursor:pointer; font:600 9px 'JetBrains Mono',monospace; }
   .library-progress-block.active { border-color:var(--bg-main); box-shadow:0 0 0 2px rgba(37,47,182,.15); }
   .library-progress-block.good { background:var(--green); border-color:var(--green); color:#fff; }
@@ -1210,21 +1203,21 @@
     --familie-sand: #413D2A; --familie-slate: #303B4B;
     --eenheid-inkt: #C4CAD8;
   }
-  :is(#dailyQuestionView, #libraryQuestionList, #premiumQuestionList) .vraag-met-categorie {
+  :is(#dailyQuestionView, #libraryQuestionList, #catalogusQuestionList) .vraag-met-categorie {
     background: var(--vraag-tint, var(--surface-2));
     background: color-mix(in srgb, var(--vraag-tint, var(--surface-2)) var(--vraag-menging, 84%), var(--surface));
     border: 1px solid var(--surface-border); border-radius: 12px;
     padding: 16px; color: var(--ink);
   }
-  :is(#dailyQuestionView, #libraryQuestionList, #premiumQuestionList) .vraag-met-categorie .q-label { display:block; color:var(--ink); }
-  :is(#dailyQuestionView, #libraryQuestionList, #premiumQuestionList) .vraag-met-categorie input {
+  :is(#dailyQuestionView, #libraryQuestionList, #catalogusQuestionList) .vraag-met-categorie .q-label { display:block; color:var(--ink); }
+  :is(#dailyQuestionView, #libraryQuestionList, #catalogusQuestionList) .vraag-met-categorie input {
     background: var(--surface); color:var(--ink); min-width:0;
   }
-  :is(#dailyQuestionView, #libraryQuestionList, #premiumQuestionList) .vraag-met-categorie input:disabled { opacity:.8; }
+  :is(#dailyQuestionView, #libraryQuestionList, #catalogusQuestionList) .vraag-met-categorie input:disabled { opacity:.8; }
   /* Het label zweeft absoluut rechts in het veld, dus het getal moet ruimte
      krijgen of het loopt eronderdoor. Breinkrakers en de race stonden hier
      niet bij: daar verscheen wel "towers" maar bleef de padding op 16px. */
-  :is(#dailyQuestionView, #libraryQuestionList, #premiumQuestionList,
+  :is(#dailyQuestionView, #libraryQuestionList, #catalogusQuestionList,
       #bkQuestionList, #raceQuestionList) input.met-eenheid { padding-right:min(48%, var(--eenheid-ruimte)); }
   .invoer-eenheid {
     position:absolute; right:14px; max-width:44%; pointer-events:none;

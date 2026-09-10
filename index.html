@@ -25,10 +25,10 @@
 <script src="data/netto_frontend_puzzles.js?v=50"></script>
 <script src="data/netto_race_pool.js?v=38"></script>
 <script src="data/netto_breinkrakers.js?v=29"></script>
-<script src="data/netto_translations_en.js?v=37"></script>
-<script src="js/i18n.js?v=57"></script>
-<link rel="stylesheet" href="css/styles.css?v=52">
-<link rel="stylesheet" href="css/refinement.css?v=86">
+<script src="data/netto_translations_en.js?v=39"></script>
+<script src="js/i18n.js?v=59"></script>
+<link rel="stylesheet" href="css/styles.css?v=53">
+<link rel="stylesheet" href="css/refinement.css?v=88">
 
 </head>
 <body>
@@ -798,55 +798,46 @@
   </section>
   <button class="calculator-toggle" onclick="toggleCalculator(true)"><span class="calculator-toggle-icon"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="2" width="16" height="20" rx="2"></rect><line x1="8" y1="6" x2="16" y2="6"></line><line x1="8" y1="10" x2="8" y2="10"></line><line x1="12" y1="10" x2="12" y2="10"></line><line x1="16" y1="10" x2="16" y2="10"></line><line x1="8" y1="14" x2="8" y2="14"></line><line x1="12" y1="14" x2="12" y2="14"></line><line x1="16" y1="14" x2="16" y2="14"></line><line x1="8" y1="18" x2="8" y2="18"></line><line x1="12" y1="18" x2="12" y2="18"></line><line x1="16" y1="18" x2="16" y2="18"></line></svg></span><span class="calculator-toggle-label">Rekenmachine</span></button>
 
-  <!-- ============ LIBRARY ✦ (PREMIUM PAGINA) ============ -->
-  <main class="library-screen" id="premiumScreen">
+  <!-- ============ LIBRARY (doorzoekbare catalogus) ============ -->
+  <main class="library-screen" id="catalogusScreen">
     <div class="library-page-inner">
-      <div class="library-page-top"><button class="library-home" onclick="goHome()">Netto</button><span class="library-page-kicker">NETTO · LIBRARY ✦</span></div>
+      <div class="library-page-top"><button class="library-home" onclick="goHome()">Netto</button><span class="library-page-kicker">NETTO · LIBRARY</span></div>
       <h1 class="library-page-title">Library</h1>
       <p class="library-page-subtitle">Alle puzzels en vragen doorzoekbaar.</p>
-      <div class="library-stats" id="premiumStats"></div>
+      <div class="library-stats" id="catalogusStats"></div>
 
-      <section class="premium-lock" id="premiumLock" style="display:none;">
-        <span class="premium-icon">✦</span>
-        <h2>Netto Library</h2>
-        <p>Doorzoek alle puzzels op operator, categorie en difficulty, en blader door alle losse vragen.</p>
-        <strong>$3.99 Premium</strong>
-        <button class="hero-cta" type="button" onclick="unlockPremiumLibrary()">Ontgrendel Library</button>
-        <small>Testmodus: simuleert aankoop lokaal in je browser.</small>
-      </section>
-
-      <div id="premiumContent" style="display:none;">
-        <div class="library-filters" id="premiumViewToggle">
-          <button class="active" onclick="setPremiumView('puzzles', this)">Puzzels</button>
-          <button onclick="setPremiumView('vragen', this)">Vragen</button>
+      <div id="catalogusContent">
+        <div class="library-filters" id="catalogusViewToggle">
+          <button class="active" onclick="setCatalogusView('puzzles', this)">Puzzels</button>
+          <button onclick="setCatalogusView('vragen', this)">Vragen</button>
         </div>
 
-        <div id="premiumPuzzlesView">
-          <div class="premium-library-toolbar">
-            <input id="premiumSearch" type="search" placeholder="Zoek in puzzels…" oninput="renderPremiumPuzzles()">
-            <select id="premiumOperator" onchange="renderPremiumPuzzles()"><option value="">Alle operators</option><option>×</option><option>÷</option><option>+</option><option>−</option></select>
-            <select id="premiumDifficulty" onchange="renderPremiumPuzzles()"><option value="">Alle difficulties</option><option value="easy">Easy</option><option value="intermediate">Intermediate</option><option value="hard">Hard</option><option value="extremely-hard">Extremely Hard</option></select>
-            <select id="premiumCategory" onchange="renderPremiumPuzzles()"><option value="">Alle categorieën</option></select>
+        <div id="catalogusPuzzlesView">
+          <div class="catalogus-library-toolbar">
+            <input id="catalogusSearch" type="search" placeholder="Zoek in puzzels…" oninput="renderCatalogusPuzzles()">
+            <select id="catalogusOperator" onchange="renderCatalogusPuzzles()"><option value="">Alle operators</option><option>×</option><option>÷</option><option>+</option><option>−</option></select>
+            <select id="catalogusDifficulty" onchange="renderCatalogusPuzzles()"><option value="">Alle difficulties</option><option value="easy">Easy</option><option value="intermediate">Intermediate</option><option value="hard">Hard</option><option value="extremely-hard">Extremely Hard</option></select>
+            <select id="catalogusCategory" onchange="renderCatalogusPuzzles()"><option value="">Alle categorieën</option></select>
           </div>
-          <div class="premium-result-count" id="premiumPuzzleCount"></div>
-          <div class="premium-card-grid" id="premiumPuzzleGrid"></div>
+          <div class="catalogus-result-count" id="catalogusPuzzleCount"></div>
+          <div class="catalogus-card-grid" id="catalogusPuzzleGrid"></div>
         </div>
 
-        <div id="premiumVragenView" style="display:none;">
-          <div class="premium-library-toolbar vragen-toolbar">
-            <input id="vragenSearch" type="search" placeholder="Zoek in vragen…" oninput="renderPremiumVragen()">
-            <select id="vragenCategory" onchange="renderPremiumVragen()"><option value="">Alle categorieën</option></select>
+        <div id="catalogusVragenView" style="display:none;">
+          <div class="catalogus-library-toolbar vragen-toolbar">
+            <input id="vragenSearch" type="search" placeholder="Zoek in vragen…" oninput="renderCatalogusVragen()">
+            <select id="vragenCategory" onchange="renderCatalogusVragen()"><option value="">Alle categorieën</option></select>
           </div>
-          <div class="premium-result-count" id="vragenCount"></div>
-          <div class="premium-card-grid" id="vragenGrid"></div>
+          <div class="catalogus-result-count" id="vragenCount"></div>
+          <div class="catalogus-card-grid" id="vragenGrid"></div>
         </div>
 
-        <div class="library-puzzle-view" id="premiumPuzzleView" style="display:none;">
-          <div class="library-progress" id="premiumProgress"></div>
-          <div class="library-timer" id="premiumTimer" role="timer" aria-live="off"></div>
-          <div class="library-equation" id="premiumEquation"></div>
-          <div class="library-question-list" id="premiumQuestionList"></div>
-          <div class="library-actions"><button onclick="premiumPuzzleMove(-1)">← Vorige</button><button onclick="premiumPuzzleMove(1)">Volgende →</button></div>
+        <div class="library-puzzle-view" id="catalogusPuzzleView" style="display:none;">
+          <div class="library-progress" id="catalogusProgress"></div>
+          <div class="library-timer" id="catalogusTimer" role="timer" aria-live="off"></div>
+          <div class="library-equation" id="catalogusEquation"></div>
+          <div class="library-question-list" id="catalogusQuestionList"></div>
+          <div class="library-actions"><button onclick="catalogusPuzzleMove(-1)">← Vorige</button><button onclick="catalogusPuzzleMove(1)">Volgende →</button></div>
         </div>
       </div>
     </div>
@@ -935,7 +926,7 @@
       <!-- Niet ingelogde weergave (Inloggen / Registreren) -->
       <div id="authFormView">
         <h2 class="modal-title" id="authTitle">Inloggen</h2>
-        <div class="modal-subtitle">Synchroniseer je scores over al je apparaten & sta op het leaderboard.</div>
+        <div class="modal-subtitle">Voor het leaderboard, online duels en het insturen van vragen. Spelen kan zonder account.</div>
 
         <div id="authErrorBox" style="display:none; background:#FEF2F2; border:1px solid #FECACA; color:#B91C1C; border-radius:10px; padding:12px 14px; font-size:13px; margin-bottom:14px;"></div>
 
@@ -952,7 +943,7 @@
           <div class="form-group">
             <label>Wachtwoord</label>
             <input type="password" id="authPassword" placeholder="••••••••" required>
-            <div style="font-size:11px; color:#9CA3AF; margin-top:4px;">Minimaal 8 tekens</div>
+            <div style="font-size:11px; color:#9CA3AF; margin-top:4px;">Minimaal 6 tekens</div>
           </div>
           <button type="submit" class="btn-check" id="authSubmitBtn" style="margin-top:16px;">Inloggen</button>
         </form>
@@ -1001,11 +992,11 @@
 <!-- De volgorde is bewust: modules delen de bestaande classic-script scope. -->
 <script src="js/photo-credits.js?v=3"></script>
 <script src="js/daily-photos.js?v=2"></script>
-<script src="js/core.js?v=90"></script>
-<script src="js/puzzle-modes.js?v=48"></script>
+<script src="js/core.js?v=92"></script>
+<script src="js/puzzle-modes.js?v=49"></script>
 <script src="js/race.js?v=53"></script>
 <script src="js/submissions.js?v=39"></script>
-<script src="js/library.js?v=51"></script>
+<script src="js/library.js?v=52"></script>
 <script src="js/app.js?v=34"></script>
 
 </body>

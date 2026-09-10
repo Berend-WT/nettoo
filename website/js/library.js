@@ -128,14 +128,14 @@ function renderLibraryStats() {
     renderPuzzleView('library', p, `Puzzel ${libraryPuzzleNumber(selectedDifficulty, libraryIndex)}`);
   }
 
-  function renderPremiumPuzzleView() {
-    const p = premiumPuzzleList[premiumPuzzleIndex]; if (!p) return;
-    premiumActivePuzzle = p;
-    renderPuzzleView('premium', p, `Library ✦ · ${p.source === 'Daily Archive' ? 'daily' : 'puzzel'} ${premiumPuzzleIndex + 1}`);
+  function renderCatalogusPuzzleView() {
+    const p = catalogusPuzzleList[catalogusPuzzleIndex]; if (!p) return;
+    catalogusActivePuzzle = p;
+    renderPuzzleView('catalogus', p, `Library · ${p.source === 'Daily Archive' ? 'daily' : 'puzzel'} ${catalogusPuzzleIndex + 1}`);
   }
 
   function submitLibraryPuzzle(auto = false) { submitPuzzleView('library', auto); }
-  function submitPremiumPuzzle(auto = false) { submitPuzzleView('premium', auto); }
+  function submitCatalogusPuzzle(auto = false) { submitPuzzleView('catalogus', auto); }
 
   function jumpToLibraryPuzzle(index) { libraryIndex = index; renderLibraryPuzzle(); }
 
@@ -298,23 +298,21 @@ function renderLibraryStats() {
   window.startNextPuzzle = startNextPuzzle;
   window.openDailyPuzzles = openDailyPuzzles;
   window.openPuzzles = openPuzzles;
-  window.openPremiumLibrary = openPremiumLibrary;
-  window.closePremiumScreen = closePremiumScreen;
-  window.setPremiumView = setPremiumView;
-  window.renderPremiumPuzzles = renderPremiumPuzzles;
-  window.renderPremiumVragen = renderPremiumVragen;
-  window.playPremiumPuzzle = playPremiumPuzzle;
-  window.premiumPuzzleMove = premiumPuzzleMove;
-  window.submitPremiumPuzzle = submitPremiumPuzzle;
+  window.openCatalogusLibrary = openCatalogusLibrary;
+  window.closeCatalogusScreen = closeCatalogusScreen;
+  window.setCatalogusView = setCatalogusView;
+  window.renderCatalogusPuzzles = renderCatalogusPuzzles;
+  window.renderCatalogusVragen = renderCatalogusVragen;
+  window.playCatalogusPuzzle = playCatalogusPuzzle;
+  window.catalogusPuzzleMove = catalogusPuzzleMove;
+  window.submitCatalogusPuzzle = submitCatalogusPuzzle;
   window.toggleVraagCard = toggleVraagCard;
-  window.unlockPremiumLibrary = unlockPremiumLibrary;
   window.selectDifficulty = selectDifficulty;
   window.selectLibraryDifficulty = selectLibraryDifficulty;
   window.playLibraryCard = playLibraryCard;
   window.jumpToLibraryPuzzle = jumpToLibraryPuzzle;
   window.libraryMove = libraryMove;
   window.submitLibraryPuzzle = submitLibraryPuzzle;
-  window.unlockPremiumLibrary = unlockPremiumLibrary;
   window.showLibraryAnswers = showLibraryAnswers;
   window.changeArchiveMonth = changeArchiveMonth;
   window.openPuzzleRace = openPuzzleRace;

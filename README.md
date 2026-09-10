@@ -100,4 +100,26 @@ die lijst staat.
 
 ## Backend
 
-Auth en score-sync draaien op Supabase (`bqatnnouxkjdzvvhqbly`). De anon key in `js/app.js` is een publieke client key. Accounts: e-mail + wachtwoord, met wachtwoord-vergeten-flow, Nederlandse foutmeldingen, invoervalidatie en een registratielimiet van 5 per uur per browser.
+Auth en score-sync draaien op Supabase (`bqatnnouxkjdzvvhqbly`). De anon key in
+`js/core.js` is een publieke client key.
+
+**Spelen kan zonder account.** De dagpuzzel, de puzzels, de catalogus, de
+breinkrakers en de solo-race werken uitgelogd; scores staan dan in localStorage.
+Een account is nodig voor drie dingen: het leaderboard, online duels en het
+insturen van vragen. Wie inlogt stuurt zijn lokaal gespeelde dagpuzzels alsnog
+op (`stuurLokaleScoresOp` in `js/core.js`), zodat die niet verloren gaan.
+
+Accounts: e-mail + wachtwoord, minimaal 6 tekens, met wachtwoord-vergeten-flow
+en Nederlandse foutmeldingen.
+
+Twee instellingen in het Supabase-dashboard horen hierbij:
+
+- **Authentication -> Sign In / Providers -> Email**: *Confirm email* uit. Staat
+  hij aan, dan verstuurt elke registratie een mail, en de ingebouwde mailserver
+  van Supabase knijpt dat af tot een handvol per uur — daarna krijgt iedereen
+  een 429 in plaats van een account.
+- **Authentication -> Policies / Password**: minimale wachtwoordlengte 6, gelijk
+  aan wat de frontend controleert.
+
+Draai `supabase/leaderboard_controle.sql` om te zien of het scorebord alles heeft
+wat het nodig heeft; dat script eindigt met een rapport per onderdeel.

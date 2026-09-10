@@ -40,7 +40,7 @@
      en een id verslaat elk aantal klassen — ook al laadt dit bestand later. Met
      alleen klassen bleef de padding op 16px staan en liep de vraagtekst onder
      de foto door. */
-  :is(#dailyQuestionView, #libraryQuestionList, #premiumQuestionList, #raceQuestionList)
+  :is(#dailyQuestionView, #libraryQuestionList, #catalogusQuestionList, #raceQuestionList)
     .q-block:has(.puzzelfoto) { padding-right: 152px; overflow: visible; min-height: 150px; }
   .puzzelfoto-lijst .q-block:has(.puzzelfoto) { overflow: visible; }
   .puzzelfoto-lijst .puzzelfoto { position: absolute; float: none; top: 8px; right: -34px; z-index: 2; width: 152px; margin: 0; }
@@ -505,8 +505,8 @@ textarea:focus-visible,
 
 .library-flip-card,
 .library-flip-card-inner,
-.premium-card-grid .library-flip-card,
-.premium-card-grid .library-flip-card-inner {
+.catalogus-card-grid .library-flip-card,
+.catalogus-card-grid .library-flip-card-inner {
   height: 156px;
   min-height: 156px;
 }
@@ -628,7 +628,7 @@ textarea:focus-visible,
   #screen-puzzle .headline { margin-bottom: 12px; font-size: clamp(24px, 2.6vw, 30px); }
   #screen-puzzle .card { padding-top: 20px; padding-bottom: 20px; }
 
-  /* Bibliotheek, premium en race delen dezelfde opbouw als de Daily, dus ze
+  /* Bibliotheek, catalogus en race delen dezelfde opbouw als de Daily, dus ze
      lopen tegen hetzelfde probleem aan: drie vraagblokken met verbindingstekens
      ertussen passen niet in een laag venster. De progressiebalk, de timer en de
      som erboven kosten daar bovendien extra aanloop. */
@@ -638,7 +638,7 @@ textarea:focus-visible,
 
   /* Geldt voor alle vier de schermen. */
   :is(#screen-puzzle, .library-puzzle-view, .race-question-list) .connector { margin: 6px 0; }
-  :is(#dailyQuestionView, #libraryQuestionList, #premiumQuestionList, #raceQuestionList) .q-block {
+  :is(#dailyQuestionView, #libraryQuestionList, #catalogusQuestionList, #raceQuestionList) .q-block {
     padding-top: 12px; padding-bottom: 12px;
   }
 }
@@ -809,16 +809,16 @@ body:has(#screen-puzzle.active, #libraryScreen.active, #breinkrakersScreen.activ
 body:has(#screen-puzzle.active, #libraryScreen.active, #breinkrakersScreen.active, #raceScreen.active) .calculator-toggle-label { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
 
 /* Vraag en invoer hebben in elke spelmodus dezelfde leesmaat. */
-:is(#dailyQuestionView, #libraryQuestionList, #premiumQuestionList, #raceQuestionList, #bkQuestionList) .q-block .q-label { color: var(--ink); font-size: 15px; line-height: 1.5; }
-:is(#dailyQuestionView, #libraryQuestionList, #premiumQuestionList, #raceQuestionList, #bkQuestionList) .input-wrapper input { min-height: 52px; }
+:is(#dailyQuestionView, #libraryQuestionList, #catalogusQuestionList, #raceQuestionList, #bkQuestionList) .q-block .q-label { color: var(--ink); font-size: 15px; line-height: 1.5; }
+:is(#dailyQuestionView, #libraryQuestionList, #catalogusQuestionList, #raceQuestionList, #bkQuestionList) .input-wrapper input { min-height: 52px; }
 #bkQuestionList .q-block { padding: 14px 0; }
 
 /* Een gedeeld ritme maakt ook langere puzzels met vier vragen overzichtelijk. */
-:is(#dailyQuestionView, #libraryQuestionList, #premiumQuestionList, #raceQuestionList, #bkQuestionList) .connector { margin: 10px 0; }
-:is(#dailyQuestionView, #libraryQuestionList, #premiumQuestionList, #raceQuestionList, #bkQuestionList) .connector-line { height: 1px; background: var(--surface-border); }
-:is(#dailyQuestionView, #libraryQuestionList, #premiumQuestionList, #raceQuestionList, #bkQuestionList) input::placeholder { color: var(--text-muted); opacity: 1; font: 400 15px 'Space Grotesk', sans-serif; }
-[data-theme="dark"] :is(#dailyQuestionView, #libraryQuestionList, #premiumQuestionList, #raceQuestionList, #bkQuestionList) input::placeholder { color: #BBC3E5; }
-:is(#dailyQuestionView, #libraryQuestionList, #premiumQuestionList, #raceQuestionList, #bkQuestionList) input:focus-visible { outline: 2px solid var(--ink); outline-offset: 3px; }
+:is(#dailyQuestionView, #libraryQuestionList, #catalogusQuestionList, #raceQuestionList, #bkQuestionList) .connector { margin: 10px 0; }
+:is(#dailyQuestionView, #libraryQuestionList, #catalogusQuestionList, #raceQuestionList, #bkQuestionList) .connector-line { height: 1px; background: var(--surface-border); }
+:is(#dailyQuestionView, #libraryQuestionList, #catalogusQuestionList, #raceQuestionList, #bkQuestionList) input::placeholder { color: var(--text-muted); opacity: 1; font: 400 15px 'Space Grotesk', sans-serif; }
+[data-theme="dark"] :is(#dailyQuestionView, #libraryQuestionList, #catalogusQuestionList, #raceQuestionList, #bkQuestionList) input::placeholder { color: #BBC3E5; }
+:is(#dailyQuestionView, #libraryQuestionList, #catalogusQuestionList, #raceQuestionList, #bkQuestionList) input:focus-visible { outline: 2px solid var(--ink); outline-offset: 3px; }
 @media (prefers-reduced-motion: reduce) {
   .library-flip-front { transition: none; }
   .library-flip-card.is-open:hover .library-flip-front { transform: none; }
@@ -868,22 +868,21 @@ body:has(#screen-puzzle.active, #libraryScreen.active, #breinkrakersScreen.activ
 
 .submit-preview { border-radius: 9px; }
 
-/* Premium Library */
+/* Catalogus Library */
 .library-filters { gap: 6px; }
 .library-filters button { border-radius: 8px; }
-.premium-library-toolbar { gap: 8px; }
-.premium-library-toolbar input,
-.premium-library-toolbar select {
+.catalogus-library-toolbar { gap: 8px; }
+.catalogus-library-toolbar input,
+.catalogus-library-toolbar select {
   min-height: 46px;
   border: 1px solid var(--surface-border);
   border-radius: 8px;
 }
 
-.premium-results,
-.premium-card-grid { gap: 10px; }
+.catalogus-results,
+.catalogus-card-grid { gap: 10px; }
 
-.premium-result-card { border: 1px solid var(--surface-border); border-radius: 10px; }
-.premium-lock { box-shadow: var(--ui-shadow); }
+.catalogus-result-card { border: 1px solid var(--surface-border); border-radius: 10px; }
 
 /* Dialogs */
 .modal-overlay { background: rgba(8, 10, 38, .76); }
@@ -927,8 +926,8 @@ body:has(#screen-puzzle.active, #libraryScreen.active, #breinkrakersScreen.activ
   .bk-card-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); grid-auto-rows: 148px; }
   .library-flip-card,
   .library-flip-card-inner,
-  .premium-card-grid .library-flip-card,
-  .premium-card-grid .library-flip-card-inner { height: 148px; min-height: 148px; }
+  .catalogus-card-grid .library-flip-card,
+  .catalogus-card-grid .library-flip-card-inner { height: 148px; min-height: 148px; }
   .library-difficulties { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .library-stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .bk-library-overview .library-stats { grid-template-columns: repeat(3, minmax(0, 1fr)); }
@@ -1576,6 +1575,11 @@ body:has(#screen-puzzle.active, #libraryScreen.active, #breinkrakersScreen.activ
   font: 14px/1.5 'Space Grotesk', sans-serif; text-align: center;
 }
 #leaderboardScreen .lb-leeg { display: grid; place-content: center; min-height: 180px; padding: 30px; border: 0; border-radius: 0; line-height: 1.7; }
+/* Uitgelogd: uitleg plus een knop, in plaats van een lege lijst. */
+.lb-inloggen { display: grid; gap: 16px; justify-items: center; }
+.lb-inloggen p { margin: 0; max-width: 380px; }
+.lb-inloggen .hero-cta { font-size: 14px; padding: 13px 22px; }
+
 .lb-voetnoot { margin-top: 16px; color: #AAB0DF; font-size: 12px; }
 .results-leaderboard-hint { margin: 8px 0 0; color: var(--text-muted); font-size: 12px; text-align: center; }
 .btn-stats-open, .btn-leaderboard-open { display: inline-flex; align-items: center; gap: 8px; }

@@ -140,6 +140,7 @@
         };
         localStorage.setItem('netto_user', JSON.stringify(currentUser));
         updateUserUI();
+        stuurLokaleScoresOp();
       }
     });
   }
@@ -772,6 +773,7 @@
           currentUser = { id: data.session.user.id, email: data.session.user.email, username: data.session.user.user_metadata?.username || data.session.user.email.split('@')[0] };
           localStorage.setItem('netto_user', JSON.stringify(currentUser));
           updateUserUI();
+          stuurLokaleScoresOp();
         }
       });
       checkExistingPlay();
@@ -1903,12 +1905,12 @@
 
   const vraagDetailLijsten = new WeakSet();
   function initVraagDetails() {
-    for (const prefix of ['library', 'premium']) {
+    for (const prefix of ['library', 'catalogus']) {
       const lijst = document.getElementById(prefix + 'QuestionList');
       if (!lijst || vraagDetailLijsten.has(lijst)) continue;
       vraagDetailLijsten.add(lijst);
       const bijwerken = () => {
-        const puzzel = prefix === 'library' ? libraryActivePuzzle : premiumActivePuzzle;
+        const puzzel = prefix === 'library' ? libraryActivePuzzle : catalogusActivePuzzle;
         if (!puzzel) return;
         const kaarten = [...lijst.querySelectorAll(':scope > .q-block, :scope > .library-question')];
         if (kaarten.length === 3) werkVraagDetailsBij(puzzel, kaarten, !lijst.querySelector('input'));
@@ -2267,6 +2269,36 @@
     }
   }
 
+  // Alles wat je uitgelogd hebt gespeeld staat alleen in localStorage. Log je
+  // daarna in, dan bleef dat daar staan: de dagpuzzels die je al had gespeeld
+  // kwamen nooit op het leaderboard, en je streak begon aan de serverkant bij
+  // nul. Spelen zonder account is nu het normale geval, dus dat gat loopt bijna
+  // iedereen in.
+  //
+  // Bij het inloggen halen we die scores daarom alsnog op. Alleen de
+  // dagpuzzels: die zijn op datum vast te leggen, en alleen die tellen voor het
+  // scorebord. Bestaat er al een rij voor die dag, dan blijft die staan —
+  // ignoreDuplicates zorgt dat een oude speelbeurt op een ander apparaat niet
+  // wordt overschreven door wat er toevallig in deze browser stond.
+  async function stuurLokaleScoresOp() {
+    if (!currentUser || !supabaseClient) return;
+    const rijen = Object.entries(getLocalPlays())
+      .filter(([sleutel, spel]) => /^\d{4}-\d{2}-\d{2}$/.test(sleutel)
+        && spel && Number.isFinite(Number(spel.factor)))
+      .map(([datum, spel]) => ({
+        user_id: currentUser.id, puzzle_date: datum,
+        g1: spel.g1, g2: spel.g2, g3: spel.g3, factor: spel.factor,
+      }));
+    if (!rijen.length) return;
+    try {
+      const { error } = await supabaseClient.from('user_plays')
+        .upsert(rijen, { onConflict: 'user_id,puzzle_date', ignoreDuplicates: true });
+      if (error) console.warn('Lokale scores niet opgestuurd:', error.message || error);
+    } catch (err) {
+      console.warn('Lokale scores niet opgestuurd:', err);
+    }
+  }
+
   async function syncPlayToCloud(dateStr, g1, g2, g3, factor) {
     if (!currentUser) return;
 
@@ -2302,12 +2334,14 @@
       return 'Te veel pogingen. Probeer het over een uur opnieuw.';
     if (m.includes('invalid login credentials'))
       return 'Onjuist e-mailadres of wachtwoord.';
+    // E-mailbevestiging staat uit in het Supabase-project. Komt deze fout toch
+    // langs, dan is die instelling teruggezet en moet de speler dat weten.
     if (m.includes('email not confirmed'))
-      return 'Bevestig eerst je e-mailadres via de link in je inbox.';
+      return 'Je account is nog niet bevestigd. Klik op de link in je inbox.';
     if (m.includes('user already registered') || m.includes('already been registered'))
       return 'Er bestaat al een account met dit e-mailadres. Log in of gebruik "Wachtwoord vergeten?".';
     if (m.includes('password should be at least') || m.includes('weak password'))
-      return 'Je wachtwoord is te zwak — gebruik minimaal 8 tekens.';
+      return 'Je wachtwoord is te zwak — gebruik minimaal 6 tekens.';
     if (m.includes('invalid format') && m.includes('email'))
       return 'Dit e-mailadres ziet er niet goed uit.';
     if (m.includes('unable to validate email'))
@@ -2334,32 +2368,11 @@
     btn.style.opacity = busy ? '0.6' : '1';
   }
 
-  // Rate limiting: max 5 signup-pogingen per uur per browser.
-  const SIGNUP_LIMIT = 5;
-  const SIGNUP_WINDOW_MS = 60 * 60 * 1000;
-  function getSignupAttempts() {
-    try {
-      const raw = JSON.parse(localStorage.getItem('netto_signup_attempts') || '[]');
-      const now = Date.now();
-      return raw.filter(t => now - t < SIGNUP_WINDOW_MS);
-    } catch (e) { return []; }
-  }
-  function signupRateLimited() {
-    return getSignupAttempts().length >= SIGNUP_LIMIT;
-  }
-  function recordSignupAttempt() {
-    const attempts = getSignupAttempts();
-    attempts.push(Date.now());
-    localStorage.setItem('netto_signup_attempts', JSON.stringify(attempts));
-  }
-  function signupCooldownText() {
-    const attempts = getSignupAttempts();
-    if (!attempts.length) return '';
-    const oldest = Math.min(...attempts);
-    const waitMs = SIGNUP_WINDOW_MS - (Date.now() - oldest);
-    const mins = Math.max(1, Math.ceil(waitMs / 60000));
-    return `Je hebt ${attempts.length} van de ${SIGNUP_LIMIT} registraties per uur gebruikt. Over ~${mins} minuten kun je weer registreren.`;
-  }
+  // Er stond hier een teller die vijf registraties per uur toestond, bewaard in
+  // localStorage. Die hield niemand tegen die het echt probeerde — het wissen
+  // van je opslag zette hem terug op nul — en stond wel in de weg bij het
+  // aanmaken van een paar accounts om het leaderboard te bekijken. Supabase
+  // begrenst registraties zelf, aan de serverkant, waar het wel telt.
 
   function validateAuthInput(email, password, username) {
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)) return 'Vul een geldig e-mailadres in.';
@@ -2367,7 +2380,7 @@
     // account (bijv. met een kort wachtwoord van vóór deze regel) moet
     // gewoon kunnen inloggen — Supabase bewaakt de echte verificatie.
     if (authMode === 'register') {
-      if (password.length < 8) return 'Je wachtwoord moet minimaal 8 tekens zijn.';
+      if (password.length < 6) return 'Je wachtwoord moet minimaal 6 tekens zijn.';
       if (password.length > 72) return 'Je wachtwoord mag maximaal 72 tekens zijn.';
       if (username) {
         if (username.length < 3 || username.length > 20) return 'Je spelersnaam moet 3 tot 20 tekens zijn.';
@@ -2393,11 +2406,6 @@
       return;
     }
 
-    if (authMode === 'register' && signupRateLimited()) {
-      showAuthError('Te veel registratiepogingen. ' + signupCooldownText());
-      return;
-    }
-
     setAuthBusy(true);
     try {
       if (authMode === 'register') {
@@ -2417,12 +2425,14 @@
             return;
           }
         } catch (_) { /* controle overslaan, trigger vangt het op */ }
-        recordSignupAttempt();
         const { data, error } = await supabaseClient.auth.signUp({
           email, password,
           options: { data: { username }, emailRedirectTo: eigenAdres() }
         });
         if (error) throw error;
+        // Met e-mailbevestiging uit levert signUp meteen een sessie op en ben je
+        // dus direct ingelogd. Staat die instelling in het Supabase-project toch
+        // weer aan, dan komt er geen sessie terug en is dit de uitleg.
         if (!data.session) {
           showSarcasticToast('Account aangemaakt! Bevestig je e-mailadres via de link in je inbox, daarna kun je inloggen.', true);
           setAuthBusy(false);
@@ -2443,6 +2453,7 @@
 
     localStorage.setItem('netto_user', JSON.stringify(currentUser));
     updateUserUI();
+    stuurLokaleScoresOp();
     closeAuthModal();
     showSarcasticToast(`Welkom terug, ${currentUser.username}! Je scores zijn gesynchroniseerd.`, true);
     checkSubmissionNotifications();
@@ -2624,6 +2635,30 @@
       list.innerHTML = '';
       list.appendChild(div);
     };
+    // Spelen kan zonder account; het leaderboard niet. Een scorebord bestaat
+    // bij de gratie van een naam die morgen nog dezelfde persoon is, en die
+    // heeft een uitgelogde speler niet. In plaats van een lege lijst of een
+    // grijze knop krijgt hij hier de reden te zien en een knop om het meteen
+    // te regelen.
+    if (!currentUser) {
+      list.setAttribute('aria-busy', 'false');
+      list.innerHTML = '';
+      const blok = document.createElement('div');
+      blok.className = 'lb-leeg lb-inloggen';
+      const tekst = document.createElement('p');
+      tekst.textContent = statsCopy(
+        'Maak een account om op het leaderboard te komen. Spelen kan gewoon zonder.',
+        'Create an account to appear on the leaderboard. You can play without one.');
+      const knop = document.createElement('button');
+      knop.type = 'button';
+      knop.className = 'hero-cta';
+      knop.textContent = statsCopy('Inloggen of registreren', 'Log in or sign up');
+      knop.onclick = () => openAuthModal();
+      blok.append(tekst, knop);
+      list.appendChild(blok);
+      return;
+    }
+
     melding(statsCopy('Laden…', 'Loading…'));
 
     const eigenNaam = currentUser ? (currentUser.username || currentUser.email) : null;
@@ -2811,7 +2846,7 @@
   function showScreen(name) {
     document.getElementById('fotoCreditsScreen')?.classList.toggle('active', name === 'fotoverantwoording');
     stopPuzzleTimer('library');
-    stopPuzzleTimer('premium');
+    stopPuzzleTimer('catalogus');
     if (name === 'library') document.getElementById('libraryCardGrid').style.display = 'none';
     if (name !== 'race' && raceState) {
       stopRaceTimer();
@@ -2822,7 +2857,7 @@
     document.getElementById('screen-home').classList.toggle('active', name === 'home');
     document.getElementById('screen-puzzle').classList.toggle('active', name === 'puzzle');
     document.getElementById('libraryScreen').classList.toggle('active', name === 'library');
-    document.getElementById('premiumScreen').classList.toggle('active', name === 'premium');
+    document.getElementById('catalogusScreen').classList.toggle('active', name === 'catalogus');
     document.getElementById('raceScreen').classList.toggle('active', name === 'race');
     document.getElementById('breinkrakersScreen').classList.toggle('active', name === 'breinkrakers');
     document.getElementById('settingsScreen').classList.toggle('active', name === 'settings');
