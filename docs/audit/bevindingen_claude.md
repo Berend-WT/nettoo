@@ -9,25 +9,6 @@ Nummering `C-###`, oplopend, nooit hergebruikt.
 
 ## Open
 
-### C-001 · hoog · supabase/fix_rls_plays.sql · open
-Op `library_plays` staat row level security nergens aan, terwijl er wel policies
-én een grant op staan. Een policy zonder RLS is geen halve beveiliging maar geen
-enkele: Postgres slaat het policy-stelsel dan over en laat de tabelrechten
-beslissen, en die staan op `grant select, insert, update ... to authenticated`.
-Elke ingelogde speler kan dus de library-voortgang van elke andere speler lezen
-en overschrijven.
-
-`fix_rls_plays.sql` opent met de zin "Op beide tabellen staat RLS aan". Dat is
-nooit ergens vastgelegd — geen enkel SQL-bestand zet hem aan voor deze tabel. De
-aanname zelf is de fout.
-
-Zo te zien: `select relname, relrowsecurity from pg_class where relname =
-'library_plays';` Staat er `false`, dan is de tabel open.
-
-Oplossing klaargezet in `supabase/controleer_rls.sql`. Dat bestand zet RLS aan op
-alle tabellen die hem horen te hebben en eindigt met een rapport per tabel, zodat
-dit niet nog eens op een aanname hoeft te rusten. **De eigenaar moet het draaien.**
-
 ### C-002 · middel · data/netto_frontend_puzzles.js, data/netto_race_pool.js · open
 39 puzzels (22 in bibliotheek + daily, 17 in de racepool) hebben alle drie hun
 vragen met een foto, terwijl de generator er hooguit twee toestaat
@@ -75,6 +56,29 @@ ermee.
 ---
 
 ## Afgehandeld
+
+### C-001 · hoog · supabase/fix_rls_plays.sql · opgelost (eigenaar draaide controleer_rls.sql, 10 sept)
+Op `library_plays` staat row level security nergens aan, terwijl er wel policies
+én een grant op staan. Een policy zonder RLS is geen halve beveiliging maar geen
+enkele: Postgres slaat het policy-stelsel dan over en laat de tabelrechten
+beslissen, en die staan op `grant select, insert, update ... to authenticated`.
+Elke ingelogde speler kan dus de library-voortgang van elke andere speler lezen
+en overschrijven.
+
+`fix_rls_plays.sql` opent met de zin "Op beide tabellen staat RLS aan". Dat is
+nooit ergens vastgelegd — geen enkel SQL-bestand zet hem aan voor deze tabel. De
+aanname zelf is de fout.
+
+Zo te zien: `select relname, relrowsecurity from pg_class where relname =
+'library_plays';` Staat er `false`, dan is de tabel open.
+
+Opgelost met `supabase/controleer_rls.sql`: RLS staat nu aan op alle tabellen die
+hem horen te hebben, `admin_users` is dichtgezet tot je eigen rij, en het script
+eindigt met een rapport per tabel zodat dit niet nog eens op een aanname rust.
+
+Nog te doen: het rapport van die run is niet bekeken. Staat er ergens
+`rls_aan = false` met `policies > 0`, dan is die tabel nog open. Vraag de
+eigenaar om de uitvoer, of draai het script nog eens — het is idempotent.
 
 ### C-000 · hoog · data/netto_frontend_puzzels.js · opgelost c78f79a
 Veertig bij de visuele controle afgekeurde foto's stonden nog in het spel. Ze
