@@ -344,5 +344,6 @@ function renderLibraryStats() {
   window.joinOpenRaceGame = joinOpenRaceGame;
   window.selectRaceTolerantie = selectRaceTolerantie;
   window.toggleAutoCalc = toggleAutoCalc;
+  window.toggleLeaderboardZichtbaar = toggleLeaderboardZichtbaar;
   window.toggleTheme = toggleTheme;
   window.applyTheme = applyTheme;

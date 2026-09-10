@@ -141,6 +141,7 @@
         localStorage.setItem('netto_user', JSON.stringify(currentUser));
         updateUserUI();
         stuurLokaleScoresOp();
+        laadLeaderboardZichtbaar();
       }
     });
   }
@@ -774,6 +775,7 @@
           localStorage.setItem('netto_user', JSON.stringify(currentUser));
           updateUserUI();
           stuurLokaleScoresOp();
+          laadLeaderboardZichtbaar();
         }
       });
       checkExistingPlay();
@@ -1341,6 +1343,60 @@
   // Settings: auto-calculator aan/uit (default aan). Uit = geen auto-fill, overal.
   const AUTO_CALC_KEY = 'netto_auto_calc';
   function isAutoCalcEnabled() { return localStorage.getItem(AUTO_CALC_KEY) !== 'off'; }
+  // ===== Zichtbaarheid op het leaderboard =====
+  // Staat in profiles.leaderboard_zichtbaar, niet in localStorage: het is een
+  // keuze over wat anderen zien, en die hoort bij het account te horen en niet
+  // bij deze browser. De schakelaar staat standaard aan — meedoen zonder erom
+  // te vragen, eruit kunnen zonder het spel te verlaten.
+  let leaderboardZichtbaar = true;
+
+  async function laadLeaderboardZichtbaar() {
+    werkLeaderboardToggleBij();
+    if (!currentUser || !supabaseClient) return;
+    try {
+      const { data, error } = await supabaseClient
+        .from('profiles').select('leaderboard_zichtbaar').eq('id', currentUser.id).maybeSingle();
+      // Kolom bestaat nog niet? Dan blijft de standaard staan; de SQL die hem
+      // toevoegt is misschien nog niet gedraaid.
+      if (!error && data && typeof data.leaderboard_zichtbaar === 'boolean') {
+        leaderboardZichtbaar = data.leaderboard_zichtbaar;
+      }
+    } catch (_) { /* standaard aan laten staan */ }
+    werkLeaderboardToggleBij();
+  }
+
+  function werkLeaderboardToggleBij() {
+    const knop = document.getElementById('leaderboardToggle');
+    const noot = document.getElementById('leaderboardZichtbaarNoot');
+    if (!knop) return;
+    const ingelogd = !!currentUser;
+    knop.setAttribute('aria-checked', String(ingelogd && leaderboardZichtbaar));
+    knop.disabled = !ingelogd;
+    if (noot) noot.hidden = ingelogd;
+  }
+
+  async function toggleLeaderboardZichtbaar() {
+    if (!currentUser) { openAuthModal(); return; }
+    const nieuw = !leaderboardZichtbaar;
+    leaderboardZichtbaar = nieuw;
+    werkLeaderboardToggleBij();
+    try {
+      const { error } = await supabaseClient
+        .from('profiles').update({ leaderboard_zichtbaar: nieuw }).eq('id', currentUser.id);
+      if (error) throw error;
+      showSarcasticToast(nieuw
+        ? statsCopy('Je staat weer op het leaderboard.', 'You are back on the leaderboard.')
+        : statsCopy('Je staat niet meer op het leaderboard. Spelen kan gewoon door.',
+                    'You are off the leaderboard now. You can still play.'), true);
+    } catch (err) {
+      // Terugdraaien: anders zegt de schakelaar iets anders dan de databank.
+      leaderboardZichtbaar = !nieuw;
+      werkLeaderboardToggleBij();
+      showSarcasticToast(statsCopy('Kon dit niet opslaan. Probeer het later opnieuw.',
+                                   'Could not save this. Please try again later.'));
+    }
+  }
+
   function toggleAutoCalc() {
     const next = isAutoCalcEnabled() ? 'off' : 'on';
     localStorage.setItem(AUTO_CALC_KEY, next);
@@ -2454,6 +2510,7 @@
     localStorage.setItem('netto_user', JSON.stringify(currentUser));
     updateUserUI();
     stuurLokaleScoresOp();
+    laadLeaderboardZichtbaar();
     closeAuthModal();
     showSarcasticToast(`Welkom terug, ${currentUser.username}! Je scores zijn gesynchroniseerd.`, true);
     checkSubmissionNotifications();
@@ -2510,6 +2567,8 @@
     if (supabaseClient) supabaseClient.auth.signOut();
     currentUser = null;
     localStorage.removeItem('netto_user');
+    leaderboardZichtbaar = true;   // standaard terug voor de volgende speler
+    werkLeaderboardToggleBij();
     updateUserUI();
     closeAuthModal();
     showSarcasticToast("Succesvol uitgelogd.", true);
@@ -2661,7 +2720,11 @@
 
     melding(statsCopy('Laden…', 'Loading…'));
 
-    const eigenNaam = currentUser ? (currentUser.username || currentUser.email) : null;
+    // Alleen de spelersnaam. Stond hier "username || email", en dan kon een
+    // e-mailadres in de vergelijking belanden zodra een profiel geen naam had.
+    // Op het bord komt sowieso alleen p.username uit de databank, maar het
+    // adres hoort ook hier niet rond te slingeren.
+    const eigenNaam = currentUser?.username || null;
     let rijen = [];
     try {
       if (!supabaseClient) throw new Error('geen verbinding');

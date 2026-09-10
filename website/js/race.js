@@ -244,6 +244,7 @@
   function openSettings() {
     closeMenu();
     updateAutoCalcToggle();
+    if (typeof werkLeaderboardToggleBij === 'function') werkLeaderboardToggleBij();
     applyTheme();
     showScreen('settings');
     document.getElementById('settingsScreen').classList.add('active');

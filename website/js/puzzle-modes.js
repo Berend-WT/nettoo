@@ -98,6 +98,20 @@
     closeMenu(); openLibraryScreen('library');
   }
 
+  // SLAPEND, MET OPZET.
+  // openLibrary() wordt nergens aangeroepen: er staat geen knop voor in het
+  // menu en ook niet op de startpagina. Dat is niet per ongeluk zo gegroeid en
+  // ook niet iets dat kapot is — het is een keuze van de eigenaar (10 sept):
+  // de catalogus voegt voor dit spel te weinig toe om er een ingang voor te
+  // maken, maar de code blijft staan.
+  //
+  // Het scherm werkt gewoon: 279 puzzels en 837 vragen, doorzoekbaar op
+  // operator, categorie en niveau, en de puzzels zijn speelbaar met score.
+  // Wil je hem terug, dan is dat één regel in index.html:
+  //   <button class="sidebar-item" onclick="openLibrary()">…</button>
+  //
+  // Let op bij opruimen: hieraan hangt het hele catalogus-blok (dit bestand,
+  // #catalogusScreen in index.html, en de .catalogus-* regels in de css).
   function openLibrary() {
     closeMenu(); openCatalogusLibrary();
   }
