@@ -117,6 +117,16 @@ def main():
     # beoordelingsblad te plakken. Die winnen het van elk voorstel: een mens
     # die de moeite neemt een betere foto op te zoeken heeft altijd gelijk.
     handmatig = lees(os.path.join(FOTOS, 'handmatige_fotos.json'))
+    # Afgekeurd bij de visuele controle van alle 678 foto's. Deze lijst gaat
+    # voor alles, ook voor een handmatige keuze.
+    #
+    # Waarom hij op vraagtekst werkt en niet op nummer: een afkeuring die als
+    # nul in het keuzeblad landt, pakt alleen bij vragen die in dat blad staan.
+    # Race- en breinkrakervragen staan er niet in, en daar bleef een afgekeurde
+    # foto gewoon staan — de minaretten van de Taj Mahal overleefden zo twee
+    # ronden. De vraagtekst is de sleutel waarop de frontend zoekt, dus dat is
+    # de enige sleutel die nergens tussendoor glipt.
+    geblokkeerd = set(lees(os.path.join(FOTOS, 'geblokkeerd.json')).get('vragen', []))
 
     # Handmatige keuzes, als het blad al is ingevuld.
     keuzes = {}
@@ -135,11 +145,14 @@ def main():
     d = pd.read_excel(REVIEW, sheet_name='Vragen')
     uit = {}
     telling = {'handmatig': 0, 'keuze': 0, 'hoofdafbeelding': 0, 'onderwerpartikel': 0, 'oude kandidaat': 0,
-               'wacht op keuze': 0, 'afgekeurd': 0, 'geen': 0}
+               'wacht op keuze': 0, 'afgekeurd': 0, 'geblokkeerd': 0, 'geen': 0}
 
     for _, r in d.iterrows():
         nr = int(r['Nr'])
         vraag = str(r['Vraag NL'])
+        if vraag in geblokkeerd:
+            telling['geblokkeerd'] += 1
+            continue
         # De kandidatenlijst zoals die in het keuzeblad stond: hoofdafbeelding
         # vooraan, daarna wat de oudere ronde vond.
         beste = (hoofd.get(str(nr), {}).get('kandidaten') or [None])[0]

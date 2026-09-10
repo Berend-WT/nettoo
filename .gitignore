@@ -49,3 +49,9 @@ puzzels/_backup_*.xlsx
 # Fotokandidaten: opnieuw op te halen, en de miniaturen zijn regenereerbaar
 fotos/assets/kandidaten/
 fotos/ophalen.log
+
+# Contactvellen voor de fotocontrole: honderden miniaturen en 34 vellen,
+# allemaal opnieuw te maken met tools/maak_contactvellen.py. Het oordeel zelf
+# staat wel in de repo, in fotos/geblokkeerd.json.
+fotos/assets/controle/
+fotos/contactvellen/
