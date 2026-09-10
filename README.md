@@ -79,6 +79,25 @@ bewéért: het controleert onder meer of `a op b = c` echt uitkomt, of elke vraa
 maar in één puzzel staat en of geen puzzel twee vragen uit dezelfde kleurfamilie
 heeft. Draai hem na elke wijziging aan de puzzeldata.
 
+## Online zetten
+
+De site draait op GitHub Pages en wordt gepubliceerd door
+`.github/workflows/pages.yml` bij elke push naar `main`. Wat online gaat is
+`website/`, niet de project-root: dezelfde frontend, zonder de vragenbank, de
+generatoren en de fotominiaturen. De workflow draait eerst
+`sync_website.py --check`, dus een vergeten synchronisatie laat de bouw falen in
+plaats van stilletjes een oude versie te publiceren.
+
+Eenmalig aanzetten: **Settings -> Pages -> Source: GitHub Actions**. Tot dat
+gebeurd is faalt de publiceerstap met "Pages is not enabled".
+
+Bij een nieuw webadres hoort ook een ronde in Supabase: **Authentication ->
+URL Configuration**, het adres toevoegen bij *Redirect URLs* en desgewenst als
+*Site URL*. Zonder dat komt iedereen die zich aanmeldt of zijn wachtwoord
+vergeet op een dood linkje uit. De frontend stuurt zijn eigen adres mee
+(`eigenAdres()` in `js/core.js`), maar Supabase negeert een adres dat niet in
+die lijst staat.
+
 ## Backend
 
 Auth en score-sync draaien op Supabase (`bqatnnouxkjdzvvhqbly`). De anon key in `js/app.js` is een publieke client key. Accounts: e-mail + wachtwoord, met wachtwoord-vergeten-flow, Nederlandse foutmeldingen, invoervalidatie en een registratielimiet van 5 per uur per browser.

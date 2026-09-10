@@ -70,6 +70,28 @@
   const SUPABASE_URL = "https://bqatnnouxkjdzvvhqbly.supabase.co"; 
   const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJxYXRubm91eGtqZHp2dmhxYmx5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODc4MzMwMDAsImV4cCI6MjEwMzQwOTAwMH0.KtjxuC3gyixJjQqKpwPd1b7wzg0VPbm-_EgeUc9iZAI"; 
   
+  // Waar de speler het spel op dit moment heeft openstaan, zonder #fragment of
+  // zoekparameters. De bevestigingsmail en de wachtwoord-resetmail sturen de
+  // speler hierheen terug.
+  //
+  // Zonder dit valt Supabase terug op de Site URL van het project, en die staat
+  // op één adres tegelijk. Draait het spel dan ergens anders — localhost, een
+  // testadres, een eigen domein naast het GitHub-adres — dan komt iedereen die
+  // zich aanmeldt op een dood linkje uit. Het adres meesturen laat de mail
+  // meegroeien met waar het spel echt draait.
+  //
+  // Let op: Supabase accepteert alleen adressen die in de projectinstellingen
+  // bij Redirect URLs staan. Wat daar niet in staat wordt genegeerd, dus een
+  // nieuw adres moet daar één keer worden toegevoegd.
+  function eigenAdres() {
+    try {
+      const u = new URL(window.location.href);
+      return u.origin + u.pathname;
+    } catch (_) {
+      return undefined;   // undefined laat Supabase zijn eigen Site URL kiezen
+    }
+  }
+
   let supabaseClient = null;
   function initSupabaseClient() {
     if (SUPABASE_URL && SUPABASE_ANON_KEY && window.supabase) {
@@ -2398,7 +2420,7 @@
         recordSignupAttempt();
         const { data, error } = await supabaseClient.auth.signUp({
           email, password,
-          options: { data: { username } }
+          options: { data: { username }, emailRedirectTo: eigenAdres() }
         });
         if (error) throw error;
         if (!data.session) {
@@ -2460,7 +2482,8 @@
     btn.disabled = true;
     btn.textContent = 'Versturen…';
     try {
-      const { error } = await supabaseClient.auth.resetPasswordForEmail(email);
+      const { error } = await supabaseClient.auth.resetPasswordForEmail(
+        email, { redirectTo: eigenAdres() });
       if (error) throw error;
       backToAuthForm();
       showSarcasticToast('Resetlink verstuurd! Check je inbox (ook de spam-map).', true);

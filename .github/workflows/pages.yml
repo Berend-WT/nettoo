@@ -1,0 +1,55 @@
+# Zet Netto online op GitHub Pages.
+#
+# Gepubliceerd wordt website/, niet de project-root. Die map is de zelfstandige
+# kopie: dezelfde frontend, maar zonder de vragenbank, de generatoren en de
+# duizenden foto-miniaturen die niemand hoeft te downloaden om te spelen.
+#
+# De controle hieronder draait sync_website.py --check voordat er iets online
+# gaat. Werkt iemand per ongeluk in website/ in plaats van in de root, of
+# vergeet hij te synchroniseren, dan faalt de bouw in plaats van dat er stilletjes
+# een oudere versie live komt.
+name: Publiceer op GitHub Pages
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Bij twee pushes kort na elkaar wint de laatste; de eerste wordt afgebroken.
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  bouw:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Controleer of website/ gelijk is aan de frontend
+        run: python tools/sync_website.py --check
+
+      - uses: actions/configure-pages@v5
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: website
+
+  publiceer:
+    needs: bouw
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deploy.outputs.page_url }}
+    steps:
+      - id: deploy
+        uses: actions/deploy-pages@v4
