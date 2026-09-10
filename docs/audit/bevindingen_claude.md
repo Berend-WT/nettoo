@@ -9,6 +9,55 @@ Nummering `C-###`, oplopend, nooit hergebruikt.
 
 ## Open
 
+### C-013 · middel · repo is publiek · open — besluit nodig
+De repo staat op public, dus alles erin is voor iedereen te downloaden. Dat is
+de prijs van gratis GitHub Pages, en voor de code prima. Voor twee bestanden
+wil ik het even hardop zeggen:
+
+- `vragen/1000+ vragen netjes gecategoriseerd.xlsx` — jouw handmatige
+  factcheckwerk. In de werkafspraken staat dat dit bestand niet achteloos
+  gecommit mag worden; het staat er wel in, en nu dus ook publiek.
+- `vragen/vragen_review_compleet.xlsx` — de complete vragenbank met alle 1409
+  antwoorden en bronnen.
+
+Hoe erg is het werkelijk? Minder dan het klinkt. De antwoorden van de
+bibliotheek- en racepuzzels zitten sowieso in `data/netto_frontend_puzzles.js`,
+want de browser rekent de score uit en heeft ze dus nodig. En de dagpuzzel van
+morgen is niet te achterhalen (zie C-014). Wat er extra bij komt is de hele
+vijver waaruit toekomstige dailies worden getrokken — om daar iets aan te hebben
+moet je 1409 antwoorden uit je hoofd leren.
+
+Wat wél weegt is het eerste punt: het is jouw werk, en de afspraak was dat het
+er niet in zou staan.
+
+Besluit nodig, want dit is niet aan mij:
+1. laten staan — het is toch al gepubliceerd;
+2. uit de repo halen met `git rm --cached` — stopt verdere verspreiding, maar
+   het bestand blijft in de geschiedenis staan en is via elke oude commit nog
+   op te halen;
+3. echt weg — geschiedenis herschrijven en force-pushen. Dat werkt, maar het is
+   onomkeerbaar en breekt elke kloon die iemand al heeft.
+
+### C-014 · vervalt (geen lek) · Supabase (puzzles) · afgehandeld 10 sept
+Nagegaan of iemand de dagpuzzel van morgen kan opvragen. Dit is de scherpere
+versie van C-008: de app bevraagt niet de view `puzzles_public` maar de tabel
+`puzzles` zelf, en beperkt zich daar met een eigen filter
+`scheduled_date=lte.<vandaag>`. Een filter dat de client meestuurt, kan de
+client ook weglaten.
+
+Gemeten op de live site met de publieke anon key uit de pagina:
+
+    toekomst (gt vandaag)    -> 200, 0 rijen
+    verleden+vandaag (lte)   -> 200, 5 rijen, nieuwste 2026-09-10
+    zonder datumfilter       -> 200, 5 rijen, nieuwste 2026-09-10
+
+Ook zónder datumfilter komt er niets nieuwer dan vandaag terug. De policy op
+`puzzles` dwingt de grens dus serverkant af, en niet de client. Dat is precies
+zoals het hoort.
+
+Meteen ook een antwoord op een deel van C-006: de onbekende policy op `puzzles`
+doet het goede.
+
 ### C-009 · te onderzoeken · Supabase (rls_auto_enable) · open
 Er bestaat een functie `public.rls_auto_enable()` die in geen enkel bestand van
 deze repo voorkomt. Hij is SECURITY DEFINER en uitvoerbaar door `anon`, dus door
