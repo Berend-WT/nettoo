@@ -1567,7 +1567,13 @@
   function gekoppeldeFoto() {
     // Dagpuzzels uit de databank dragen geen photo-veld; fotoUitVraagtekst uit
     // js/photo-credits.js zoekt de foto dan alsnog op via NETTO_FOTOS.
-    const f = PUZZLE_DATA?.photo
+    // Het meegedragen photo-veld telt alleen zolang die vraag nog in
+    // NETTO_FOTOS staat; anders is de foto sindsdien afgekeurd. Zie
+    // nogInDeBank in js/photo-credits.js.
+    const eigen = PUZZLE_DATA?.photo;
+    const draagbaar = eigen && (typeof nogInDeBank !== 'function'
+      || nogInDeBank(PUZZLE_DATA, eigen)) ? eigen : null;
+    const f = draagbaar
       || (typeof fotoUitVraagtekst === 'function' ? fotoUitVraagtekst(PUZZLE_DATA) : null);
     if (!f?.url) return null;
     const nr = Number(f.vraag);
