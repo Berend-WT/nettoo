@@ -144,17 +144,40 @@ Zo te zien: `supabase/toon_policies.sql`, deel 3.
 Oplossing staat in datzelfde bestand, deel 2, bewust uitgecommentarieerd: niet
 tegen deze databank uitgeprobeerd.
 
-### C-003 · middel · Supabase (dagpuzzels) · open
-De dagpuzzels zijn gepland tot 2026-10-09. Daarna heeft het spel geen puzzel van
-de dag, en dat is het eerste wat een bezoeker ziet. Ongeveer dertig dagen vanaf
-nu.
+### C-003 · middel · Supabase (dagpuzzels) · klaargezet, wacht op de eigenaar
+De dagpuzzels lopen tot 2026-10-09. Daarna heeft het spel niets te tonen op de
+pagina waar iedereen binnenkomt.
 
-Zo te zien: `select max(scheduled_date) from public.puzzles where status =
-'scheduled';`
+`supabase/plan_dailies_vooruit.sql` staat klaar met 45 dagen; er blijven daarna
+156 bruikbare library-puzzels over. **De eigenaar moet hem draaien.**
 
-Oplossing bestaat al: `tools/plan_dailies.py` plus
-`supabase/plan_dailies_vooruit.sql`. Het is een terugkerende handeling, geen
-eenmalige — zou een herinnering moeten worden.
+Bij het klaarzetten bleek de generator twee ontwerpfouten te hebben, en allebei
+speelden ze juist op het moment dat je hem nodig hebt:
+
+- Hij zette de datums vast bij het genereren, vanaf de dag van draaien. Met een
+  agenda die al tot 9 oktober liep botste elke regel met een bestaande dag en
+  werd er niets ingevoegd — zonder zichtbare fout. Je zou pas op 10 oktober
+  merken dat je niets had gedaan. De SQL rekent nu zelf uit waar de reeks
+  ophoudt.
+- De lijst met al gebruikte library-puzzels stond met de hand in het
+  Python-script, met in het commentaar de query om hem bij te werken. Loopt die
+  achter, dan komt dezelfde puzzel een tweede keer langs. Nu kijkt de databank.
+
+### C-015 · laag · Supabase (opslag + auth) · open
+Twee kleine dingen uit de security advisor die nog openstaan, allebei één
+handeling in het dashboard:
+
+- De publieke bucket `daily-images` laat zich oplijsten (zie C-010).
+- Leaked password protection staat uit (zie C-012).
+
+### C-016 · vervalt (geen fout) · live site · afgehandeld 10 sept
+De console van de live site leek fouten te geven: twee 404's en een 401. Bij
+navraag in een verse tab: geen enkele melding. Het waren restanten van mijn
+eigen HEAD-verzoeken in dezelfde tab, die in de buffer bleven staan.
+
+Waarom dit blijft staan: ik had dit bijna als bevinding opgeschreven. Een
+console-buffer die over herladingen heen blijft staan is precies het soort
+meetfout dat je een avond kost.
 
 ### C-004 · laag · vragen/, fotos/ · open
 378 vragen hebben een fotokandidaat die op een oordeel wacht, 182 hebben er geen
@@ -173,6 +196,36 @@ ermee.
 ---
 
 ## Afgehandeld
+
+### Nacht van 10 september — leaderboard, teksten en contrast
+Op verzoek van de eigenaar doorgewerkt terwijl hij sliep. Alles gecommit en
+gepusht; de live site draait het.
+
+- **Het leaderboard laat nu mensen zien.** De oorzaak was de ontbrekende
+  profielrij: de functie koppelt `user_plays` aan `profiles` met een gewone
+  join, en zonder tegenhanger verdwijnt de rij. Na `leaderboard_werkend.sql`
+  staan er drie spelers op.
+- **Kijken mag zonder account.** De inlogmuur die Codex ervoor zette (X-001)
+  blokkeerde ook de knop op het resultatenscherm. Die knop bestond al; hij werd
+  onderschept. Meedoen vraagt nog steeds een account, met een uitnodiging onder
+  de lijst.
+- **Alleen de spelersnaam** op het bord; het e-mailadres kan er niet meer in
+  belanden.
+- **Zichtbaarheid uit te zetten** in Instellingen, standaard aan, bewaard in het
+  profiel en niet in localStorage.
+- **31 kapotte Engelse teksten.** Bij het machinaal vertalen sneuvelden emoji,
+  soms met onzin ervoor in de plaats: "🔥 Huidige streak" werd "Gallus
+  domesticus Current streak", "🟧 ≤2,50×" werd "Plywood ≤2,50×".
+- **De deel-link wees naar netto.game**, waar dit spel niet staat, en de
+  deelafbeelding bestond niet. Beide gerepareerd.
+- **Contrast doorgemeten**, zeven schermen, beide thema's: van 20 unieke
+  tekortkomingen naar 0. De ernstigste was de score op het scorebord in donkere
+  modus — verhouding 1,18 waar 4,5 de ondergrens is, dus het belangrijkste getal
+  op een scorebord was onleesbaar.
+
+Wat ik daarvan meeneem: drie van deze fouten waren dezelfde fout — een
+achtergrondkleur die als tekstkleur werd gebruikt. Eén ervan had ik zelf net
+gemaakt.
 
 ### C-002 · middel · tools/controleer_puzzels.py · opgelost 10 sept (ook X-003)
 39 puzzels (22 in daily+bibliotheek, 17 in de racepool) hebben alle drie hun
