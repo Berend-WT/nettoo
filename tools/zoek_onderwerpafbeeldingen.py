@@ -48,10 +48,35 @@ PAUZE = 0.6  # Wikipedia geeft boven de tien verzoeken per seconde zwijgend niet
 
 # Woorden die met een hoofdletter beginnen maar geen onderwerp zijn.
 GEEN_NAAM = {'Hoeveel', 'Welke', 'Welk', 'Hoe', 'Wat', 'In', 'Er', 'De', 'Het', 'Een'}
-# Woorden die achteraan de vraag hangen zonder het onderwerp te zijn.
-STAART = {'ongeveer', 'wereldwijd', 'totaal', 'samen', 'maximaal', 'minimaal',
-    'gemiddeld', 'jaarlijks', 'precies', 'volgens', 'benadering', 'afgerond',
-    'stand', 'ruwweg', 'naar', 'schatting', 'veld', 'begin', 'start'}
+# Woorden die wel achteraan de vraag staan maar nooit het onderwerp zijn.
+# Deze lijst is niet bedacht maar afgeleid: Berend keurde 34 voorstellen en
+# vrijwel alles wat hij wegstreepte was gezocht op een maateenheid, een
+# bijwoord of een werkwoord. "Hoe hoog was de hoogste duik in meters" leverde
+# een foto van een duimstok, "hoeveel legt een kip" een luchtfoto van Getafe.
+STAART = {
+    # maten
+    'meter', 'meters', 'centimeter', 'centimeters', 'millimeter', 'millimeters',
+    'kilometer', 'kilometers', 'kilo', 'kilogram', 'gram', 'ton', 'tonnen',
+    'liter', 'liters', 'graden', 'hertz', 'procent', 'seconde', 'seconden',
+    'minuut', 'minuten', 'uur', 'uren', 'dag', 'dagen', 'week', 'weken',
+    'maand', 'maanden', 'jaar', 'jaren', 'eeuw', 'eeuwen', 'euro', 'dollar',
+    # bijwoorden en overtreffende trappen
+    'ooit', 'exact', 'precies', 'gemiddeld', 'gemiddelde', 'maximaal', 'minimaal',
+    'snelst', 'hoogst', 'langst', 'grootst', 'zwaarst', 'diepst', 'kleinst',
+    'meest', 'totaal', 'samen', 'ongeveer', 'wereldwijd', 'jaarlijks',
+    'dagelijks', 'tegelijk', 'momenteel', 'huidige', 'benadering', 'afgerond',
+    'stand', 'ruwweg', 'naar', 'schatting', 'volgens', 'begin', 'start',
+    # werkwoordsvormen
+    'gelanceerd', 'gepubliceerd', 'opgenomen', 'uitgestrekt', 'geproduceerd',
+    'gebouwd', 'gemaakt', 'verkocht', 'gewonnen', 'gespeeld', 'geschreven',
+    'gevonden', 'gebruikt', 'geteld', 'bedekt', 'legt', 'meet', 'weegt',
+    'telt', 'duurt', 'bevat', 'kost', 'haalt', 'staat', 'ligt', 'loopt',
+    'rijdt', 'vliegt', 'zwemt', 'klopt', 'draait', 'heeft', 'hebben',
+    # te vaag om een artikel mee te vinden
+    'veld', 'land', 'leven', 'ding', 'dingen', 'deel', 'delen', 'aantal',
+    'soort', 'soorten', 'stuk', 'stuks', 'keer', 'plek', 'systeem', 'wereld',
+    'volledig', 'volledige', 'compleet', 'complete', 'hele', 'gehele',
+}
 TELWOORD_OVERSLAAN = {'verschillende', 'officiele', 'officiële', 'individuele', 'erkende',
     'bekende', 'gepubliceerde', 'complete', 'standaard', 'totale', 'unieke', 'actieve',
     'echte', 'grote', 'kleine', 'afzonderlijke', 'belangrijkste', 'centrale', 'natuurlijke',
@@ -69,14 +94,18 @@ def onderwerpen(vraag):
     for n, woord in enumerate(woorden):
         naam = woord[:1].isupper() and woord not in GEEN_NAAM and not (n == 0)
         if naam:
-            reeks.append(woord)
+            reeks.append((n, woord))
         else:
             if reeks:
-                uit.append(' '.join(reeks))
+                uit.append((reeks[0][0], ' '.join(w for _, w in reeks)))
             reeks = []
     if reeks:
-        uit.append(' '.join(reeks))
-    uit.sort(key=lambda s: -len(s.split()))
+        uit.append((reeks[0][0], ' '.join(w for _, w in reeks)))
+    # Langste naam eerst, en bij gelijke lengte de laatste in de zin. Bij "de
+    # Slag om Gettysburg" zijn "Slag" en "Gettysburg" allebei een woord, maar
+    # het tweede zegt waar het over gaat en het eerste levert een dorp in Chili.
+    uit.sort(key=lambda p: (-len(p[1].split()), -p[0]))
+    uit = [naam for _, naam in uit]
     # Zonder eigennaam staat het onderwerp meestal achteraan: "Hoeveel kilo
     # weegt een KONINGSPINGUIN", "Hoeveel toetsen heeft een standaard PIANO".
     # Bijwoorden als "ongeveer" en "wereldwijd" hangen er los achter en tellen

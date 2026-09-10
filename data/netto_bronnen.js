@@ -1056,15 +1056,15 @@ window.NETTO_BRONNEN = {
     "bron": "https://en.wikipedia.org/wiki/Queen_bee",
     "uitleg": "Een koningin legt op het hoogtepunt van het seizoen tot tweeduizend eitjes per dag."
   },
-  "Hoeveel electorale stemmen heeft Californië (2024)?": {
+  "Hoeveel kiesmannen heeft Californië (2024)?": {
     "bron": "https://www.archives.gov/electoral-college/allocation",
     "uitleg": "Californie heeft 54 kiesmannen."
   },
-  "Hoeveel electorale stemmen heeft Texas (2024)?": {
+  "Hoeveel kiesmannen heeft Texas (2024)?": {
     "bron": "https://en.wikipedia.org/wiki/United_States_Electoral_College",
     "uitleg": "Texas heeft veertig kiesmannen tot de herverdeling na de volkstelling van 2030."
   },
-  "Hoeveel electorale stemmen zijn er nodig om de VS-presidentsverkiezing te winnen?": {
+  "Hoeveel kiesmannen zijn er nodig om de Amerikaanse presidentsverkiezing te winnen?": {
     "bron": "https://www.archives.gov/electoral-college/about",
     "uitleg": "Van de 538 kiesmannen zijn er 270 nodig voor een meerderheid."
   },
@@ -4924,7 +4924,7 @@ window.NETTO_BRONNEN = {
     "bron": "https://en.wikipedia.org/wiki/St._Petersburg%E2%80%93Tampa_Airboat_Line",
     "uitleg": "De eerste lijnvlucht met betalende passagiers vertrok op 1 januari 1914. De oude bron was het artikel over de Eerste Wereldoorlog."
   },
-  "In welk jaar viel de Berlijnse Muur niet maar werd Japan aangevallen door de VS in Pearl Harbor?": {
+  "In welk jaar viel Japan de Amerikaanse vlootbasis Pearl Harbor aan?": {
     "bron": "https://nl.wikipedia.org/wiki/Aanval_op_Pearl_Harbor",
     "uitleg": "De aanval op Pearl Harbor was een verrassingsaanval door de Japanse Keizerlijke Marine onder leiding van admiraal Isoroku Yamamoto op de Amerikaanse marinebasis Pearl Harbor in Hawaï, op zondag 7 december 1941, om 17:55 UTC (op Hawaï in de ochtend, in Washington D.C."
   },

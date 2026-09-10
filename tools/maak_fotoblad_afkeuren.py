@@ -16,13 +16,17 @@ wat niet deugt — ongeveer een op de vier. Dat is drie keer minder werk dan
 kiezen, en wat overblijft is door een mens goedgekeurd in plaats van door een
 script geraden.
 
-INVULLEN
-  kolom "Weg?"      een 0, een x of het woord nee bij een foto die niet deugt.
-                    Leeg laten betekent: deze is goed.
-  tabblad Voortgang tot welke rij je gekeken hebt. Zonder dat getal weet het
-                    verwerkingsscript niet of een lege regel "goedgekeurd"
-                    betekent of "nog niet bekeken", en dat verschil bepaalt of
-                    er een foto in het spel komt.
+INVULLEN, in de kolom "Oordeel"
+  1                 deze foto is goed
+  0                 deze foto deugt niet
+  een Commons-URL   gebruik deze in plaats van het voorstel
+  vrije tekst       een opmerking; die komt bij het verwerken op het scherm
+  leeg              nog niet bekeken, er verandert niets
+
+Een eerdere versie vroeg alleen om weg te strepen, met een apart vakje voor hoe
+ver je gekomen was. Berend vulde spontaan 1 en 0 in, en dat is beter: een
+ingevulde regel is dan altijd een beslissing en een lege regel altijd "nog niet
+bekeken". Wat je beoordeeld hebt komt in een volgende ronde niet terug.
 """
 
 import os
@@ -47,7 +51,7 @@ FOTOS = os.path.join(WORTEL, 'fotos')
 MINIATUREN = os.path.join(FOTOS, 'assets', 'kandidaten')
 UIT = os.path.join(WORTEL, 'vragen', 'fotos_afkeuren.xlsx')
 RANG = {'daily': 0, 'puzzel': 1, 'race': 2, 'breinkraker': 3}
-KOLOMMEN = ['Nr', 'In gebruik', 'Vraag', 'Antwoord', 'Foto', 'Weg?',
+KOLOMMEN = ['Nr', 'In gebruik', 'Vraag', 'Antwoord', 'Foto', 'Oordeel',
             'Gezocht op', 'Naamtreffer', 'Bestand', 'Commons']
 BREEDTES = [6, 12, 62, 10, 26, 8, 18, 12, 34, 12]
 
@@ -57,6 +61,23 @@ def main():
     hoofd = json.load(open(os.path.join(FOTOS, 'hoofdafbeeldingen.json'), encoding='utf-8'))
     onderwerp = json.load(open(os.path.join(FOTOS, 'onderwerpafbeeldingen.json'), encoding='utf-8'))
     met_infobox = {nr for nr, v in hoofd.items() if v.get('kandidaten')}
+
+    # Wat je al beoordeeld hebt komt niet terug. Een oordeel staat of in de
+    # kolom Keuze van het keuzeblad, of - bij een zelf opgezocht adres - in
+    # handmatige_fotos.json. Zonder deze stap krijg je bij elke ronde dezelfde
+    # rijen opnieuw voorgeschoteld.
+    beslist = set()
+    pad_handmatig = os.path.join(FOTOS, 'handmatige_fotos.json')
+    if os.path.exists(pad_handmatig):
+        beslist |= set(json.load(open(pad_handmatig, encoding='utf-8')))
+    pad_keuze = os.path.join(WORTEL, 'vragen', 'fotokeuze.xlsx')
+    if os.path.exists(pad_keuze):
+        kb = openpyxl.load_workbook(pad_keuze, read_only=True)['Fotokeuze']
+        kr = list(kb.iter_rows(values_only=True))
+        kk = {naam: n for n, naam in enumerate(kr[0])}
+        beslist |= {str(int(x[kk['Nr']])) for x in kr[1:]
+                    if x[kk['Nr']] is not None and x[kk['Keuze']] is not None}
+    print(f'{len(beslist)} vragen zijn al beoordeeld en blijven buiten dit blad')
 
     blad = openpyxl.load_workbook(REVIEW, read_only=True)['Vragen']
     rijen = list(blad.iter_rows(values_only=True))
@@ -68,7 +89,7 @@ def main():
             continue
         nr = str(int(r[k['Nr']]))
         gebruik = r[k['In gebruik']]
-        if gebruik not in RANG or nr in met_infobox:
+        if gebruik not in RANG or nr in met_infobox or nr in beslist:
             continue
         kandidaat = (onderwerp.get(nr, {}).get('kandidaten') or [None])[0]
         if not kandidaat:
@@ -106,7 +127,7 @@ def main():
         for kol, waarde in enumerate(waarden, start=1):
             cel = ws.cell(rij, kol, waarde)
             cel.alignment = Alignment(vertical='center', wrap_text=(kol == 3))
-            if KOLOMMEN[kol - 1] == 'Weg?':
+            if KOLOMMEN[kol - 1] == 'Oordeel':
                 cel.fill = rood
             if KOLOMMEN[kol - 1] == 'Commons' and kandidaat.get('pagina'):
                 cel.hyperlink = kandidaat['pagina']
@@ -128,15 +149,25 @@ def main():
 
     ws.auto_filter.ref = f'A1:{get_column_letter(len(KOLOMMEN))}{ws.max_row}'
 
-    voortgang = boek.create_sheet('Voortgang')
-    voortgang['A1'] = 'Tot en met welke rij van het tabblad Fotos heb je gekeken?'
-    voortgang['A1'].font = Font(bold=True)
-    voortgang.column_dimensions['A'].width = 62
-    voortgang['B1'] = 1
-    voortgang['B1'].fill = PatternFill('solid', fgColor='FFF2CC')
-    voortgang['A3'] = ('Alles tot en met dat rijnummer geldt als bekeken. Een lege "Weg?" '
-                       'daarbinnen betekent goedgekeurd; daarbuiten betekent het nog niets.')
-    voortgang['A4'] = 'Je hoeft niet in een keer klaar te zijn. Vul het getal in tot waar je kwam.'
+    uitleg = boek.create_sheet('Uitleg')
+    uitleg.column_dimensions['A'].width = 20
+    uitleg.column_dimensions['B'].width = 78
+    regels = [
+        ('Wat je invult', 'in de kolom Oordeel op het tabblad Fotos'),
+        ('1', 'deze foto is goed'),
+        ('0', 'deze foto deugt niet, de vraag krijgt er geen'),
+        ('een Commons-URL', 'gebruik deze foto in plaats van het voorstel'),
+        ('vrije tekst', 'een opmerking, bijvoorbeeld dat de vraag zelf rammelt'),
+        ('leeg', 'nog niet bekeken; er verandert niets'),
+        ('', ''),
+        ('Je hoeft niet klaar', 'Wat je beoordeeld hebt komt in de volgende ronde niet terug.'),
+        ('Volgorde', 'Dagpuzzels eerst, en daarbinnen de sterkste voorstellen bovenaan.'),
+        ('Naamtreffer', 'ja betekent dat de naam van het gevonden artikel in de vraag staat;'),
+        ('', 'die kloppen vaker dan de rest.'),
+    ]
+    for n, (links, rechts) in enumerate(regels, start=1):
+        uitleg.cell(n, 1, links).font = Font(bold=True)
+        uitleg.cell(n, 2, rechts)
 
     boek.save(UIT)
     print(f'{os.path.relpath(UIT, WORTEL)}: {len(te_doen)} rijen, {meegenomen} miniaturen, '

@@ -113,6 +113,10 @@ def main():
     hoofd = lees(os.path.join(FOTOS, 'hoofdafbeeldingen.json'))
     onderwerp = lees(os.path.join(FOTOS, 'onderwerpafbeeldingen.json'))
     oud = lees(os.path.join(FOTOS, 'kandidaten.json'))
+    # Foto's die met de hand zijn aangewezen, meestal door een adres in het
+    # beoordelingsblad te plakken. Die winnen het van elk voorstel: een mens
+    # die de moeite neemt een betere foto op te zoeken heeft altijd gelijk.
+    handmatig = lees(os.path.join(FOTOS, 'handmatige_fotos.json'))
 
     # Handmatige keuzes, als het blad al is ingevuld.
     keuzes = {}
@@ -130,7 +134,7 @@ def main():
 
     d = pd.read_excel(REVIEW, sheet_name='Vragen')
     uit = {}
-    telling = {'keuze': 0, 'hoofdafbeelding': 0, 'onderwerpartikel': 0, 'oude kandidaat': 0,
+    telling = {'handmatig': 0, 'keuze': 0, 'hoofdafbeelding': 0, 'onderwerpartikel': 0, 'oude kandidaat': 0,
                'wacht op keuze': 0, 'afgekeurd': 0, 'geen': 0}
 
     for _, r in d.iterrows():
@@ -161,6 +165,13 @@ def main():
                  and geschikt_beeld(k.get('titel', ''))]
                 if not beste or k.get('titel') != beste.get('titel')]
         lijst = ([beste] if beste else []) + rest[:2]
+
+        eigen = handmatig.get(str(nr))
+        if eigen:
+            telling['handmatig'] += 1
+            uit[vraag] = {'url': eigen['url'], 'pagina': eigen['pagina'],
+                          'licentie': eigen['licentie'], 'maker': eigen['maker']}
+            continue
 
         keuze = keuzes.get(nr)
         if keuze == 0:

@@ -49,6 +49,27 @@ HERNOEMINGEN = {
         'In which year BC did Carthage fall to the Romans?',
         None,
     ),
+    'In welk jaar viel de Berlijnse Muur niet maar werd Japan aangevallen door de VS in Pearl Harbor?': (
+        'In welk jaar viel Japan de Amerikaanse vlootbasis Pearl Harbor aan?',
+        'In which year did Japan attack the American naval base at Pearl Harbor?',
+        'De aanval op Pearl Harbor was een verrassingsaanval door de Japanse Keizerlijke '
+        'Marine op de Amerikaanse vlootbasis op 7 december 1941.',
+    ),
+    'Hoeveel electorale stemmen heeft Californië (2024)?': (
+        'Hoeveel kiesmannen heeft Californië (2024)?',
+        'How many electoral votes does California have (2024)?',
+        None,
+    ),
+    'Hoeveel electorale stemmen heeft Texas (2024)?': (
+        'Hoeveel kiesmannen heeft Texas (2024)?',
+        'How many electoral votes does Texas have (2024)?',
+        None,
+    ),
+    'Hoeveel electorale stemmen zijn er nodig om de VS-presidentsverkiezing te winnen?': (
+        'Hoeveel kiesmannen zijn er nodig om de Amerikaanse presidentsverkiezing te winnen?',
+        'How many electoral votes are needed to win the American presidential election?',
+        None,
+    ),
     'Hoeveel deelstaten (Bundesländer) telt Duitsland?': (
         'Hoeveel deelstaten telt Duitsland?',
         'How many federal states does Germany have?',
