@@ -125,7 +125,13 @@ def licenties(bestanden):
         for pagina in (d.get('query', {}) or {}).get('pages', []) or []:
             info = (pagina.get('imageinfo') or [{}])[0]
             mime = str(info.get('mime', ''))
-            if not mime.startswith('image/') or mime.endswith('svg+xml'):
+            if not mime.startswith('image/'):
+                continue
+            # Een SVG mag mee zolang Commons er een miniatuur van maakt: dat is
+            # een PNG, dus de frontend krijgt gewoon een plaatje. Uitsluiten
+            # kostte 216 bestanden en 421 vragen - vlaggen, kaarten, clublogo's,
+            # en juist bij zulke vragen is dat het duidelijkste beeld.
+            if mime.endswith('svg+xml') and not info.get('thumburl'):
                 continue
             meta = info.get('extmetadata') or {}
             naam = zo.zh.tekst(meta, 'LicenseShortName')
