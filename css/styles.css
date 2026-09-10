@@ -1218,7 +1218,11 @@
     background: var(--surface); color:var(--ink); min-width:0;
   }
   :is(#dailyQuestionView, #libraryQuestionList, #premiumQuestionList) .vraag-met-categorie input:disabled { opacity:.8; }
-  :is(#dailyQuestionView, #libraryQuestionList, #premiumQuestionList) input.met-eenheid { padding-right:min(48%, var(--eenheid-ruimte)); }
+  /* Het label zweeft absoluut rechts in het veld, dus het getal moet ruimte
+     krijgen of het loopt eronderdoor. Breinkrakers en de race stonden hier
+     niet bij: daar verscheen wel "towers" maar bleef de padding op 16px. */
+  :is(#dailyQuestionView, #libraryQuestionList, #premiumQuestionList,
+      #bkQuestionList, #raceQuestionList) input.met-eenheid { padding-right:min(48%, var(--eenheid-ruimte)); }
   .invoer-eenheid {
     position:absolute; right:14px; max-width:44%; pointer-events:none;
     color:var(--eenheid-inkt); font:500 12px/1.2 'JetBrains Mono',monospace;

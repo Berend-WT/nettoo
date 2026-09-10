@@ -112,12 +112,15 @@ def main():
     for oud, (nieuw, engels, bewijs) in HERNOEMINGEN.items():
         # De SQL komt er altijd, ook voor een hernoeming die hier al gedaan is:
         # de database loopt een eigen ronde en kan de oude tekst nog hebben.
-        sql.append(
-            "update public.puzzles set q1_label = {n} where q1_label = {o};\n"
-            "update public.puzzles set q2_label = {n} where q2_label = {o};\n"
-            "update public.puzzles set q3_label = {n} where q3_label = {o};".format(
-                n="'" + nieuw.replace("'", "''") + "'",
-                o="'" + oud.replace("'", "''") + "'"))
+        # De kolommen heten in de database question_1 tot en met question_3.
+        # q1_label is de naam die de frontend er pas in mapDbDaily aan geeft, en
+        # daar zat een eerdere versie van dit script naast: de SQL viel om met
+        # 'column "q1_label" does not exist'.
+        sql.append('\n'.join(
+            "update public.puzzles set question_{i} = {n} where question_{i} = {o};".format(
+                i=i, n="'" + nieuw.replace("'", "''") + "'",
+                o="'" + oud.replace("'", "''") + "'")
+            for i in (1, 2, 3)))
 
         rijen = [r for r in range(2, blad.max_row + 1)
                  if blad.cell(r, kolom['Vraag NL']).value == oud]
