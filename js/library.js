@@ -121,15 +121,53 @@ function renderLibraryStats() {
     document.getElementById('libraryDifficulties').style.display = 'none'; document.getElementById('dailyPuzzleList').style.display = 'none'; document.getElementById('libraryCardGrid').style.display = 'none'; document.getElementById('libraryPuzzleView').style.display = 'block'; renderLibraryPuzzle();
   }
 
+  // Wat te doen als er geen puzzel te tonen is.
+  //
+  // Hier stond alleen "if (!p) return;". De aanroeper had het scherm dan al op
+  // zichtbaar gezet, dus je kreeg de vorige puzzel te zien alsof er niets was
+  // gebeurd — of een leeg vlak. Beide liegen: de een toont een puzzel die je
+  // niet hebt gekozen, de ander zegt niets.
+  //
+  // Dit gebeurt niet bij gewoon doorklikken (libraryMove klemt de index), maar
+  // wel als de lijst leeg is of als een index blijft staan nadat de puzzelset
+  // is vernieuwd vanuit de databank.
+  function toonGeenPuzzel(prefix, melding) {
+    const lijst = document.getElementById(prefix + 'QuestionList');
+    const som = document.getElementById(prefix + 'Equation');
+    const voortgang = document.getElementById(prefix + 'Progress');
+    const klok = document.getElementById(prefix + 'Timer');
+    if (som) som.textContent = '';
+    if (voortgang) voortgang.innerHTML = '';
+    if (klok) klok.textContent = '';
+    if (!lijst) return;
+    lijst.innerHTML = '';
+    const blok = document.createElement('div');
+    blok.className = 'geen-puzzel';
+    blok.textContent = melding;
+    lijst.appendChild(blok);
+  }
+
   function renderLibraryPuzzle() {
     // Begin bij de vraag, ook als de speler ver door de catalogus was gescrold.
     requestAnimationFrame(() => document.getElementById('libraryPuzzleView').scrollIntoView({ block: 'start' }));
-    const p = libraryPuzzles.filter(x => x.difficulty === selectedDifficulty)[libraryIndex]; if (!p) return;
+    const p = libraryPuzzles.filter(x => x.difficulty === selectedDifficulty)[libraryIndex];
+    if (!p) {
+      toonGeenPuzzel('library', statsCopy(
+        'Deze puzzel is er niet meer. Ga terug naar het overzicht en kies een andere.',
+        'This puzzle is no longer available. Go back to the overview and pick another.'));
+      return;
+    }
     renderPuzzleView('library', p, `Puzzel ${libraryPuzzleNumber(selectedDifficulty, libraryIndex)}`);
   }
 
   function renderCatalogusPuzzleView() {
-    const p = catalogusPuzzleList[catalogusPuzzleIndex]; if (!p) return;
+    const p = catalogusPuzzleList[catalogusPuzzleIndex];
+    if (!p) {
+      toonGeenPuzzel('catalogus', statsCopy(
+        'Deze puzzel is er niet meer. Ga terug naar het overzicht en kies een andere.',
+        'This puzzle is no longer available. Go back to the overview and pick another.'));
+      return;
+    }
     catalogusActivePuzzle = p;
     renderPuzzleView('catalogus', p, `Library · ${p.source === 'Daily Archive' ? 'daily' : 'puzzel'} ${catalogusPuzzleIndex + 1}`);
   }
