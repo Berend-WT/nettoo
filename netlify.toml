@@ -1,0 +1,50 @@
+# Netto op Netlify — zodat de repo privé kan zijn terwijl de site openbaar blijft.
+#
+# WAAROM DIT BESTAAT
+# GitHub Pages publiceert een privérepo alleen op een betaald plan. Op het
+# gratis plan geldt: repo op privé = site offline. Netlify heeft die koppeling
+# niet: het gratis plan bouwt gewoon uit een privérepo en zet het resultaat
+# openbaar neer.
+#
+# Dit bestand ligt klaar maar doet nog niets. Het wordt pas gebruikt zodra
+# iemand de repo in Netlify koppelt (app.netlify.com -> Add new site -> Import
+# an existing project -> GitHub). Blijft de site op GitHub Pages, dan kan dit
+# bestand gewoon weg.
+#
+# Er valt niets te bouwen: website/ is de kant-en-klare kopie van de frontend,
+# 5,3 MB, zonder bundler of stap ertussen. De controle hieronder is dezelfde als
+# in de Pages-workflow: loopt website/ achter op de bron, dan faalt de bouw in
+# plaats van dat er stilletjes een oude versie online komt.
+
+[build]
+  publish = "website"
+  command = "python3 tools/sync_website.py --check"
+
+[build.environment]
+  PYTHON_VERSION = "3.12"
+
+# De site staat op Netlify in de hoofdmap, niet in een submap zoals bij GitHub
+# Pages (/nettoo/). Alle paden in de frontend zijn relatief, dus dat werkt
+# vanzelf — maar drie dingen noemen het adres wel met naam en moeten mee
+# verhuizen. Ze staan bij elkaar zodat je ze niet hoeft te zoeken:
+#
+#   index.html  og:url, og:image en twitter:image
+#   js/core.js  GEPUBLICEERD, het adres waar een gedeelde score naar wijst
+#               als je lokaal speelt
+#
+# Vergeet je die, dan blijft de site werken maar wijzen gedeelde links en
+# linkvoorbeelden naar het oude adres.
+
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+
+# De gegenereerde databestanden dragen allemaal een ?v=-nummer in index.html,
+# dus ze mogen lang gebufferd worden. index.html zelf juist niet: dat is het
+# bestand waarin die nummers staan.
+[[headers]]
+  for = "/index.html"
+  [headers.values]
+    Cache-Control = "no-cache"

@@ -91,6 +91,28 @@ plaats van stilletjes een oude versie te publiceren.
 Eenmalig aanzetten: **Settings -> Pages -> Source: GitHub Actions**. Tot dat
 gebeurd is faalt de publiceerstap met "Pages is not enabled".
 
+### Repo op privé zetten
+
+GitHub Pages publiceert een privérepo alleen op een betaald plan. Op het gratis
+plan geldt: repo op privé = site offline. Wil je allebei — broncode dicht, site
+open — dan zijn er twee wegen:
+
+1. **GitHub Pro** (~$4 per maand). Niets aan de opzet veranderen; de bestaande
+   workflow blijft werken.
+2. **Netlify, Vercel of Cloudflare Pages** (gratis). Die bouwen wel uit een
+   privérepo. `netlify.toml` ligt klaar; koppelen duurt een paar minuten.
+
+Bij optie 2 verhuist de site van `berend-wt.github.io/nettoo/` naar de hoofdmap
+van het nieuwe adres. Alle paden in de frontend zijn relatief, dus dat werkt
+vanzelf, maar drie plekken noemen het adres met naam:
+
+- `index.html` — `og:url`, `og:image`, `twitter:image`
+- `js/core.js` — `GEPUBLICEERD`, waar een gedeelde score naar wijst als je
+  lokaal speelt
+
+En let op: privé zetten haalt niet weg wat al openbaar heeft gestaan. Wie de
+repo eerder kloonde, houdt die kopie.
+
 Bij een nieuw webadres hoort ook een ronde in Supabase: **Authentication ->
 URL Configuration**, het adres toevoegen bij *Redirect URLs* en desgewenst als
 *Site URL*. Zonder dat komt iedereen die zich aanmeldt of zijn wachtwoord
