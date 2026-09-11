@@ -180,38 +180,24 @@ gerepareerd en gecommit, niet door hem. De rest van zijn baan — het donkere
 thema, de volledige smalle doorloop, de toetsenbordbediening buiten dit
 formulier — is nog steeds van hem en nog steeds ongedaan.
 
-### C-019 · middel · data/netto_translations_en.js · open
-De Engelse vertaling van de vragen is machinaal gemaakt en de kwaliteit is
-wisselend. Aanleiding: Nozzit meldde één rare zin; toen ik ging kijken bleek het
-een patroon.
+### C-019 · middel · data/netto_translations_en.js · opgelost voor wat zichtbaar is, 11 sept
+De Engelse vertaling van de vragen was machinaal gemaakt en op ongeveer een op
+de zes plekken echt fout. Aanleiding was één melding van Nozzit.
 
-Gemeten op 35 aselect gelezen vertalingen: zes duidelijk fout, zes houterig. Op
-1683 vertaalde vragen komt dat ruwweg neer op 280 die echt fout zijn en nog eens
-280 die krom lezen.
+Alle 897 vraagteksten die in een puzzel staan zijn nagelopen, in acht blokken.
+268 vervangen. Wat het opleverde staat in dfd1532; de ernstigste soort was een
+vraag die in het Engels niet meer bij zijn eigen antwoord hoorde — een
+twaalfhoek die een vijfhoek werd, "nummer 1-hits" die "songs" werden.
 
-Wat er nu uit is (zie 3ae189a): de systematische gevallen. "tientallen" dat
-"dozens" werd, afrondingsinstructies die onleesbaar waren geworden, Amerikaanse
-naast Britse spelling, en 25 met de hand.
+Wat niet is nagelopen: 786 vertaalde vragen die in geen enkele puzzel voorkomen.
+Zolang ze nergens verschijnen hoeft dat ook niet. Maar komt er ooit een puzzel
+bij die zo'n vraag gebruikt, dan staat er een onnagekeken vertaling in het spel.
 
-Wat er níét uit is: de rest. Die fouten zijn gevarieerd en niet met patronen te
-vangen — een omgedraaide betekenis, een verkeerd woord, een naam op de verkeerde
-plek. Een paar voorbeelden uit de steekproef die nog leven:
+Daarvoor is `vragen/vertaald_nagelopen.json`: die houdt bij wat wel en niet
+langs een mens is geweest. `python tools/vertaal_vragen.py --stand` zegt hoeveel.
 
-    "How many assignments (works) had Hercules to complete ..."
-    "How many countries border on Congo-Kinshasa?"     (border on -> border)
-    "How many kitchen salt ..."                        (kitchen -> table)
-
-Drie mogelijke wegen, en het is de keuze van de eigenaar welke:
-
-1. Laten staan. Het spel werkt, de vragen zijn te begrijpen, en de meeste
-   spelers zijn Nederlands.
-2. Opnieuw vertalen, in batches, met een controle per batch. Dat is het soort
-   werk waar tijd in gaat maar geen risico aan zit — de Nederlandse vragen
-   blijven ongemoeid.
-3. Het Engels voorlopig uitzetten tot het klopt.
-
-Mijn voorkeur is 2, maar niet nu: er zitten testers op de site en dit is de
-enige plek waar ik honderden regels tegelijk zou aanraken.
+Voor de volgende ronde: exporteer een blok met `--uit N`, lees het, stuur de
+correcties terug met `--in`, en vink de rest af met `--klaar`.
 
 ### C-004 · laag · vragen/, fotos/ · open
 378 vragen hebben een fotokandidaat die op een oordeel wacht, 182 hebben er geen
