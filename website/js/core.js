@@ -704,14 +704,7 @@
     motion.addEventListener('change', finish);
   }
 
-  function toonHomeCategorie(knop) {
-    const tekst = document.getElementById('homeCategoryCaption');
-    if (tekst) tekst.textContent = knop.getAttribute('aria-label') || '';
-  }
-
   function renderHomeDailyPreview(puzzle = DAILY_PUZZLES[0] || PUZZLE_DATA) {
-    const categorietekst = document.getElementById('homeCategoryCaption');
-    if (categorietekst) categorietekst.textContent = '';
     if (!puzzle) return;
     const categories = categorieënVoor(puzzle);
     const operator = puzzle.operator || '×';

@@ -6,6 +6,7 @@
     --bg-dark: #14163B;
     --accent: #FFD84A;
     --accent-blue-light: #C7CCFF;
+    --accent-mint: #7BE0C0;
     --text-muted: #4C519C;
     --border-color: #E3E4F7;
     --green: #10B981;
@@ -24,6 +25,7 @@
     --bg-dark: #141B45;
     --accent: #F4B860;
     --accent-blue-light: #A9B3E6;
+    --accent-mint: #5FC9A9;
     /* Was #8B93C4. Dat gaf 3,92 tegen --surface, net onder de ondergrens van
        4,5 — en dit token draagt vrijwel alle bijtekst in het spel: de labels
        op het scorebord, de uitleg onder de knoppen, de aftelklok. Nu 4,96 op
@@ -249,10 +251,12 @@
   .home-quick-card strong { max-width:240px; margin-top:auto; font:700 24px/1.12 'Space Grotesk',sans-serif; letter-spacing:-.025em; }
   .home-quick-detail { margin-top:9px; max-width:220px; font-size:13px; line-height:1.4; opacity:.66; }
   .home-quick-arrow { position:absolute; top:24px; right:24px; font:500 19px 'JetBrains Mono',monospace; }
+  /* Twee kleuren naast elkaar, geen twee witte kaarten. Het label staat op
+     .72 en niet lager: daaronder zakt het onder 4,5 tegen het geel. */
   .home-quick-continue { background:var(--accent); color:var(--bg-dark); border-color:var(--accent); }
-  .home-quick-continue .home-section-label { color:rgba(20,22,59,.62); }
-  .home-quick-library { background:var(--surface); color:var(--ink); }
-  .home-quick-library .home-section-label { color:var(--text-muted); }
+  .home-quick-continue .home-section-label { color:rgba(20,22,59,.72); }
+  .home-quick-library { background:var(--accent-mint); color:var(--bg-dark); border-color:var(--accent-mint); }
+  .home-quick-library .home-section-label { color:rgba(20,22,59,.72); }
   .home-modes { margin-top:52px; }
   .home-modes-heading { display:flex; align-items:flex-end; justify-content:space-between; gap:24px; margin-bottom:18px; }
   .home-modes-heading h2 { margin-top:8px; font:400 27px/1.15 'Archivo Black',sans-serif; letter-spacing:-.025em; }

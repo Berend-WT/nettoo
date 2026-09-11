@@ -350,13 +350,7 @@ textarea:focus-visible,
 .home-landing-grid { align-items: stretch; }
 .screen-home { padding-bottom: 40px; }
 .home-content { padding-bottom: 0; }
-.home-quick-continue { background: var(--surface-2); color: var(--ink); border-color: var(--surface-border); }
-.home-quick-continue .home-section-label { color: var(--text-muted); }
-.home-quick-continue .home-quick-arrow { color: var(--ink); }
 .home-more .home-modes-heading h2 { font: 600 18px 'Space Grotesk', sans-serif; }
-.home-equation button.home-category-icon { position: relative; overflow: hidden; display: grid; place-items: center; width: 48px; height: 48px; padding: 0; border: 1px solid rgba(255,255,255,.2); border-radius: 10px; color: #fff; background: rgba(255,255,255,.06); cursor: pointer; }
-.home-equation button.home-category-icon.result { color: var(--accent); border-color: rgba(255,220,65,.5); }
-.home-category-caption { min-height: 18px; margin: -10px 0 14px; color: #D8DCF5; font: 500 12px/18px 'Space Grotesk', sans-serif; }
 @media (min-width: 901px) {
   .home-landing-grid .home-quick-actions { grid-template-rows: 1fr 1fr; grid-auto-rows: auto; align-content: stretch; }
   .home-landing-grid .home-quick-card strong { margin-top: auto; }
