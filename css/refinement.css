@@ -170,7 +170,15 @@
 #screen-puzzle #results .score-badge-val { color: var(--ink); }
 #screen-puzzle #results .score-badge-title, #screen-puzzle #results .score-badge-factor { color: var(--text-muted); }
 #screen-puzzle #results .cloud-sync-banner { display: none !important; }
-#screen-puzzle #results .btn-leaderboard-open { display: none; }
+/* Vier duidelijke vervolgacties, zonder extra kaart of herhaalde uitleg. */
+#results .daily-result-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 24px; padding-top: 20px; border-top: 1px solid var(--surface-border); }
+#results .daily-result-actions button { display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-width: 0; min-height: 48px; padding: 12px 10px; border-radius: 9px; font: 600 14px 'Space Grotesk',sans-serif; cursor: pointer; }
+#results .daily-result-actions .btn-share { background: var(--accent); color: #14163B; border: 1px solid transparent; }
+#screen-puzzle #results .btn-leaderboard-open { display: inline-flex; background: var(--surface-2); color: var(--ink); border: 1px solid var(--surface-border); }
+#results .daily-result-navigation { display: flex; justify-content: space-between; gap: 12px; margin-top: 8px; }
+#results .daily-result-navigation .daily-home-button { width: auto; min-height: 44px; margin: 0; padding: 8px 4px; border-color: transparent; font-size: 13px; }
+#results :is(.daily-result-actions, .daily-result-navigation) button:focus-visible { outline: 2px solid var(--ink); outline-offset: 3px; }
+#results .daily-result-actions .btn-leaderboard-open:hover { border-color: var(--ink); }
 .hist-heading span { font-size: 12px; color: var(--text-muted); }
 .hist-demo { color: var(--text-muted); font: 500 10px/1.5 'JetBrains Mono',monospace; }
 .histogram-chart { margin-top: 10px; }

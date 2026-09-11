@@ -37,7 +37,7 @@
 <script src="data/netto_translations_en.js?v=43"></script>
 <script src="js/i18n.js?v=63"></script>
 <link rel="stylesheet" href="css/styles.css?v=57">
-<link rel="stylesheet" href="css/refinement.css?v=92">
+<link rel="stylesheet" href="css/refinement.css?v=93">
 
 </head>
 <body>
@@ -331,29 +331,26 @@
             </div>
           </div>
 
-          <div class="actions-row">
+          <div class="actions-row daily-result-actions">
             <button class="btn-share" onclick="shareScore()">
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
               Deel uitslag
             </button>
-            <button class="btn-stats-open" onclick="openStatsModal()">
-              <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" aria-hidden="true"><path d="M5 20V10h3v10M11 20V4h3v16M17 20v-7h3v7M3 20h19"/></svg>
-              Statistieken
-            </button>
             <button class="btn-leaderboard-open" onclick="openLeaderboardModal()">
               <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 21h8M12 17v4M7 4h10v5a5 5 0 0 1-10 0V4Z"/><path d="M7 6H4v2a4 4 0 0 0 4 4M17 6h3v2a4 4 0 0 1-4 4"/></svg>
-              <span id="btnLeaderboardLabel">Bekijk het leaderboard</span>
+              <span id="btnLeaderboardLabel">Leaderboard</span>
             </button>
           </div>
-          <p class="results-leaderboard-hint" id="resultsLeaderboardHint">Kijk hoe anderen het vandaag deden.</p>
 
           <!-- Banner om in te loggen als speler niet is ingelogd -->
           <div class="cloud-sync-banner" id="cloudSyncBanner">
             <span>🏆 Wil je meedoen in het <b>Leaderboard</b>?</span>
             <button onclick="openAuthModal()">Log in / Registreer</button>
           </div>
-          <button type="button" class="daily-home-button" onclick="goHome()"><svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="m3 10 9-7 9 7M5 9v12h5v-7h4v7h5V9"/></svg>Home</button>
-          <button type="button" class="daily-home-button" onclick="openDailyPuzzles()">← Terug naar Daily Archive</button>
+          <div class="daily-result-navigation">
+            <button type="button" class="daily-home-button" onclick="goHome()"><svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="m3 10 9-7 9 7M5 9v12h5v-7h4v7h5V9"/></svg>Home</button>
+            <button type="button" class="daily-home-button" onclick="openDailyPuzzles()">Daily Archive <span aria-hidden="true">→</span></button>
+          </div>
         </div>
 
       </div>
