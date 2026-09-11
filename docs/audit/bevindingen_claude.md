@@ -107,24 +107,6 @@ het weert de wachtwoorden die in bestaande lekken staan.
 
 Eén schakelaar: Authentication -> Password.
 
-### C-006 · middel · Supabase (policies) · open
-Acht policies staan live die uit geen enkel SQL-bestand in deze repo komen; ze
-zijn ooit via het dashboard gemaakt en wat ze toestaan weet niemand meer.
-
-  admin_users 1 van 2 · library_puzzles 1 van 1 · puzzles 1 van 2 ·
-  question_submissions 3 van 7 · scores 2 van 2
-
-Dat is niet los te zien van hoe Postgres policies combineert: **permissive
-policies worden met OR samengevoegd.** Eén policy die `using (true)` zegt maakt
-elke zorgvuldige policy ernaast betekenisloos, en in een telling zie je dat
-verschil niet — twee is twee. Op `scores` en `library_puzzles` heeft ook `anon`
-SELECT, dus daar telt het voor iedere bezoeker.
-
-Zo te zien: `supabase/toon_policies.sql`, deel 1. Dat zet alles-toestaan en
-alles-voor-anon bovenaan.
-
-Nog niet beoordeeld: de uitvoer van dat script is er nog niet.
-
 ### C-007 · laag · Supabase (grants) · open
 Op elke tabel staan TRUNCATE, REFERENCES en TRIGGER voor zowel `anon` als
 `authenticated`. Dat komt uit de standaard-grant waarmee een Supabase-project
@@ -196,6 +178,55 @@ ermee.
 ---
 
 ## Afgehandeld
+
+### C-006 · vervalt (geen gat) · Supabase (policies) · afgehandeld 11 sept
+De acht policies die niet uit deze repo kwamen zijn nagelezen. Geen ervan zet
+iets open dat dicht hoort te zijn.
+
+Twee staan op `true`, en dat leek het gevaarlijke geval:
+
+- `library_puzzles` "Iedereen kan library puzzels lezen" — bevat de
+  bibliotheekpuzzels mét antwoorden, leesbaar voor iedereen. Dat is geen lek:
+  diezelfde antwoorden staan in `data/netto_frontend_puzzles.js`, dat elke
+  browser downloadt om je score te kunnen uitrekenen. Zo werkt een spel dat aan
+  de clientkant rekent.
+- `scores` "leaderboard leesbaar" — de tabel is leeg (0 rijen) en de app gebruikt
+  hem niet; ons scorebord draait op `user_plays`. Er valt dus niets te lezen.
+  Wel iets om te onthouden: schrijft er ooit iets naar deze tabel, dan is het
+  meteen voor iedereen leesbaar.
+
+De rest toetst netjes op `auth.uid()` of `is_admin()`.
+
+WAT MIJN QUERY NIET LIET ZIEN
+Ik vroeg `qual` op, en dat veld is leeg bij INSERT-policies — daar telt
+`with_check`. Van de acht INSERT-policies kon ik dus niet zien wát ze eisen, en
+juist één ervan heet "iedereen mag vragen insturen" op een tabel waar `anon`
+INSERT-rechten heeft. Dat is precies het soort naam waar je niet op moet gokken.
+
+Daarom gemeten in plaats van gevraagd, met een lege insert vanaf de live site:
+blokkeert RLS hem, dan volgt 403 "row-level security"; laat RLS hem door, dan
+struikelt hij pas op een kolom-eis. Zo ontstaat er geen rij.
+
+  question_submissions -> 401, "new row violates row-level security policy"
+  profiles, user_plays, library_plays, archive_plays,
+  user_notifications, scores, puzzles, admin_users -> 401, "permission denied"
+
+Geen enkele tabel accepteert een schrijfactie van een uitgelogde bezoeker.
+
+### C-017 · laag · Supabase (policies) · open
+Twee policies op `question_submissions` hangen aan een e-mailadres in plaats van
+aan `is_admin()`:
+
+  "alleen admin keurt goed of af"  -> (auth.jwt() ->> 'email') = 'berendschroten@gmail.com'
+  "alleen admin leest inzendingen" -> idem
+
+Ze doen naast de `is_admin()`-policies hetzelfde werk, en permissive policies
+worden met OR samengevoegd, dus er gaat niets mis. Maar ze koppelen beheerrechten
+aan een adres dat kan veranderen, en ze maken het beeld troebel: zeven policies
+op één tabel, waarvan vier hetzelfde doen.
+
+Opruimen mag, hoeft niet vandaag, en is de keuze van de eigenaar — het zijn zijn
+rechten.
 
 ### Nacht van 10 september — leaderboard, teksten en contrast
 Op verzoek van de eigenaar doorgewerkt terwijl hij sliep. Alles gecommit en
