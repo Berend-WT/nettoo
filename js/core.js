@@ -1930,7 +1930,11 @@
     link.href = url.href;
     link.target = '_blank';
     link.rel = 'noopener';
-    link.textContent = 'Bekijk de bron: ' + url.hostname.replace(/^www\./, '');
+    // De bewijszin zelf blijft Nederlands: dat is een citaat uit de bron, geen
+    // interfacetekst. Dit label eromheen is dat wel, en bleef staan omdat het
+    // met de hand aan elkaar werd geplakt en dus nooit langs de vertaling kwam.
+    link.textContent = statsCopy('Bekijk de bron: ', 'View the source: ')
+      + url.hostname.replace(/^www\./, '');
     paneel.append(kop, uitleg, link);
     return paneel;
   }

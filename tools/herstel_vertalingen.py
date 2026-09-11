@@ -65,6 +65,70 @@ HANDMATIG = {
 }
 
 
+# Terugkerende vertaalfouten in de vraagteksten, gevonden nadat een tester
+# meldde dat er rare Engelse zinnen langskwamen.
+#
+# "tientallen" werd "dozens" — dozijnen, dus twaalftallen. Dat is geen stijlfout
+# maar een rekenfout: "afgerond op tientallen" en "afgerond op dozijnen" vragen
+# om een ander antwoord. Vijftig vragen.
+#
+# "afgerond" werd soms "finished". "How many days did Saigon fall to reunion
+# (finished in tens of days)?" is daar het resultaat van.
+#
+# En de spelling liep door elkaar: 56 keer "meters" tegenover honderden keren
+# "metres". Beide zijn Engels, maar niet in dezelfde zin.
+ZINNEN = [
+    ('(in dozens of rounded)', '(rounded to the nearest ten)'),
+    ('(in hundreds of rounded)', '(rounded to the nearest hundred)'),
+    ('(in dozens of meters)', '(rounded to the nearest ten metres)'),
+    ('in dozens of rounded', 'rounded to the nearest ten'),
+    ('in hundreds of rounded', 'rounded to the nearest hundred'),
+    ('finished in tens of days', 'rounded to the nearest ten days'),
+    ('finished in tens', 'rounded to the nearest ten'),
+    ('finished in dozens of meters', 'rounded to the nearest ten metres'),
+    ('finished in dozens', 'rounded to the nearest ten'),
+    ('finished on tens', 'rounded to the nearest ten'),
+    ('finished in thousands of km', 'rounded to the nearest thousand km'),
+    ('finished in hundreds of km', 'rounded to the nearest hundred km'),
+    ('finished in whole hours', 'rounded to the nearest whole hour'),
+]
+
+# Alleen waar het Nederlands ook echt over tientallen gaat.
+DOZENS = [('in dozens', 'in tens'), ('of dozens', 'of tens'), ('dozens of', 'tens of')]
+
+SPELLING = [('meters', 'metres'), ('meter', 'metre'),
+            ('kilometers', 'kilometres'), ('kilometer', 'kilometre'),
+            ('liters', 'litres'), ('liter', 'litre')]
+
+
+def herstel_zinnen(d):
+    """Tweede ronde: terugkerende fouten in de vraagteksten zelf."""
+    import re as _re
+    n_zin = n_doz = n_sp = 0
+    for nl, en in list(d.items()):
+        oud = en
+        for a, b in ZINNEN:
+            if a in en:
+                en = en.replace(a, b)
+        if en != oud:
+            n_zin += 1
+        # "dozens" alleen aanpakken als het Nederlands over tientallen gaat
+        if 'dozens' in en and ('tiental' in nl.lower()):
+            voor = en
+            for a, b in DOZENS:
+                en = en.replace(a, b)
+            en = en.replace('dozens', 'tens')
+            if en != voor:
+                n_doz += 1
+        voor = en
+        for a, b in SPELLING:
+            en = _re.sub(r'\b' + a + r'\b', b, en)
+        if en != voor:
+            n_sp += 1
+        d[nl] = en
+    return n_zin, n_doz, n_sp
+
+
 def main():
     ontleder = argparse.ArgumentParser()
     ontleder.add_argument('--droog', action='store_true')
@@ -94,7 +158,11 @@ def main():
         d[nl] = m.group(1).rstrip() + ' ' + schoon
         hersteld += 1
 
+    n_zin, n_doz, n_sp = herstel_zinnen(d)
     print(f'{hersteld} emoji teruggezet')
+    print(f'{n_zin} zinnen met een kapotte afrondingsinstructie hersteld')
+    print(f'{n_doz} keer "dozens" -> "tens" waar het Nederlands tientallen zegt')
+    print(f'{n_sp} teksten op Britse spelling gezet')
     print(f'{handmatig} zinnen met de hand rechtgezet')
     print(f'{ongemoeid} hadden hun emoji al')
 
