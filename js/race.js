@@ -40,6 +40,9 @@
   let raceOnlineVisibility = 'open'; // aan/uit-schakelaar in de online-tab
   let raceLobbyChannel = null;
   let raceLobbyReady = false;
+  // Of de laatste poging tot verbinden mislukte. Zonder dit is een kapotte
+  // lobby niet te onderscheiden van een lobby waar niemand in zit.
+  let raceLobbyFout = false;
   let raceAutoStartTimer = null;
   let raceAutoStartInterval = null;
 
@@ -137,12 +140,17 @@
       .subscribe(status => {
         if (status === 'SUBSCRIBED') {
           raceLobbyReady = true;
+          raceLobbyFout = false;
           publishOpenRaceEntry();
           renderOpenGames();
         } else if (status === 'CHANNEL_ERROR' || status === 'TIMED_OUT') {
           // Kanaal kapot: volledig resetten zodat de volgende ensure het opnieuw probeert.
           raceLobbyReady = false;
           raceLobbyChannel = null;
+          // En het opnieuw tekenen, anders blijft er "Nog geen open games"
+          // staan terwijl er in werkelijkheid geen verbinding is.
+          raceLobbyFout = true;
+          renderOpenGames();
         }
       });
   }
@@ -171,7 +179,19 @@
     if (!list) return;
     const games = openRaceEntries();
     if (!games.length) {
-      list.innerHTML = '<div class="race-open-games-empty">Nog geen open games. Maak de eerste.</div>';
+      // Leeg en kapot zagen er hetzelfde uit: "Nog geen open games" stond er
+      // ook als de verbinding was weggevallen of er helemaal geen server was.
+      // Je bleef dan wachten op spelers die je nooit te zien zou krijgen.
+      const melding = !supabaseClient
+        ? 'Geen verbinding met de server, dus open games zijn nu niet te zien. Solo spelen kan wel.'
+        : raceLobbyFout
+          ? 'De verbinding met de lobby is weggevallen. Ververs om het opnieuw te proberen.'
+          : 'Nog geen open games. Maak de eerste.';
+      list.innerHTML = '';
+      const div = document.createElement('div');
+      div.className = 'race-open-games-empty';
+      div.textContent = melding;
+      list.appendChild(div);
       return;
     }
     list.innerHTML = games.map(game => {

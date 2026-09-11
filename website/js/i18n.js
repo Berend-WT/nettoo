@@ -349,6 +349,8 @@
     'Rekenmachine display': 'Calculator display',
     'NETTO · LIBRARY': 'NETTO · LIBRARY',
     'Waar komt dit vandaan?': 'Where does this come from?',
+    'Geen verbinding met de server, dus open games zijn nu niet te zien. Solo spelen kan wel.': 'No connection to the server, so open games cannot be shown right now. You can still play solo.',
+    'De verbinding met de lobby is weggevallen. Ververs om het opnieuw te proberen.': 'The connection to the lobby dropped. Refresh to try again.',
     'Je kijkt mee zonder account. Maak er een om zelf tussen de scores te komen.': 'You are watching without an account. Create one to appear among the scores yourself.',
     'Meedoen': 'Join in',
     'Zichtbaar op het leaderboard': 'Visible on the leaderboard',
