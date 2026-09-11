@@ -703,7 +703,19 @@
   }
   .form-group input:focus { outline: none; border-color: var(--bg-main); }
   .auth-toggle { font-size: 13px; color: #6B7280; text-align: center; margin-top: 14px; }
-  .auth-toggle a { color: var(--bg-main); text-decoration: none; font-weight: 700; cursor: pointer; }
+  /* Dit waren <a>-elementen zonder href. Die staan niet in de tabvolgorde, dus
+     met een toetsenbord kon je "Registreer gratis" en "Wachtwoord vergeten?"
+     niet bereiken — je kon dus geen account maken zonder muis. Nu knoppen, wat
+     hier ook klopt: er wordt niets genavigeerd. Ze zien er hetzelfde uit. */
+  .auth-toggle a,
+  .auth-toggle .auth-link { color: var(--bg-main); text-decoration: none; font-weight: 700; cursor: pointer; }
+  .auth-toggle .auth-link {
+    border: 0; background: none; padding: 0;
+    font: 700 13px 'Space Grotesk', sans-serif;
+  }
+  .auth-toggle .auth-link:hover { text-decoration: underline; }
+  .auth-toggle .auth-link:focus-visible { outline: 2px solid var(--bg-main); outline-offset: 3px; border-radius: 4px; }
+  .auth-toggle .auth-link-klein { font-size: 12px; color: #5B6172; font-weight: 600; }
 
   /* ---------- Puzzel Race ---------- */
   .race-page-inner { max-width:760px; }

@@ -36,7 +36,7 @@
 <script src="data/netto_breinkrakers.js?v=29"></script>
 <script src="data/netto_translations_en.js?v=42"></script>
 <script src="js/i18n.js?v=62"></script>
-<link rel="stylesheet" href="css/styles.css?v=56">
+<link rel="stylesheet" href="css/styles.css?v=57">
 <link rel="stylesheet" href="css/refinement.css?v=92">
 
 </head>
@@ -955,16 +955,16 @@
 
         <form id="authForm" onsubmit="handleAuthSubmit(event)">
           <div class="form-group" id="usernameGroup" style="display:none;">
-            <label>Spelersnaam (uniek)</label>
+            <label for="authUsername">Spelersnaam (uniek)</label>
             <input type="text" id="authUsername" placeholder="bijv. MathMasterNL" maxlength="20">
             <div style="font-size:11px; color:#9CA3AF; margin-top:4px;">3–20 tekens</div>
           </div>
           <div class="form-group">
-            <label>E-mailadres</label>
+            <label for="authEmail">E-mailadres</label>
             <input type="email" id="authEmail" placeholder="jouw@email.nl" required>
           </div>
           <div class="form-group">
-            <label>Wachtwoord</label>
+            <label for="authPassword">Wachtwoord</label>
             <input type="password" id="authPassword" placeholder="••••••••" required>
             <div style="font-size:11px; color:#9CA3AF; margin-top:4px;">Minimaal 6 tekens</div>
           </div>
@@ -973,10 +973,10 @@
 
         <div class="auth-toggle">
           <span id="authToggleText">Nog geen account? </span>
-          <a onclick="toggleAuthMode()" id="authToggleLink">Registreer gratis</a>
+          <button type="button" class="auth-link" onclick="toggleAuthMode()" id="authToggleLink">Registreer gratis</button>
         </div>
         <div class="auth-toggle" id="forgotRow" style="margin-top:8px;">
-          <a onclick="showForgotPassword()" style="font-size:12px; color:#6B7280;">Wachtwoord vergeten?</a>
+          <button type="button" class="auth-link auth-link-klein" onclick="showForgotPassword()">Wachtwoord vergeten?</button>
         </div>
       </div>
 
@@ -987,13 +987,13 @@
         <div id="forgotErrorBox" style="display:none; background:#FEF2F2; border:1px solid #FECACA; color:#B91C1C; border-radius:10px; padding:12px 14px; font-size:13px; margin-bottom:14px;"></div>
         <form onsubmit="handleForgotPassword(event)">
           <div class="form-group">
-            <label>E-mailadres</label>
+            <label for="forgotEmail">E-mailadres</label>
             <input type="email" id="forgotEmail" placeholder="jouw@email.nl" required>
           </div>
           <button type="submit" class="btn-check" id="forgotSubmitBtn" style="margin-top:16px;">Verstuur resetlink</button>
         </form>
         <div class="auth-toggle" style="margin-top:14px;">
-          <a onclick="backToAuthForm()">← Terug naar inloggen</a>
+          <button type="button" class="auth-link" onclick="backToAuthForm()">← Terug naar inloggen</button>
         </div>
       </div>
     </div>
