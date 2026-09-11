@@ -35,7 +35,7 @@
 <script src="data/netto_race_pool.js?v=38"></script>
 <script src="data/netto_breinkrakers.js?v=29"></script>
 <script src="data/netto_translations_en.js?v=43"></script>
-<script src="js/i18n.js?v=63"></script>
+<script src="js/i18n.js?v=64"></script>
 <link rel="stylesheet" href="css/styles.css?v=57">
 <link rel="stylesheet" href="css/refinement.css?v=93">
 
@@ -108,23 +108,19 @@
 
     <div class="sidebar-scroll">
       <div class="sidebar-group">
-        <div class="sidebar-group-title">Vandaag</div>
+        <div class="sidebar-group-title">Daily</div>
         <button class="sidebar-item" onclick="goHome(); showScreen('puzzle')"><span class="sidebar-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="4"/><path d="M12 12h.01"/></svg></span><span class="label">De Daily</span><span class="arrow">→</span></button>
         <button class="sidebar-item" onclick="openDailyPuzzles()"><span class="sidebar-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M8 3v4M16 3v4M3 10h18M8 14h.01M12 14h.01M16 14h.01M8 18h.01M12 18h.01"/></svg></span><span class="label">Daily Archive</span><span class="arrow">→</span></button>
-      </div>
-      <div class="sidebar-group">
-        <div class="sidebar-group-title">Vrij spelen</div>
-        <button class="sidebar-item" onclick="openPuzzles()"><span class="sidebar-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><path d="M14 17.5h7M17.5 14v7"/></svg></span><span class="label">Puzzels</span><span class="arrow">→</span></button>
-        <button class="sidebar-item" onclick="openBreinkrakers()"><span class="sidebar-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9.5 4.5A3.5 3.5 0 0 0 6 8v.4A3.5 3.5 0 0 0 4 15a3.5 3.5 0 0 0 5.5 3M14.5 4.5A3.5 3.5 0 0 1 18 8v.4a3.5 3.5 0 0 1 2 6.6 3.5 3.5 0 0 1-5.5 3M9.5 4.5v15M14.5 4.5v15M9.5 9H7.8M14.5 14h1.7"/></svg></span><span class="label">Breinkrakers</span><span class="arrow">→</span></button>
-      </div>
-      <div class="sidebar-group">
-        <div class="sidebar-group-title">Competitie</div>
-        <button class="sidebar-item" onclick="openPuzzleRace()"><span class="sidebar-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l3 2M9 2h6M12 5V2"/></svg></span><span class="label">Puzzel Race</span><span class="arrow">→</span></button>
         <button class="sidebar-item" onclick="openLeaderboardModal()"><span class="sidebar-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 21h8M12 17v4M7 4h10v5a5 5 0 0 1-10 0V4Z"/><path d="M7 6H4v2a4 4 0 0 0 4 4M17 6h3v2a4 4 0 0 1-4 4"/></svg></span><span class="label">Leaderboard</span><span class="arrow">→</span></button>
       </div>
       <div class="sidebar-group">
+        <div class="sidebar-group-title">Spelen</div>
+        <button class="sidebar-item" onclick="openPuzzles()"><span class="sidebar-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><path d="M14 17.5h7M17.5 14v7"/></svg></span><span class="label">Puzzels</span><span class="arrow">→</span></button>
+        <button class="sidebar-item" onclick="openBreinkrakers()"><span class="sidebar-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9.5 4.5A3.5 3.5 0 0 0 6 8v.4A3.5 3.5 0 0 0 4 15a3.5 3.5 0 0 0 5.5 3M14.5 4.5A3.5 3.5 0 0 1 18 8v.4a3.5 3.5 0 0 1 2 6.6 3.5 3.5 0 0 1-5.5 3M9.5 4.5v15M14.5 4.5v15M9.5 9H7.8M14.5 14h1.7"/></svg></span><span class="label">Breinkrakers</span><span class="arrow">→</span></button>
+        <button class="sidebar-item" onclick="openPuzzleRace()"><span class="sidebar-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l3 2M9 2h6M12 5V2"/></svg></span><span class="label">Puzzel Race</span><span class="arrow">→</span></button>
+      </div>
+      <div class="sidebar-group">
         <div class="sidebar-group-title">Meer</div>
-        <button class="sidebar-item" onclick="openFotoverantwoording()"><span class="sidebar-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8" cy="8" r="2"/><path d="m3 18 6-6 4 4 3-3 5 5"/></svg></span><span class="label">Fotoverantwoording</span><span class="arrow">→</span></button>
         <button class="sidebar-item" onclick="openHowItWorks()"><span class="sidebar-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M9.8 9a2.4 2.4 0 1 1 3.3 2.2c-.8.4-1.1.9-1.1 1.8M12 17h.01"/></svg></span><span class="label">Hoe werkt het?</span><span class="arrow">→</span></button>
         <button class="sidebar-item" onclick="openSubmitQuestion()"><span class="sidebar-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20h4l11-11a2.8 2.8 0 0 0-4-4L4 16v4Z"/><path d="m13.5 6.5 4 4"/></svg></span><span class="label">Vraag insturen</span><span class="arrow">→</span></button>
       </div>

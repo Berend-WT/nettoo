@@ -68,7 +68,7 @@
     'Uitloggen': 'Log out',
     'dagelijkse schatting': 'daily estimation',
     'Spelen': 'Play',
-    'Vrij spelen': 'Free play',
+    'Spelen': 'Play',
     'Bekijk het leaderboard': 'View the leaderboard',
     'Kijk hoe anderen het vandaag deden.': 'See how everyone else did today.',
     'Statistieken bekijken': 'View statistics',
