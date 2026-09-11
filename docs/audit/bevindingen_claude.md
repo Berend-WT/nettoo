@@ -161,6 +161,25 @@ Waarom dit blijft staan: ik had dit bijna als bevinding opgeschreven. Een
 console-buffer die over herladingen heen blijft staan is precies het soort
 meetfout dat je een avond kost.
 
+### C-018 · toelichting · frontend · 11 sept
+Ik heb in Codex' werkgebied gewerkt: `index.html`, `js/race.js`, `css/styles.css`.
+Dat is tegen de afspraak in `AUDIT.md`, dus hier staat waarom.
+
+Codex liep tegen zijn limiet aan met X-004 tot en met X-006 open, en er testen
+sinds vandaag vrienden en familie op de live site. X-005 bleek bij het nalopen
+erger dan hij beschreef: de knoppen "Registreer gratis" en "Wachtwoord vergeten?"
+waren anchors zonder href en stonden dus niet in de tabvolgorde. Wie met een
+toetsenbord werkt kon geen account maken. Dat wilde ik niet laten staan terwijl
+er mensen op de site zitten.
+
+Opgepakt: X-005 (de6151a) en X-004 (91004f7). X-006 staat nog open; die is
+kleiner en kan wachten tot hij terug is.
+
+Komt Codex terug, dan is dit wat hij moet weten: zijn twee bevindingen zijn
+gerepareerd en gecommit, niet door hem. De rest van zijn baan — het donkere
+thema, de volledige smalle doorloop, de toetsenbordbediening buiten dit
+formulier — is nog steeds van hem en nog steeds ongedaan.
+
 ### C-004 · laag · vragen/, fotos/ · open
 378 vragen hebben een fotokandidaat die op een oordeel wacht, 182 hebben er geen
 enkele. Het spel werkt zonder; dit is dekking, geen fout. Staat hier zodat het
