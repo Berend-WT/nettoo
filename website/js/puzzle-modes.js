@@ -44,6 +44,30 @@
     }, 1000);
   }
   // ===== Generieke puzzle-view (werkt voor 'library' én 'catalogus' prefix) =====
+  function werkPuzzelNavigatieBij(prefix, ingeleverd) {
+    const navigatie = document.querySelector('#' + prefix + 'PuzzleView .library-actions');
+    if (!navigatie) return;
+    const bibliotheek = prefix === 'library';
+    const reeks = bibliotheek ? libraryPuzzles.filter(p => p.difficulty === selectedDifficulty) : catalogusPuzzleList;
+    const index = bibliotheek ? libraryIndex : catalogusPuzzleIndex;
+    const verplaats = stap => bibliotheek ? libraryMove(stap) : catalogusPuzzleMove(stap);
+    const vorige = document.createElement('button');
+    vorige.type = 'button';
+    vorige.textContent = statsCopy('← Vorige', '← Previous');
+    vorige.disabled = index <= 0;
+    vorige.onclick = () => verplaats(-1);
+    const volgende = document.createElement('button');
+    volgende.type = 'button';
+    volgende.className = ingeleverd ? 'puzzel-verder' : '';
+    const laatste = index >= reeks.length - 1;
+    volgende.textContent = laatste
+      ? statsCopy('Alle puzzels →', 'All puzzles →')
+      : ingeleverd ? statsCopy('Volgende puzzel →', 'Next puzzle →') : statsCopy('Overslaan →', 'Skip puzzle →');
+    // Overslaan navigeert alleen: het levert geen antwoord of score in.
+    volgende.onclick = laatste ? () => bibliotheek ? openPuzzles() : openCatalogusLibrary() : () => verplaats(1);
+    navigatie.replaceChildren(vorige, volgende);
+  }
+
   function renderPuzzleView(prefix, p, progressLabel, moveAction) {
     const listEl = document.getElementById(prefix + 'QuestionList');
     if (!listEl || !p) return;
@@ -56,6 +80,7 @@
     renderPuzzelfoto(listEl, p);
     bindDerivedInputs(prefix, p.operator || '×');
     startPuzzleTimer(prefix, p.difficulty);
+    werkPuzzelNavigatieBij(prefix, false);
   }
 
   function submitPuzzleView(prefix, auto = false) {
@@ -84,8 +109,8 @@
     if (guesses.every((guess, i) => isSpotOnAnswer(guess, answers[i]))) launchConfetti();
     const plays = JSON.parse(localStorage.getItem('netto_library_plays') || '{}'); plays[active.id] = { factor, guesses, completedAt:new Date().toISOString() }; localStorage.setItem('netto_library_plays',JSON.stringify(plays));
     updateContinuePuzzleButton();
-    const nextAction = prefix === 'library' ? 'libraryMove(1)' : 'catalogusPuzzleMove(1)';
-    document.getElementById(prefix + 'QuestionList').innerHTML = answers.map((a,i) => `<div class="library-question"><b>Vraag ${i+1}</b>${[active.q1_label,active.q2_label,active.q3_label][i]}<br><strong>Echt antwoord: ${fmt(a)} · ${scoreVraag(guesses[i],a).toFixed(2)}×</strong></div>`).join('') + `<div class="score-badge-container"><div class="score-badge-title">Jouw gemiddelde afwijking</div><div class="score-badge-val" style="color:${scoreColor(factor)}">${factor.toFixed(2)}×</div></div><button class="btn-check" onclick="${nextAction}">Volgende puzzel →</button>`;
+    document.getElementById(prefix + 'QuestionList').innerHTML = answers.map((a,i) => `<div class="library-question"><b>Vraag ${i+1}</b>${[active.q1_label,active.q2_label,active.q3_label][i]}<br><strong>Echt antwoord: ${fmt(a)} · ${scoreVraag(guesses[i],a).toFixed(2)}×</strong></div>`).join('') + `<div class="score-badge-container"><div class="score-badge-title">Jouw gemiddelde afwijking</div><div class="score-badge-val" style="color:${scoreColor(factor)}">${factor.toFixed(2)}×</div></div>`;
+    werkPuzzelNavigatieBij(prefix, true);
     syncLibraryPlay(active, guesses[0], guesses[1], guesses[2], factor);
     if (prefix === 'library') renderLibraryCards(); else renderCatalogusPuzzles();
   }
