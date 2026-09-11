@@ -98,7 +98,13 @@ DOZENS = [('in dozens', 'in tens'), ('of dozens', 'of tens'), ('dozens of', 'ten
 
 SPELLING = [('meters', 'metres'), ('meter', 'metre'),
             ('kilometers', 'kilometres'), ('kilometer', 'kilometre'),
-            ('liters', 'litres'), ('liter', 'litre')]
+            ('centimeters', 'centimetres'), ('centimeter', 'centimetre'),
+            ('millimeters', 'millimetres'), ('millimeter', 'millimetre'),
+            ('liters', 'litres'), ('liter', 'litre'),
+            ('fertilization', 'fertilisation'), ('organization', 'organisation'),
+            ('organizations', 'organisations'), ('recognized', 'recognised'),
+            ('color', 'colour'), ('colors', 'colours'),
+            ('defense', 'defence'), ('center', 'centre'), ('centers', 'centres')]
 
 
 def herstel_zinnen(d):
